@@ -1,5 +1,6 @@
 #include "day3.hpp"
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -62,3 +63,23 @@ bool is_part_number(const vector<string> &lines, size_t y, size_t x,
 bool is_digit(char ch) { return ch >= '0' && ch <= '9'; }
 
 bool is_symbol(char ch) { return !is_digit(ch) && (ch != '.'); }
+
+
+void test_day3_pt1() {
+  // clang-format off
+  const vector<string> input = {
+    "467..114..",
+    "...*......",
+    "..35..633.",
+    "......#...",
+    "617*......",
+    ".....+.58.",
+    "..592.....",
+    "......755.",
+    "...$.*....",
+    ".664.598.."
+  };
+  // clang-format on
+  int actual = solve_day3_pt1(input);
+  cout << "result = " << actual << endl;
+}

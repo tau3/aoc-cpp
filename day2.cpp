@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "day2.hpp"
+#include "util.hpp"
 
 using namespace std;
 
@@ -19,19 +20,6 @@ bool is_possible(const string &color, int count);
 int power(const string &line);
 int solve_day2_pt2(const vector<string> &lines);
 void test_day2();
-
-int main_old() {
-  vector<string> lines;
-  ifstream input("day2_input");
-  string line;
-  while (getline(input, line)) {
-    lines.push_back(line);
-  }
-
-  cout << "result = " << solve_day2_pt2(lines) << endl;
-
-  return 0;
-}
 
 void test_day1() {
   const vector<string> lines = {
@@ -118,12 +106,3 @@ bool is_possible(const string &color, int count) {
          (color[0] == 'b' && count <= 14);
 }
 
-vector<string> split(const string &line) {
-  vector<string> result;
-  stringstream stream(line);
-  string word;
-  while (stream >> word) {
-    result.push_back(word);
-  }
-  return result;
-}

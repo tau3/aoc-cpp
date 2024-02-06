@@ -1,6 +1,7 @@
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <fstream>
 
 #include "util.hpp"
 
@@ -14,4 +15,14 @@ vector<string> read_file(const string &path) {
     lines.push_back(line);
   }
   return lines;
+}
+
+vector<string> split(const string &line) {
+  vector<string> result;
+  stringstream stream(line);
+  string word;
+  while (stream >> word) {
+    result.push_back(word);
+  }
+  return result;
 }

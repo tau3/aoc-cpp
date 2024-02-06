@@ -8,6 +8,8 @@
 #include <type_traits>
 #include <vector>
 
+#include "day2.hpp"
+
 using namespace std;
 
 int solve_day2_pt1(const vector<string> &lines);
@@ -18,7 +20,7 @@ int power(const string &line);
 int solve_day2_pt2(const vector<string> &lines);
 void test_day2();
 
-int main() {
+int main_old() {
   vector<string> lines;
   ifstream input("day2_input");
   string line;
@@ -28,7 +30,7 @@ int main() {
 
   cout << "result = " << solve_day2_pt2(lines) << endl;
 
-  // return 0;
+  return 0;
 }
 
 void test_day1() {

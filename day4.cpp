@@ -31,8 +31,8 @@ vector<int> count_wins(const vector<string> &lines) {
     set_intersection(winning.begin(), winning.end(), you_have.begin(),
                      you_have.end(), back_inserter(you_have_winning));
 
-    int subresult =
-        you_have_winning.empty() ? 0 : pow(2, you_have_winning.size() - 1);
+    int subresult = you_have_winning.size();
+
     result.push_back(subresult);
   }
   return result;

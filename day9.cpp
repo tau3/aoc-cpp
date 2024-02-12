@@ -25,7 +25,9 @@ vector<vector<int>> parse(const vector<string> &input) {
 int solve(const vector<vector<int>> &lines) {
   int result = 0;
   for (vector<int> line : lines) {
-    result += solve_line(line);
+    int line_result = solve_line(line);
+    cout << line_result << endl;
+    result += line_result;
   }
   return result;
 }
@@ -33,15 +35,15 @@ int solve(const vector<vector<int>> &lines) {
 int solve_line(vector<int> &line) {
   vector<vector<int>> pyramid;
 
-  vector<int> *current = &line;
-  while (!all_zeros(*current)) {
-    pyramid.push_back(*current);
-    vector<int> new_current = diffs(*current);
-    current = &new_current;
+  vector<int> current = line;
+  while (!all_zeros(current)) {
+    pyramid.push_back(current);
+    current = diffs(current);
   }
+  pyramid.push_back(current);
   last(pyramid).push_back(0);
 
-  for (size_t i = pyramid.size() - 2; i >= 0; --i) {
+  for (size_t i = pyramid.size() - 2; i-- > 0;) {
     int val = last(pyramid[i]) + last(pyramid[i + 1]);
     pyramid[i].push_back(val);
   }
@@ -55,8 +57,8 @@ template <typename T> T last(const vector<T> &items) {
 
 vector<int> diffs(const vector<int> &line) {
   vector<int> result;
-  for (size_t i = 1; i < line.size() - 1; ++i) {
-    result.push_back(line[i + 1] - line[i]);
+  for (size_t i = 1; i < line.size(); ++i) {
+    result.push_back(line[i] - line[i - 1]);
   }
   return result;
 }

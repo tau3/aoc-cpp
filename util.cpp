@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -26,3 +27,4 @@ vector<string> split(const string &line) {
   }
   return result;
 }
+

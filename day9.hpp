@@ -1,5 +1,8 @@
 #include <string>
 #include <vector>
+#include <cstdint>
 
-std::vector<std::vector<int>> parse(const std::vector<std::string> &input);
-int solve(const std::vector<std::vector<int>> &lines);
+typedef int int_t;
+
+std::vector<std::vector<int_t>> parse(const std::vector<std::string> &input);
+int_t solve(const std::vector<std::vector<int_t>> &lines);

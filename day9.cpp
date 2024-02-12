@@ -3,16 +3,16 @@
 
 using namespace std;
 
-int solve_line(vector<int> &);
-bool all_zeros(const vector<int> &);
-vector<int> diffs(const vector<int> &);
+int solve_line(vector<int_t> &);
+bool all_zeros(const vector<int_t> &);
+vector<int_t> diffs(const vector<int_t> &);
 template <typename T> T last(const vector<T> &);
 
-vector<vector<int>> parse(const vector<string> &input) {
-  vector<vector<int>> result;
+vector<vector<int_t>> parse(const vector<string> &input) {
+  vector<vector<int_t>> result;
   for (const string &line : input) {
     const vector<string> &tokens = split(line);
-    vector<int> ints;
+    vector<int_t> ints;
     for (const string &token : tokens) {
       int val = stoi(token);
       ints.push_back(val);
@@ -22,20 +22,19 @@ vector<vector<int>> parse(const vector<string> &input) {
   return result;
 }
 
-int solve(const vector<vector<int>> &lines) {
+int_t solve(const vector<vector<int_t>> &lines) {
   int result = 0;
-  for (vector<int> line : lines) {
+  for (vector<int_t> line : lines) {
     int line_result = solve_line(line);
-    cout << line_result << endl;
     result += line_result;
   }
   return result;
 }
 
-int solve_line(vector<int> &line) {
-  vector<vector<int>> pyramid;
+int solve_line(vector<int_t> &line) {
+  vector<vector<int_t>> pyramid;
 
-  vector<int> current = line;
+  vector<int_t> current = line;
   while (!all_zeros(current)) {
     pyramid.push_back(current);
     current = diffs(current);
@@ -55,15 +54,15 @@ template <typename T> T last(const vector<T> &items) {
   return items[items.size() - 1];
 }
 
-vector<int> diffs(const vector<int> &line) {
-  vector<int> result;
+vector<int_t> diffs(const vector<int_t> &line) {
+  vector<int_t> result;
   for (size_t i = 1; i < line.size(); ++i) {
     result.push_back(line[i] - line[i - 1]);
   }
   return result;
 }
 
-bool all_zeros(const vector<int> &line) {
+bool all_zeros(const vector<int_t> &line) {
   for (int i : line) {
     if (i != 0) {
       return false;

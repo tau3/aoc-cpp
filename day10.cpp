@@ -1,9 +1,9 @@
-#include <cstddef>
 #include <functional>
-#include <stdexcept>
-#include <string>
 #include <tuple>
-#include <vector>
+#include <stdexcept>
+#include <iostream>
+
+#include "day10.hpp"
 
 using namespace std;
 
@@ -20,10 +20,6 @@ Point find_start(const vector<string> &grid) {
   throw invalid_argument("grid");
 }
 
-struct State {
-  Point start;
-};
-
 bool contains(const string &str, char c) { return str.find(c) != string::npos; }
 
 char direction_for_start(const vector<string> &grid, const Point &start) {
@@ -33,25 +29,22 @@ char direction_for_start(const vector<string> &grid, const Point &start) {
   size_t height = grid.size();
   size_t width = grid[0].size();
 
-  vector<Point> lrup;
-  string directions = "F7JL-|";
   if ((c > 0) && contains("FL-", grid[r][c - 1])) {
     return 'l';
   }
   if ((r > 0) && contains("F7|", grid[r - 1][c])) {
     return 'u';
   }
-  if ((r < height - 1) && contains("7-J", grid[r + 1][c])) {
+  if ((r < height - 1) && contains("|JL", grid[r + 1][c])) {
     return 'd';
   }
-  if ((c < width - 1) && contains("|JL", grid[r][c + 1])) {
+  if ((c < width - 1) && contains("-J7", grid[r][c + 1])) {
     return 'r';
   }
   throw invalid_argument("start");
 }
 
 int solve_pt1(const vector<string> &grid) {
-  State state;
   const Point start = find_start(grid);
   Point current = start;
   int steps = 0;

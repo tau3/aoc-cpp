@@ -1,9 +1,6 @@
-#include <cstddef>
-#include <functional>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <vector>
 
 #include "day10.hpp"
@@ -11,6 +8,26 @@
 using namespace std;
 
 enum class Direction { UP, DOWN, LEFT, RIGHT };
+
+inline ostream &operator<<(ostream &os, const Direction &direction) {
+  switch(direction) {
+  case Direction::UP:
+    os << "Direction::UP";
+    break;
+  case Direction::DOWN:
+    os << "Direction::DOWN";
+    break;
+  case Direction::LEFT:
+    os << "Direction::LEFT";
+    break;
+  case Direction::RIGHT:
+    os << "Direction::RIGHT";
+    break;
+  default:
+    throw invalid_argument("direction");
+  }
+  return os;
+}
 
 struct Point {
   size_t row;
@@ -21,16 +38,16 @@ struct Point {
   void move(const Direction direction) {
     switch (direction) {
     case Direction::UP:
-      col--;
-      break;
-    case Direction::DOWN:
-      col++;
-      break;
-    case Direction::LEFT:
       row--;
       break;
-    case Direction::RIGHT:
+    case Direction::DOWN:
       row++;
+      break;
+    case Direction::LEFT:
+      col--;
+      break;
+    case Direction::RIGHT:
+      col++;
       break;
     default:
       throw invalid_argument("direction");
@@ -39,7 +56,12 @@ struct Point {
 };
 
 inline bool operator!=(const Point &lhs, const Point &rhs) {
-  return (lhs.col != rhs.col) || (lhs.row == rhs.row);
+  return (lhs.col != rhs.col) || (lhs.row != rhs.row);
+}
+
+inline ostream &operator<<(ostream &os, const Point &point) {
+  os << "Point{row=" << point.row << ";col=" << point.col << "}";
+  return os;
 }
 
 Point find_start(const vector<string> &grid) {
@@ -79,46 +101,38 @@ Direction direction_for_start(const vector<string> &grid, const Point &start) {
   throw invalid_argument("start");
 }
 
-Direction foo(const vector<string> &grid, const Point &current,
-              const Direction direction) {
-  char current_value = grid[current.col][current.row];
+Direction pick_direction(const vector<string> &grid, const Point &current,
+                         const Direction direction) {
+  const char current_value = grid[current.row][current.col];
   switch (current_value) {
   case 'L':
     if (direction == Direction::LEFT) {
       return Direction::UP;
     } else if (direction == Direction::DOWN) {
       return Direction::RIGHT;
-    } else {
-      throw invalid_argument("L direction");
     }
-    break;
+    throw invalid_argument("L direction");
   case 'J':
     if (direction == Direction::RIGHT) {
       return Direction::UP;
     } else if (direction == Direction::DOWN) {
       return Direction::LEFT;
-    } else {
-      throw invalid_argument("J direction");
     }
-    break;
+    throw invalid_argument("J direction");
   case '7':
     if (direction == Direction::RIGHT) {
       return Direction::DOWN;
     } else if (direction == Direction::UP) {
       return Direction::LEFT;
-    } else {
-      throw invalid_argument("7 direction");
     }
-    break;
+    throw invalid_argument("7 direction");
   case 'F':
     if (direction == Direction::UP) {
       return Direction::RIGHT;
     } else if (direction == Direction::LEFT) {
       return Direction::DOWN;
-    } else {
-      throw invalid_argument("F direction");
     }
-    break;
+    throw invalid_argument("F direction");
   }
   return direction;
 }
@@ -130,9 +144,10 @@ int solve_pt1(const vector<string> &grid) {
   Direction direction = direction_for_start(grid, start);
 
   while ((current != start) || (steps == 0)) {
+    // cout << "current: " << current << ", direction: " << direction << endl;
     current.move(direction);
     ++steps;
-    direction = foo(grid, current, direction);
+    direction = pick_direction(grid, current, direction);
   }
 
   return steps / 2;

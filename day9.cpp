@@ -72,7 +72,7 @@ int solve_line(deque<int_t> &line, bool right) {
     }
   }
 
-  return pyramid[0].back();
+  return right ? pyramid[0].back() : pyramid[0].front();
 }
 
 template <typename T> T last(const vector<T> &items) {

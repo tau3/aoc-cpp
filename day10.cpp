@@ -1,6 +1,7 @@
+#include <algorithm>
 #include <cstddef>
+#include <deque>
 #include <iostream>
-#include <queue>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -33,8 +34,8 @@ inline ostream &operator<<(ostream &os, const Direction &direction) {
 }
 
 struct Point {
-  size_t row;
-  size_t col;
+  int row;
+  int col;
 
   explicit Point(size_t row, size_t col) : row(row), col(col) {}
 
@@ -56,6 +57,21 @@ struct Point {
       throw invalid_argument("direction");
     }
   }
+
+  vector<Point> adjacent(const vector<string> &grid) const {
+    const size_t height = grid.size();
+    const size_t width = grid[0].size();
+    vector<Point> candidates = {
+        Point(row - 1, col - 1), Point(row - 1, col),
+        Point(row - 1, col + 1), Point(row, col - 1),
+        Point(row, col + 1),     Point(row + 1, col - 1),
+        Point(row + 1, col),     Point(row + 1, col + 1)};
+    remove_if(candidates.begin(), candidates.end(), [](const Point &point) {
+      return (point.col >= 0) && (point.row >= 0) && (point.col < width) &&
+             (point.col < height);
+    });
+    return candidates;
+  };
 };
 
 inline bool operator!=(const Point &lhs, const Point &rhs) {
@@ -199,12 +215,19 @@ bool inside(const vector<string> &grid, const set<Point> &loop,
   return count(line, '|') % 2 == 1;
 }
 
-int foo(const vector<string> &grid) {
-  queue<Point> dots;
+void add_all(deque<Point> to, const vector<Point> &from) {
+  for (Point point : from) {
+    to.push_back(point);
+  }
+}
+
+int foo(const vector<string> &grid, const set<Point> &loop,
+        const Point &start) {
+  deque<Point> dots;
   for (size_t row = 0; row < grid.size(); ++row) {
     for (size_t col = 0; col < grid[0].size(); ++col) {
       if (grid[row][col] == '.') {
-        dots.push(Point(row, col));
+        dots.push_back(Point(row, col));
       }
     }
   }
@@ -212,35 +235,28 @@ int foo(const vector<string> &grid) {
   int result = 0;
   while (!dots.empty()) {
     Point point = dots.front();
-    dots.pop();
+    dots.pop_front();
 
     set<Point> visited;
-    queue<Point> neighbours;
-    neighbours.push(point);
+    deque<Point> area;
+    area.push_back(point);
 
-    while (!neighbours.empty()) {
-      point = neighbours.front();
-      neighbours.pop();
+    while (!area.empty()) {
+      point = area.front();
+      area.pop_front();
       if (contains(visited, point)) {
         continue;
       }
-      const vector<Point> adjacent = point.adjacent();
-      neighbours.add_all(adjacent);
+      const vector<Point> adjacent = point.adjacent(grid);
+      add_all(area, adjacent);
     }
 
     if (inside(grid, loop, point, start)) {
-      result += neighbours.size();
+      result += area.size();
     }
 
-    dots.remove_all(neighbours);
+    remove_if(dots.begin(), dots.end(),
+              [](const Point &point) { return contains(area, point); });
   }
   return result;
-}
-
-void solve_pt2(const vector<string> &grid) {
-  for (const string &line : grid) {
-    bool inside = false;
-    for (const char c : line) {
-    }
-  }
 }

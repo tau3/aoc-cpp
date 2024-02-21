@@ -1,10 +1,9 @@
 #include <algorithm>
-#include <cstddef>
 #include <deque>
 #include <iostream>
-#include <set>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "day10.hpp"
@@ -66,10 +65,12 @@ struct Point {
         Point(row - 1, col + 1), Point(row, col - 1),
         Point(row, col + 1),     Point(row + 1, col - 1),
         Point(row + 1, col),     Point(row + 1, col + 1)};
-    remove_if(candidates.begin(), candidates.end(), [](const Point &point) {
-      return (point.col >= 0) && (point.row >= 0) && (point.col < width) &&
-             (point.col < height);
-    });
+    candidates.erase(remove_if(candidates.begin(), candidates.end(),
+                               [&width, &height](const Point &point) {
+                                 return (point.col >= 0) && (point.row >= 0) &&
+                                        (point.col < width) &&
+                                        (point.col < height);
+                               }));
     return candidates;
   };
 };
@@ -78,11 +79,25 @@ inline bool operator!=(const Point &lhs, const Point &rhs) {
   return (lhs.col != rhs.col) || (lhs.row != rhs.row);
 }
 
+inline bool operator==(const Point &lhs, const Point &rhs) {
+  return (lhs.col == rhs.col) && (lhs.row == rhs.row);
+}
+
 inline ostream &operator<<(ostream &os, const Point &point) {
   os << "Point{row=" << point.row << ";col=" << point.col << "}";
   return os;
 }
 
+namespace std {
+
+template <> struct hash<Point> {
+  typedef Point argument_type;
+  typedef size_t result_type;
+
+  size_t operator()(const Point &point) const { return point.col ^ point.row; }
+};
+
+} // namespace std
 Point find_start(const vector<string> &grid) {
   const size_t width = grid[0].size();
   for (size_t row = 0; row < grid.size(); ++row) {
@@ -171,6 +186,24 @@ int solve_pt1(const vector<string> &grid) {
   return steps / 2;
 }
 
+unordered_set<Point> loop(const vector<string> &grid) {
+  const Point start = find_start(grid);
+  Point current = start;
+  int steps = 0;
+  Direction direction = direction_for_start(grid, start);
+
+  unordered_set<Point> result{};
+  result.insert(start);
+  while ((current != start) || (steps == 0)) {
+    current.move(direction);
+    ++steps;
+    result.insert(current);
+    direction = pick_direction(grid, current, direction);
+  }
+
+  return result;
+}
+
 void replace_all(string &orig, string substring, string replacement) {
   size_t pos = orig.find(substring);
   while (pos != string::npos) {
@@ -189,11 +222,12 @@ size_t count(const string &str, char symbol) {
   return result;
 }
 
-bool contains(const set<Point> &points, const Point &point) {
-  return points.find(point) != points.end();
+template <typename Container>
+bool contains(const Container &points, const Point &point) {
+  return find(points.begin(), points.end(), point) != points.end();
 }
 
-bool inside(const vector<string> &grid, const set<Point> &loop,
+bool inside(const vector<string> &grid, const unordered_set<Point> &loop,
             const Point &point, const Point &start) {
   // TODO may be wrong
   string line;
@@ -221,8 +255,8 @@ void add_all(deque<Point> to, const vector<Point> &from) {
   }
 }
 
-int foo(const vector<string> &grid, const set<Point> &loop,
-        const Point &start) {
+int enclosed_area(const vector<string> &grid, const unordered_set<Point> &loop,
+                  const Point &start) {
   deque<Point> dots;
   for (size_t row = 0; row < grid.size(); ++row) {
     for (size_t col = 0; col < grid[0].size(); ++col) {
@@ -237,7 +271,7 @@ int foo(const vector<string> &grid, const set<Point> &loop,
     Point point = dots.front();
     dots.pop_front();
 
-    set<Point> visited;
+    unordered_set<Point> visited;
     deque<Point> area;
     area.push_back(point);
 
@@ -255,8 +289,13 @@ int foo(const vector<string> &grid, const set<Point> &loop,
       result += area.size();
     }
 
-    remove_if(dots.begin(), dots.end(),
-              [](const Point &point) { return contains(area, point); });
+    dots.erase(remove_if(dots.begin(), dots.end(), [&area](const Point &point) {
+      return contains(area, point);
+    }));
   }
   return result;
+}
+
+int solve_pt2(const vector<string> &grid) {
+  return enclosed_area(grid, loop(grid), find_start(grid));
 }

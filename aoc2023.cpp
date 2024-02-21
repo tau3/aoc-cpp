@@ -21,9 +21,21 @@ int main() {
     // "|F--J",
     // "LJ..."
   // };
-  const vector<string> input = read_file("../day10_input");
+  // const vector<string> input = read_file("../day10_input");
 
-  cout << solve_pt1(input) << " expected 8" << endl;
+  const vector<string> input = {
+    "...........",
+    ".S-------7.",
+    ".|F-----7|.",
+    ".||.....||.",
+    ".||.....||.",
+    ".|L-7.F-J|.",
+    ".|..|.|..|.",
+    ".L--J.L--J.",
+    "..........."
+  };
+  
+  cout << solve_pt1(input) << " expected 4" << endl;
 
   return 0;
 }

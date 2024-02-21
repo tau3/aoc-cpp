@@ -58,22 +58,22 @@ struct Point {
   }
 
   vector<Point> adjacent(const vector<string> &grid) const {
+    vector<Point> result = {Point(row - 1, col - 1), Point(row - 1, col),
+                            Point(row - 1, col + 1), Point(row, col - 1),
+                            Point(row, col + 1),     Point(row + 1, col - 1),
+                            Point(row + 1, col),     Point(row + 1, col + 1)};
+    auto out_of_bounds =
+        remove_if(result.begin(), result.end(),
+                  [&grid](const Point &point) { return !point.fits(grid); });
+    result.erase(out_of_bounds, result.end());
+    return result;
+  };
+
+  bool fits(const vector<string> &grid) const {
     const size_t height = grid.size();
     const size_t width = grid[0].size();
-    vector<Point> candidates = {
-        Point(row - 1, col - 1), Point(row - 1, col),
-        Point(row - 1, col + 1), Point(row, col - 1),
-        Point(row, col + 1),     Point(row + 1, col - 1),
-        Point(row + 1, col),     Point(row + 1, col + 1)};
-    candidates.erase(
-        remove_if(candidates.begin(), candidates.end(),
-                  [&width, &height](const Point &point) {
-                    return !((point.col >= 0) && (point.row >= 0) &&
-                             (point.col < width) && (point.row < height));
-                  }),
-        candidates.end());
-    return candidates;
-  };
+    return ((col >= 0) && (row >= 0) && (col < width) && (row < height));
+  }
 };
 
 inline bool operator!=(const Point &lhs, const Point &rhs) {
@@ -188,7 +188,7 @@ int solve_pt1(const vector<string> &grid) {
   return steps / 2;
 }
 
-unordered_set<Point> loop(const vector<string> &grid) {
+unordered_set<Point> find_loop(const vector<string> &grid) {
   const Point start = find_start(grid);
   Point current = start;
   int steps = 0;
@@ -247,9 +247,7 @@ bool inside(const vector<string> &grid, const unordered_set<Point> &loop,
   replace_all(line, "FJ", "|");
   replace_all(line, "L7", "|");
 
-  auto result = count(line, '|') % 2 == 1;
-  cout << point << " inside: " << result << endl;
-  return result;
+  return count(line, '|') % 2 == 1;
 }
 
 void add_all(deque<Point> to, const vector<Point> &from) {
@@ -258,8 +256,7 @@ void add_all(deque<Point> to, const vector<Point> &from) {
   }
 }
 
-int enclosed_area(const vector<string> &grid, const unordered_set<Point> &loop,
-                  const Point &start) {
+deque<Point> collect_dots(const vector<string> &grid) {
   deque<Point> dots;
   for (size_t row = 0; row < grid.size(); ++row) {
     for (size_t col = 0; col < grid[0].size(); ++col) {
@@ -268,40 +265,57 @@ int enclosed_area(const vector<string> &grid, const unordered_set<Point> &loop,
       }
     }
   }
+  return dots;
+}
 
+unordered_set<Point> bfs(const Point &point, const vector<string> &grid) {
+  unordered_set<Point> result;
+
+  Point current = point;
+  deque<Point> to_visit;
+  to_visit.push_back(current);
+
+  while (!to_visit.empty()) {
+    current = to_visit.front();
+    to_visit.pop_front();
+    if (contains(result, current)) {
+      continue;
+    }
+    result.insert(current);
+    const vector<Point> adjacent = current.adjacent(grid);
+    add_all(to_visit, adjacent);
+  }
+
+  return result;
+}
+
+void remove_all(deque<Point> &dots, const unordered_set<Point> &visited) {
+
+  dots.erase(remove_if(dots.begin(), dots.end(),
+                       [&visited](const Point &point) {
+                         return contains(visited, point);
+                       }),
+             dots.end());
+}
+
+int solve_pt2(const vector<string> &grid) {
   int result = 0;
+  auto start = find_start(grid);
+  unordered_set<Point> loop = find_loop(grid);
+
+  deque<Point> dots = collect_dots(grid);
   while (!dots.empty()) {
     Point point = dots.front();
     dots.pop_front();
 
-    unordered_set<Point> visited;
-    deque<Point> to_visit;
-    to_visit.push_back(point);
-
-    while (!to_visit.empty()) {
-      point = to_visit.front();
-      to_visit.pop_front();
-      if (contains(visited, point)) {
-        continue;
-      }
-      visited.insert(point);
-      const vector<Point> adjacent = point.adjacent(grid);
-      add_all(to_visit, adjacent);
-    }
+    unordered_set<Point> visited = bfs(point, grid);
 
     if (inside(grid, loop, point, start)) {
       result += visited.size();
     }
 
-    dots.erase(remove_if(dots.begin(), dots.end(),
-                         [&visited](const Point &point) {
-                           return contains(visited, point);
-                         }),
-               dots.end());
+    remove_all(dots, visited);
   }
-  return result;
-}
 
-int solve_pt2(const vector<string> &grid) {
-  return enclosed_area(grid, loop(grid), find_start(grid));
+  return result;
 }

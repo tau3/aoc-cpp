@@ -65,12 +65,13 @@ struct Point {
         Point(row - 1, col + 1), Point(row, col - 1),
         Point(row, col + 1),     Point(row + 1, col - 1),
         Point(row + 1, col),     Point(row + 1, col + 1)};
-    candidates.erase(remove_if(candidates.begin(), candidates.end(),
-                               [&width, &height](const Point &point) {
-                                 return (point.col >= 0) && (point.row >= 0) &&
-                                        (point.col < width) &&
-                                        (point.col < height);
-                               }));
+    candidates.erase(
+        remove_if(candidates.begin(), candidates.end(),
+                  [&width, &height](const Point &point) {
+                    return !((point.col >= 0) && (point.row >= 0) &&
+                             (point.col < width) && (point.row < height));
+                  }),
+        candidates.end());
     return candidates;
   };
 };
@@ -98,6 +99,7 @@ template <> struct hash<Point> {
 };
 
 } // namespace std
+
 Point find_start(const vector<string> &grid) {
   const size_t width = grid[0].size();
   for (size_t row = 0; row < grid.size(); ++row) {
@@ -229,7 +231,6 @@ bool contains(const Container &points, const Point &point) {
 
 bool inside(const vector<string> &grid, const unordered_set<Point> &loop,
             const Point &point, const Point &start) {
-  // TODO may be wrong
   string line;
   const size_t from = (point.col < start.col) ? 0 : point.col + 1;
   const size_t to = (point.col < start.col) ? point.col : grid[0].size();
@@ -246,7 +247,9 @@ bool inside(const vector<string> &grid, const unordered_set<Point> &loop,
   replace_all(line, "FJ", "|");
   replace_all(line, "L7", "|");
 
-  return count(line, '|') % 2 == 1;
+  auto result = count(line, '|') % 2 == 1;
+  cout << point << " inside: " << result << endl;
+  return result;
 }
 
 void add_all(deque<Point> to, const vector<Point> &from) {
@@ -272,26 +275,29 @@ int enclosed_area(const vector<string> &grid, const unordered_set<Point> &loop,
     dots.pop_front();
 
     unordered_set<Point> visited;
-    deque<Point> area;
-    area.push_back(point);
+    deque<Point> to_visit;
+    to_visit.push_back(point);
 
-    while (!area.empty()) {
-      point = area.front();
-      area.pop_front();
+    while (!to_visit.empty()) {
+      point = to_visit.front();
+      to_visit.pop_front();
       if (contains(visited, point)) {
         continue;
       }
+      visited.insert(point);
       const vector<Point> adjacent = point.adjacent(grid);
-      add_all(area, adjacent);
+      add_all(to_visit, adjacent);
     }
 
     if (inside(grid, loop, point, start)) {
-      result += area.size();
+      result += visited.size();
     }
 
-    dots.erase(remove_if(dots.begin(), dots.end(), [&area](const Point &point) {
-      return contains(area, point);
-    }));
+    dots.erase(remove_if(dots.begin(), dots.end(),
+                         [&visited](const Point &point) {
+                           return contains(visited, point);
+                         }),
+               dots.end());
   }
   return result;
 }

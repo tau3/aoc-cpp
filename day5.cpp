@@ -13,7 +13,7 @@ public:
   explicit Probe(const vector<string> &raw) {
     vector<array<int, 3>> intervals;
     for (const string &line : raw) {
-      const vector<string> tokens = split(line);
+      const vector<string> tokens = split(line, " ");
       int left_key = stoi(tokens[0]);
       int left_value = stoi(tokens[1]);
       int width = stoi(tokens[2]);

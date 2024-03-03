@@ -290,7 +290,6 @@ unordered_set<Point> bfs(const Point &point, const vector<string> &grid) {
 }
 
 void remove_all(deque<Point> &dots, const unordered_set<Point> &visited) {
-
   dots.erase(remove_if(dots.begin(), dots.end(),
                        [&visited](const Point &point) {
                          return contains(visited, point);

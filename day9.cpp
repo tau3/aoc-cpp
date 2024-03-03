@@ -14,7 +14,7 @@ template <typename T> T last(const vector<T> &);
 vector<vector<int_t>> parse(const vector<string> &input) {
   vector<vector<int_t>> result;
   for (const string &line : input) {
-    const vector<string> &tokens = split(line);
+    const vector<string> &tokens = split(line, " ");
     vector<int_t> ints;
     for (const string &token : tokens) {
       int val = stoi(token);

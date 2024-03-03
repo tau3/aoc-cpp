@@ -14,7 +14,7 @@ vector<int> count_wins(const vector<string> &lines) {
     vector<int> winning;
     vector<int> you_have;
     vector<int> *receiver = &winning;
-    const vector<string> tokens = split(line);
+    const vector<string> tokens = split(line, " ");
     for (size_t i = 2; i < tokens.size(); ++i) {
       const string &token = tokens[i];
       if (token == "|") {

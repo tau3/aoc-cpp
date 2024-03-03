@@ -56,7 +56,7 @@ int solve_day2_pt2(const vector<string> &lines) {
 }
 
 int power(const string &line) {
-  const vector<string> tokens = split(line);
+  const vector<string> tokens = split(line, " ");
   int stats[3] = {0, 0, 0};
   for (size_t i = 2; i < tokens.size() - 1; i += 2) {
     const int count = stoi(tokens[i]);
@@ -90,7 +90,7 @@ int solve_day2_pt1(const vector<string> &lines) {
 }
 
 bool parse_line(const string &line) {
-  const vector<string> tokens = split(line);
+  const vector<string> tokens = split(line, " ");
   for (size_t i = 2; i < tokens.size() - 1; i += 2) {
     const int count = stoi(tokens[i]);
     const string color = tokens[i + 1];

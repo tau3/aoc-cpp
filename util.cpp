@@ -18,13 +18,16 @@ vector<string> read_file(const string &path) {
   return lines;
 }
 
-vector<string> split(const string &line) {
+vector<string> split(const string &line, const string &delimiter) {
+
   vector<string> result;
-  stringstream stream(line);
-  string word;
-  while (stream >> word) {
-    result.push_back(word);
+  size_t last = 0;
+  size_t next = 0;
+  while ((next = line.find(delimiter, last)) != string::npos) {
+    const string token = line.substr(last, next - last);
+    result.push_back(token);
+    last = next + 1;
   }
+  result.push_back(line.substr(last));
   return result;
 }
-

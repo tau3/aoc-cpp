@@ -44,10 +44,8 @@ bool fits_group(const string &line) {
   return true;
 }
 
+// incorrect
 int count_arrangements(const string &springs, const deque<size_t> &groups) {
-  cout << "check " << springs << " and ";
-  print(groups);
-
   if (springs.empty() || groups.empty()) {
     return 0;
   }
@@ -57,26 +55,25 @@ int count_arrangements(const string &springs, const deque<size_t> &groups) {
     return 0;
   }
 
-  int result;
+  int result = 0;
   if (fits_group(springs.substr(0, group))) {
     if (springs.length() > group) {
       if (springs[group] == '.' || springs[group] == '?') {
-        result =
-            1 + count_arrangements(springs.substr(group + 1), copy_pop(groups));
+        result +=
+            count_arrangements(springs.substr(group + 1), copy_pop(groups));
       } else {
         if (springs[0] == '#') {
           result = 0;
         } else {
-          result = count_arrangements(springs.substr(1), groups);
+          result *= count_arrangements(springs.substr(1), groups);
         }
       }
     } else {
-      result = groups.size() == 1 ? 1 : 0;
+      result = groups.size() == 1 ? result : 0;
     }
   } else {
-    result = count_arrangements(springs.substr(1), groups);
+    result += count_arrangements(springs.substr(1), groups);
   }
 
-  cout << "result = " << result << endl;
   return result;
 }

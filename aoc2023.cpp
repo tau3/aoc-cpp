@@ -24,7 +24,7 @@ int main() {
   //   "..##..###",
   //   "#....#..#"};
   const vector<string> input = read_file("../day13_input");
-  cout << solve_day13_pt1(input) << endl;
+  cout << solve_day13_pt2(input) << endl;
 
   return 0;
 }

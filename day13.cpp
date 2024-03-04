@@ -1,11 +1,7 @@
 #include "day13.hpp"
 #include "util.hpp"
-#include <cstddef>
-#include <iostream>
-#include <ostream>
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 using namespace std;
@@ -24,6 +20,7 @@ bool equal_cols(const vector<string> &input, size_t left, size_t right) {
   return true;
 }
 
+// TODO refactor into one function
 bool is_horizontal_border(const vector<string> &input, size_t lower) {
   int down = lower + 1;
   int up = lower - 2;
@@ -95,10 +92,11 @@ size_t count_diffs(const vector<string> &pattern, bool is_row, size_t i,
 
 void set_column(vector<string> &input, size_t i, size_t j) {
   for (string &line : input) {
-    line[i] = line[j];
+    line[j] = line[i];
   }
 }
 
+// TODO O(2n) complexity due to extra comparison, can be refactored to O(n)
 bool other_is_symmetrical(const vector<string> &pattern, bool is_row, int i,
                           int j) {
   if (is_row) {
@@ -135,7 +133,7 @@ void place_smudge(vector<string> &input) {
     for (size_t j = i + 1; j < input.size(); ++j) {
       if (count_diffs(input, true, i, j) == 1) {
         if (other_is_symmetrical(input, true, i, j)) {
-          input[i] = input[j];
+          input[j] = input[i];
           return;
         }
       }
@@ -155,7 +153,8 @@ void place_smudge(vector<string> &input) {
   throw invalid_argument("no smudge found");
 }
 
-int traverse(const vector<string> &input, void (*func)(vector<string> &)) {
+// TODO pass object by value instead of function
+int traverse(const vector<string> &input, void (*mutate)(vector<string> &)) {
   size_t start = 0;
   size_t current = 0;
   size_t columns = 0;
@@ -167,16 +166,17 @@ int traverse(const vector<string> &input, void (*func)(vector<string> &)) {
     }
     vector<string> slice =
         vector<string>(input.begin() + start, input.begin() + current);
-    func(slice);
+    mutate(slice);
     const Solution solution = solve_pattern(slice);
     columns += solution.columns;
     rows += solution.rows;
     start = current + 1;
   }
+  // TODO duplicated code
   if (start < current) {
     vector<string> slice =
         vector<string>(input.begin() + start, input.begin() + current);
-    func(slice);
+    mutate(slice);
     const Solution solution = solve_pattern(slice);
     columns += solution.columns;
     rows += solution.rows;

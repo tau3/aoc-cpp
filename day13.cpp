@@ -1,6 +1,7 @@
 #include "day13.hpp"
 #include "util.hpp"
 #include <iostream>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -83,10 +84,11 @@ int solve_day13_pt1(const vector<string> &input) {
     rows += solution.rows;
     start = current + 1;
   }
-  auto slice = vector<string>(input.begin() + start, input.begin() + current);
-  const Solution solution = solve_pattern(slice);
-  columns += solution.columns;
-  rows += solution.rows;
-  start = current;
+  if (start < current) {
+    auto slice = vector<string>(input.begin() + start, input.begin() + current);
+    const Solution solution = solve_pattern(slice);
+    columns += solution.columns;
+    rows += solution.rows;
+  }
   return columns + 100 * rows;
 }

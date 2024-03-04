@@ -6,9 +6,9 @@ std::vector<std::string> read_file(const std::string &);
 
 std::vector<std::string> split(const std::string &, const std::string &);
 
-template <typename T> void print(const std::vector<T> items) {
+template <typename T> void print(const T& items) {
   std::cout << "vector: ";
-  for (T item : items) {
+  for (const auto& item : items) {
     std::cout << item << " ";
   }
   std::cout << std::endl;

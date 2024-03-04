@@ -2,11 +2,11 @@
 #include "util.hpp"
 #include <cstddef>
 #include <deque>
+#include <iostream>
 #include <vector>
 
 using namespace std;
 
-int count_arrangements(const string &, const deque<size_t> &);
 deque<size_t> to_groups(const string &);
 
 int solve(const vector<string> &input) {
@@ -45,7 +45,10 @@ bool fits_group(const string &line) {
 }
 
 int count_arrangements(const string &springs, const deque<size_t> &groups) {
-  if (groups.empty() || springs.empty()) {
+  cout << "check " << springs << " and ";
+  print(groups);
+
+  if (springs.empty() || groups.empty()) {
     return 0;
   }
 
@@ -54,17 +57,26 @@ int count_arrangements(const string &springs, const deque<size_t> &groups) {
     return 0;
   }
 
-  if (fits_group(springs.substr(0))) {
+  int result;
+  if (fits_group(springs.substr(0, group))) {
     if (springs.length() > group) {
-      if (springs[group] == '.') {
-        return 1 +
-               count_arrangements(springs.substr(group + 1), copy_pop(groups));
+      if (springs[group] == '.' || springs[group] == '?') {
+        result =
+            1 + count_arrangements(springs.substr(group + 1), copy_pop(groups));
       } else {
-        return count_arrangements(springs.substr(1), groups);
+        if (springs[0] == '#') {
+          result = 0;
+        } else {
+          result = count_arrangements(springs.substr(1), groups);
+        }
       }
     } else {
-      return 1 + count_arrangements(springs.substr(group), copy_pop(groups));
+      result = groups.size() == 1 ? 1 : 0;
     }
+  } else {
+    result = count_arrangements(springs.substr(1), groups);
   }
-  return count_arrangements(springs.substr(1), groups);
+
+  cout << "result = " << result << endl;
+  return result;
 }

@@ -7,7 +7,9 @@
 using namespace std;
 
 int main() {
-  cout << count_arrangements("???.###", {1,1,3}) << " expected 4" << endl;
+  cout << count_arrangements("???.###", {1, 1, 3}) << " expected 1" << endl;
+  // cout << count_arrangements(".??..??...?##.", {1, 1, 3}) << " expected 4"
+       // << endl;
 
   return 0;
 }

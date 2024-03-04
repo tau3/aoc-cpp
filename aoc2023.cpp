@@ -23,7 +23,7 @@ int main() {
     "#####.##.",
     "..##..###",
     "#....#..#"};
-  cout << solve(input) << endl;
+  cout << solve_day13_pt1(input) << endl;
 
   return 0;
 }

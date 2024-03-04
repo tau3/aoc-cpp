@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iostream>
+#include "util.hpp"
 
 using namespace std;
 
@@ -22,12 +24,20 @@ bool equal_cols(const vector<string> &input, size_t left, size_t right) {
 Solution solve_pattern(const vector<string> &input) {
   for (size_t i = 1; i < input.size(); ++i) {
     if (input[i] == input[i - 1]) {
+      cout << "input: " << endl;
+      print(input);
+      cout << "rows above: " << i << endl;
+      
       return Solution{i, 0};
     }
   }
 
   for (size_t i = 0; i < input[0].size(); ++i) {
     if (equal_cols(input, i, i - 1)) {
+      cout << "input: " << endl;
+      print(input);
+      cout << "cols left: " << i << endl;
+      
       return Solution{0, i};
     }
   }
@@ -35,24 +45,24 @@ Solution solve_pattern(const vector<string> &input) {
   throw invalid_argument("no solution");
 }
 
-int solve(const vector<string> &input) {
+int solve_day13_pt1(const vector<string> &input) {
   size_t start = 0;
   size_t current = 0;
   size_t columns = 0;
   size_t rows = 0;
   while (current < input.size()) {
+    current++;
     if (!input[current].empty()) {
-      current++;
       continue;
     }
-    const Solution solution = solve_pattern(
-        vector<string>(input.begin() + start, input.begin() + current));
+    auto slice = vector<string>(input.begin() + start, input.begin() + current);
+    const Solution solution = solve_pattern(slice);
     columns += solution.columns;
     rows += solution.rows;
-    start = current;
+    start = current+1;
   }
-  const Solution solution = solve_pattern(
-      vector<string>(input.begin() + start, input.begin() + current));
+  auto slice = vector<string>(input.begin() + start, input.begin() + current);
+  const Solution solution = solve_pattern(slice);
   columns += solution.columns;
   rows += solution.rows;
   start = current;

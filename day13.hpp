@@ -1,4 +1,4 @@
 #include <string>
 #include <vector>
 
-int solve(const std::vector<std::string> &input);
+int solve_day13_pt1(const std::vector<std::string> &);

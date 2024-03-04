@@ -1,9 +1,9 @@
 #include "day13.hpp"
+#include "util.hpp"
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <iostream>
-#include "util.hpp"
 
 using namespace std;
 
@@ -21,24 +21,46 @@ bool equal_cols(const vector<string> &input, size_t left, size_t right) {
   return true;
 }
 
+bool is_horizontal_border(const vector<string> &input, size_t lower) {
+  int down = lower + 1;
+  int up = lower - 2;
+  while ((up >= 0) && (down < input.size())) {
+    if (input[up] != input[down]) {
+      return false;
+    }
+    up--;
+    down++;
+  }
+  return true;
+}
+
+bool is_vertical_border(const vector<string> &input, size_t right) {
+  int east = right + 1;
+  int west = right - 2;
+  while ((west >= 0) && (east < input[0].size())) {
+    if (!equal_cols(input, west, east)) {
+      return false;
+    }
+    west--;
+    east++;
+  }
+  return true;
+}
+
 Solution solve_pattern(const vector<string> &input) {
   for (size_t i = 1; i < input.size(); ++i) {
     if (input[i] == input[i - 1]) {
-      cout << "input: " << endl;
-      print(input);
-      cout << "rows above: " << i << endl;
-      
-      return Solution{i, 0};
+      if (is_horizontal_border(input, i)) {
+        return Solution{i, 0};
+      }
     }
   }
 
   for (size_t i = 0; i < input[0].size(); ++i) {
     if (equal_cols(input, i, i - 1)) {
-      cout << "input: " << endl;
-      print(input);
-      cout << "cols left: " << i << endl;
-      
-      return Solution{0, i};
+      if (is_vertical_border(input, i)) {
+        return Solution{0, i};
+      }
     }
   }
 
@@ -59,7 +81,7 @@ int solve_day13_pt1(const vector<string> &input) {
     const Solution solution = solve_pattern(slice);
     columns += solution.columns;
     rows += solution.rows;
-    start = current+1;
+    start = current + 1;
   }
   auto slice = vector<string>(input.begin() + start, input.begin() + current);
   const Solution solution = solve_pattern(slice);

@@ -1,4 +1,4 @@
-#include "day12.hpp"
+#include "day13.hpp"
 #include "util.hpp"
 
 #include <iostream>
@@ -7,10 +7,23 @@
 using namespace std;
 
 int main() {
-  cout << count_arrangements("??...?##.", {1, 3}) << " expected 2" << endl;
-  // cout << count_arrangements("???.###", {1, 1, 3}) << " expected 1" << endl;
-  // cout << count_arrangements(".??..??...?##.", {1, 1, 3}) << " expected 4"
-       // << endl;
+  const vector<string> input = {
+    "#.##..##.",
+    "..#.##.#.",
+    "##......#",
+    "##......#",
+    "..#.##.#.",
+    "..##..##.",
+    "#.#.##.#.",
+    "",
+    "#...##..#",
+    "#....#..#",
+    "..##..###",
+    "#####.##.",
+    "#####.##.",
+    "..##..###",
+    "#....#..#"};
+  cout << solve(input) << endl;
 
   return 0;
 }

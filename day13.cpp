@@ -1,6 +1,4 @@
 #include "day13.hpp"
-#include <cstddef>
-#include <functional>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -47,11 +45,16 @@ int solve(const vector<string> &input) {
       current++;
       continue;
     }
-    const Solution solution =
-        solve_pattern(input.begin() + start, input.begin() + current);
+    const Solution solution = solve_pattern(
+        vector<string>(input.begin() + start, input.begin() + current));
     columns += solution.columns;
     rows += solution.rows;
     start = current;
   }
+  const Solution solution = solve_pattern(
+      vector<string>(input.begin() + start, input.begin() + current));
+  columns += solution.columns;
+  rows += solution.rows;
+  start = current;
   return columns + 100 * rows;
 }

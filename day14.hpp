@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef INCLUDE_DAY_14_H
 #define INCLUDE_DAY_14_H
 
@@ -28,3 +29,9 @@ int solve_pt2(const vector<string> &input, const Grid &grid);
 } // namespace Day14
 
 #endif
+=======
+#include <string>
+#include <vector>
+
+int solve_day14_pt1(std::vector<std::string> &);
+>>>>>>> 1807ec9 (initial day14pt1)

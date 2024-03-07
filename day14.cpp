@@ -133,6 +133,8 @@ int solve_pt2(const vector<string> &input, const Grid &grid) {
 } // namespace Day14
 =======
 #include <cstddef>
+#include <deque>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -150,25 +152,83 @@ int total_load(const vector<string> &grid) {
   return result;
 }
 
-void move_point(vector<string> &grid, size_t row, size_t column) {
-  if (row == 0) {
+bool is_valid_move(const vector<string> &grid, size_t row, size_t column,
+                   char direction) {
+  int target_row;
+  int target_column;
+  switch (direction) {
+  case 'N':
+    target_row = row - 1;
+    target_column = column;
+    break;
+  case 'E':
+    target_row = row;
+    target_column = column + 1;
+    break;
+  case 'S':
+    target_row = row + 1;
+    target_column = column;
+    break;
+  case 'W':
+    target_row = row;
+    target_column = column - 1;
+    break;
+  default:
+    throw invalid_argument({direction});
+  }
+  return !(target_row < 0 || target_column < 0 || target_row >= grid.size() ||
+           target_column >= grid[0].size());
+}
+
+void move_point(vector<string> &grid, size_t row, size_t column,
+                char direction) {
+  if (!is_valid_move(grid, row, column, direction)) {
     return;
   }
 
   if (grid[row - 1][column] == '.') {
     grid[row - 1][column] = 'O';
     grid[row][column] = '.';
-    move_point(grid, row - 1, column);
+    move_point(grid, row - 1, column, direction);
+  }
+}
+
+void tilt(vector<string> &grid, char direction) {
+  for (size_t row = 0; row < grid.size(); ++row) {
+    for (size_t column = 0; column < grid[0].size(); ++column) {
+      if (grid[row][column] == 'O') {
+        move_point(grid, row, column, direction);
+      }
+    }
   }
 }
 
 int solve_day14_pt1(vector<string> &grid) {
-  for (size_t row = 0; row < grid.size(); ++row) {
-    for (size_t column = 0; column < grid[0].size(); ++column) {
-      if (grid[row][column] == 'O') {
-        move_point(grid, row, column);
-      }
+  tilt(grid, 'N');
+  return total_load(grid);
+}
+
+int solve_day14_pt2(vector<string> &grid) {
+  for (auto i = 0, j = 0; i < 1000000000; ++i, ++j) {
+    char direction;
+    switch (j) {
+    case 0:
+      direction = 'N';
+      break;
+    case 1:
+      direction = 'W';
+      break;
+    case 2:
+      direction = 'S';
+      break;
+    case 3:
+      direction = 'E';
+      j = 0;
+      break;
+    default:
+      throw invalid_argument(to_string(j));
     }
+    tilt(grid, direction);
   }
 
   return total_load(grid);

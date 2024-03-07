@@ -34,4 +34,8 @@ int solve_pt2(const vector<string> &input, const Grid &grid);
 #include <vector>
 
 int solve_day14_pt1(std::vector<std::string> &);
+<<<<<<< HEAD
 >>>>>>> 1807ec9 (initial day14pt1)
+=======
+int solve_day14_pt2(std::vector<std::string> &);
+>>>>>>> e5dbd72 (initial day14 pt 2)

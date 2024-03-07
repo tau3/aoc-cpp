@@ -134,6 +134,7 @@ int solve_pt2(const vector<string> &input, const Grid &grid) {
 =======
 #include <cstddef>
 #include <deque>
+#include <exception>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -152,8 +153,13 @@ int total_load(const vector<string> &grid) {
   return result;
 }
 
-bool is_valid_move(const vector<string> &grid, size_t row, size_t column,
-                   char direction) {
+struct Point {
+  int row;
+  int column;
+};
+
+Point is_valid_move(const vector<string> &grid, size_t row, size_t column,
+                    char direction) {
   int target_row;
   int target_column;
   switch (direction) {
@@ -174,22 +180,23 @@ bool is_valid_move(const vector<string> &grid, size_t row, size_t column,
     target_column = column - 1;
     break;
   default:
-    throw invalid_argument({direction});
+    throw invalid_argument("direction " + to_string(direction));
   }
-  return !(target_row < 0 || target_column < 0 || target_row >= grid.size() ||
-           target_column >= grid[0].size());
+  return Point{target_row, target_column};
 }
 
 void move_point(vector<string> &grid, size_t row, size_t column,
                 char direction) {
-  if (!is_valid_move(grid, row, column, direction)) {
+  Point next = is_valid_move(grid, row, column, direction);
+  if (next.row < 0 || next.column < 0 || next.row >= grid.size() ||
+      next.column >= grid[0].size()) {
     return;
   }
 
-  if (grid[row - 1][column] == '.') {
-    grid[row - 1][column] = 'O';
-    grid[row][column] = '.';
-    move_point(grid, row - 1, column, direction);
+  if (grid[next.row][next.column] == '.') {
+    grid[next.row][next.column] = 'O';
+    grid[row][next.column] = '.';
+    move_point(grid, next.row, next.column, direction);
   }
 }
 
@@ -226,7 +233,7 @@ int solve_day14_pt2(vector<string> &grid) {
       j = 0;
       break;
     default:
-      throw invalid_argument(to_string(j));
+      throw invalid_argument("j=" + to_string(j));
     }
     tilt(grid, direction);
   }

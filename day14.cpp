@@ -150,30 +150,23 @@ int total_load(const vector<string> &grid) {
   return result;
 }
 
-struct Point {
-  size_t row;
-  size_t column;
-};
-
-void move_point(vector<string> &grid, Point &point) {
-  if (point.row == 0) {
+void move_point(vector<string> &grid, size_t row, size_t column) {
+  if (row == 0) {
     return;
   }
 
-  if (grid[point.row - 1][point.column] == '.') {
-    grid[point.row - 1][point.column] = 'O';
-    grid[point.row][point.column] = '.';
-    Point other = Point{point.row - 1, point.column};
-    move_point(grid, other);
+  if (grid[row - 1][column] == '.') {
+    grid[row - 1][column] = 'O';
+    grid[row][column] = '.';
+    move_point(grid, row - 1, column);
   }
 }
 
 int solve_day14_pt1(vector<string> &grid) {
   for (size_t row = 0; row < grid.size(); ++row) {
-    for (size_t column = 0; row < grid[0].size(); ++column) {
+    for (size_t column = 0; column < grid[0].size(); ++column) {
       if (grid[row][column] == 'O') {
-        Point point = {row, column};
-        move_point(grid, point);
+        move_point(grid, row, column);
       }
     }
   }

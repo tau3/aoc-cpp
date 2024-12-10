@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-int solve_day1(vector<string> input) {
+int solve_day1_pt1(vector<string> input) {
   vector<int> left, right;
   for (const string &line : input) {
     const vector<string> tokens = split(line, "   ");
@@ -29,3 +29,22 @@ int solve_day1(vector<string> input) {
 
   return result;
 }
+
+int solve_day1_pt2(vector<string> input) {
+  vector<int> left, right;
+  for (const string &line : input) {
+    const vector<string> tokens = split(line, "   ");
+    left.push_back(stoi(tokens[0]));
+    right.push_back(stoi(tokens[1]));
+  }
+
+  int result = 0;
+  for(const int l : left) {
+    // TODO hashmap?
+    int score = count(right.begin(), right.end(), l);
+    result += score;
+  }
+
+  return result;
+}
+

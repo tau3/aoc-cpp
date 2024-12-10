@@ -42,7 +42,7 @@ int solve_day1_pt2(vector<string> input) {
   for(const int l : left) {
     // TODO hashmap?
     int score = count(right.begin(), right.end(), l);
-    result += score;
+    result += l * score;
   }
 
   return result;

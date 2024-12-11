@@ -12,15 +12,12 @@ bool is_safe(const vector<int> &report) {
   for (size_t i = 1; i < report.size(); ++i) {
     const int current = report[i];
     const int previous = report[i - 1];
+    const int diff = current - previous;
     if (is_increasing) {
-      if (!(current > previous)) {
+      if (!((diff >= 1) && (diff <= 3))) {
         return false;
       }
-    } else if (current == previous) {
-      return false;
-    }
-    const int diff = abs(current - previous);
-    if (!((diff >= 1) && (diff <= 3))) {
+    } else if (!((diff <= -1) && (diff >= -3))) {
       return false;
     }
   }

@@ -2,8 +2,9 @@
 #include "util.hpp"
 #include <cstddef>
 #include <cstdlib>
+#include <vector>
 
-bool is_safe(const vector<int> &report) {
+bool is_safe_pt1(const vector<int> &report) {
   if (report[1] == report[0]) {
     return false;
   }
@@ -24,7 +25,27 @@ bool is_safe(const vector<int> &report) {
   return true;
 }
 
-int solve_day2_pt1(const vector<string> &input) {
+void drop(vector<int> &items, const size_t index) {
+  items.erase(items.begin() + index);
+}
+
+bool is_safe_pt2(const vector<int> &report) {
+  if (is_safe_pt1(report)) {
+    return true;
+  }
+
+  for (size_t i = 0; i < report.size(); ++i) {
+    vector<int> current = report;
+    drop(current, i);
+    if (!is_safe_pt1(current)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+int solve(const vector<string> &input, const bool is_pt_2) {
   int result = 0;
   for (const string &line : input) {
     const vector<string> levels = split(line, " ");
@@ -32,9 +53,19 @@ int solve_day2_pt1(const vector<string> &input) {
     for (const string &level : levels) {
       report.push_back(stoi(level));
     }
-    if (is_safe(report)) {
-      ++result;
+    if (is_pt_2) {
+      if (is_safe_pt1(report)) {
+        ++result;
+      }
+    } else {
+      if (is_safe_pt2(report)) {
+        ++result;
+      }
     }
   }
   return result;
 }
+
+int solve_day2_pt1(const vector<string> &input) { return solve(input, true); }
+
+int solve_day2_pt2(const vector<string> &input) { return solve(input, false); }

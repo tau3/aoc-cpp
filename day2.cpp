@@ -4,14 +4,20 @@
 #include <cstdlib>
 
 bool is_safe(const vector<int> &report) {
+  if (report[1] == report[0]) {
+    return false;
+  }
+
   const bool is_increasing = report[1] > report[0];
   for (size_t i = 1; i < report.size(); ++i) {
     const int current = report[i];
     const int previous = report[i - 1];
     if (is_increasing) {
-      if (previous >= current) {
+      if (!(current > previous)) {
         return false;
       }
+    } else if (current == previous) {
+      return false;
     }
     const int diff = abs(current - previous);
     if (!((diff >= 1) && (diff <= 3))) {

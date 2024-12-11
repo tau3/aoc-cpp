@@ -37,15 +37,15 @@ bool is_safe_pt2(const vector<int> &report) {
   for (size_t i = 0; i < report.size(); ++i) {
     vector<int> current = report;
     drop(current, i);
-    if (!is_safe_pt1(current)) {
-      return false;
+    if (is_safe_pt1(current)) {
+      return true;
     }
   }
 
-  return true;
+  return false;
 }
 
-int solve(const vector<string> &input, const bool is_pt_2) {
+int solve(const vector<string> &input, const bool is_pt_1) {
   int result = 0;
   for (const string &line : input) {
     const vector<string> levels = split(line, " ");
@@ -53,14 +53,9 @@ int solve(const vector<string> &input, const bool is_pt_2) {
     for (const string &level : levels) {
       report.push_back(stoi(level));
     }
-    if (is_pt_2) {
-      if (is_safe_pt1(report)) {
-        ++result;
-      }
-    } else {
-      if (is_safe_pt2(report)) {
-        ++result;
-      }
+
+    if ((is_pt_1 && (is_safe_pt1(report))) || is_safe_pt2(report)) {
+      ++result;
     }
   }
   return result;

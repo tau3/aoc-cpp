@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-  // const vector<string> input = read_file("../day2_input");
+  // const vector<string> input = read_file("../day4_input");
   const vector<string> input = {
     "MMMSXXMASM",
     "MSAMXMSMSA",
@@ -18,7 +18,7 @@ int main() {
     "MAMMMXMMMM",
     "MXMXAXMASX",
   };
-  cout << solve(input) << endl;
+  cout << solve_day4_pt2(input) << endl;
 
   return 0;
 }

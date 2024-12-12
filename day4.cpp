@@ -1,5 +1,6 @@
 #include "day4.hpp"
 #include <cstddef>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -49,41 +50,78 @@ auto get_unsafe(const vector<string> &grid, const Pos &pos) {
   return grid[r][c];
 }
 
-bool check_direction(const vector<string> &grid, const size_t r, const size_t c,
+bool check_direction(const vector<string> &grid, const Pos &pos,
                      const Direction &direction) {
   const string word = "XMAS";
-  Pos pos = {r, c};
+  Pos current = pos;
   for (size_t i = 1; i < word.size(); ++i) {
-    pos = step(direction, pos);
+    current = step(direction, current);
     const auto letter = word[i];
-    if (!is_in_grid(grid, pos)) {
+    if (!is_in_grid(grid, current)) {
       return false;
     }
-    if (get_unsafe(grid, pos) != letter) {
+    if (get_unsafe(grid, current) != letter) {
       return false;
     }
   }
   return true;
 }
 
-int count(const vector<string> &grid, const size_t r, const size_t c) {
+int count(const vector<string> &grid, const Pos &pos) {
   int result = 0;
   for (const Direction direction : ALL) {
-    if (check_direction(grid, r, c, direction)) {
+    if (check_direction(grid, pos, direction)) {
       ++result;
     }
   }
   return result;
 }
 
-int solve(const vector<string> &grid) {
+int solve_day4_pt1(const vector<string> &grid) {
   const size_t w = grid[0].size();
   const size_t h = grid.size();
   int result = 0;
   for (size_t r = 0; r < w; ++r) {
     for (size_t c = 0; c < h; ++c) {
       if (grid[r][c] == 'X') {
-        result += count(grid, r, c);
+        result += count(grid, {r, c});
+      }
+    }
+  }
+  return result;
+}
+
+bool is_xmas(const vector<string> &grid, const Pos &pos) {
+  int m = 0;
+  int s = 0;
+  const auto [r, c] = pos;
+  const Direction steps[] = {Direction::NW, Direction::NE, Direction::SE,
+                             Direction::SE};
+  for (const Direction direction : steps) {
+    const Pos target = step(direction, pos);
+    if (!is_in_grid(grid, target)) {
+      return false;
+    }
+    const auto letter = get_unsafe(grid, target);
+    if (letter == 'M') {
+      ++m;
+    } else if (letter == 'S') {
+      ++s;
+    }
+  }
+  return (m == 2) && (s == 2);
+}
+
+int solve_day4_pt2(const vector<string> &grid) {
+  const size_t w = grid[0].size();
+  const size_t h = grid.size();
+  int result = 0;
+  for (size_t r = 0; r < w; ++r) {
+    for (size_t c = 0; c < h; ++c) {
+      if (grid[r][c] == 'A') {
+        if (is_xmas(grid, {r, c})) {
+          ++result;
+        }
       }
     }
   }

@@ -94,9 +94,8 @@ int solve_day4_pt1(const vector<string> &grid) {
 bool is_xmas(const vector<string> &grid, const Pos &pos) {
   int m = 0;
   int s = 0;
-  const auto [r, c] = pos;
   const Direction steps[] = {Direction::NW, Direction::NE, Direction::SE,
-                             Direction::SE};
+                             Direction::SW};
   for (const Direction direction : steps) {
     const Pos target = step(direction, pos);
     if (!is_in_grid(grid, target)) {

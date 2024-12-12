@@ -16,6 +16,10 @@ vector<string> read_file(const string &path) {
   return lines;
 }
 
+bool starts_with(const string &input, const string &prefix) {
+  return input.rfind(prefix, 0) == 0;
+}
+
 vector<string> split(const string &line, const string &delimiter) {
 
   vector<string> result;

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -5,6 +6,11 @@
 #include "util.hpp"
 
 using namespace std;
+
+template <typename T>
+bool contains(const std::vector<T> &values, const T &val) {
+  return find(values.begin(), values.end(), val) != values.end();
+}
 
 vector<string> read_file(const string &path) {
   vector<string> lines;

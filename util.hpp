@@ -6,6 +6,8 @@ std::vector<std::string> read_file(const std::string &);
 
 std::vector<std::string> split(const std::string &, const std::string &);
 
+template <typename T> bool contains(const std::vector<T> &values, const T &val);
+
 bool starts_with(const std::string &, const std::string &);
 
 template <typename T> void print(const T &items) {

@@ -42,6 +42,18 @@ struct Guard {
   }
 };
 
+bool operator==(const Guard &lhs, const Guard &rhs) {
+  return (lhs.direction == rhs.direction) && (lhs.position == rhs.position);
+}
+
+struct GuardHash {
+  PositionHash positionHash;
+
+  size_t operator()(const Guard &guard) const {
+    return 11 * guard.direction + positionHash(guard.position);
+  }
+};
+
 bool is_oob(const Position &posititon, const vector<string> &grid) {
   const auto [r, c] = posititon;
   const size_t w = grid[0].size();
@@ -96,7 +108,6 @@ bool step(const vector<string> &grid, Guard &guard) {
   return false;
 }
 
-// TODO inline
 unordered_set<Position, PositionHash> get_trail(const vector<string> &grid) {
   const Position current = get_current_position(grid);
   Guard guard = {current, 'N'};
@@ -109,15 +120,21 @@ unordered_set<Position, PositionHash> get_trail(const vector<string> &grid) {
 }
 
 int solve_day6_pt1(const vector<string> &grid) {
-  const auto result = get_trail(grid);
+  const Position current = get_current_position(grid);
+  Guard guard = {current, 'N'};
+  unordered_set<Position, PositionHash> result;
+  result.insert(current);
+  while (!step(grid, guard)) {
+    result.insert(guard.position);
+  }
   return result.size();
 }
 
 bool is_loop(const vector<string> &grid) {
   Guard guard = {get_current_position(grid), 'N'};
-  unordered_set<Position, PositionHash> result;
+  unordered_set<Guard, GuardHash> result;
   while (!step(grid, guard)) {
-    const auto [_, is_already_visited] = result.insert(guard.position);
+    const auto [_, is_already_visited] = result.insert(guard);
     if (is_already_visited) {
       return true;
     }

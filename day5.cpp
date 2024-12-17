@@ -1,7 +1,6 @@
 #include "day5.hpp"
 #include "util.hpp"
 #include <cstddef>
-#include <functional>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -99,7 +98,7 @@ void swap(vector<int> &values, const size_t i, const size_t j) {
 
 Update fix_update(const Update &update, const Ordering &ordering) {
   Update result = update;
-  for (size_t i = result.size() - 1; i >= 0; --i) {
+  for (int i = result.size() - 1; i >= 0; --i) {
     for (size_t j = 0; j < i; ++j) {
       if (auto entry = ordering.find(result[j]); entry != ordering.end()) {
         const vector<int> &expected_before = entry->second;
@@ -111,8 +110,6 @@ Update fix_update(const Update &update, const Ordering &ordering) {
       }
     }
   }
-  cout << "before: " << to_string(update) << ", after: " << to_string(result)
-       << endl;
   return result;
 }
 

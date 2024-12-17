@@ -1,7 +1,7 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 std::vector<std::string> read_file(const std::string &);
 
@@ -20,4 +20,14 @@ template <typename T> void print(const T &items) {
     std::cout << item << " ";
   }
   std::cout << std::endl;
+}
+
+template <typename T> std::string to_string(const T &items) {
+  std::string result = "vector: ";
+
+  for (const auto &item : items) {
+    result += item;
+    result += " ";
+  }
+  return result;
 }

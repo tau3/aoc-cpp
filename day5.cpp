@@ -1,8 +1,11 @@
 #include "day5.hpp"
 #include "util.hpp"
 #include <cstddef>
+#include <functional>
+#include <string>
 #include <tuple>
 #include <unordered_map>
+#include <vector>
 
 namespace Day5 {
 using namespace std;
@@ -80,8 +83,48 @@ int solve_day5_pt1(const vector<string> &input) {
   int result = 0;
   for (const Update &update : updates) {
     if (is_valid(update, ordering)) {
-      size_t size = update.size();
-      int middle = update[size / 2];
+      const size_t size = update.size();
+      const int middle = update[size / 2];
+      result += middle;
+    }
+  }
+  return result;
+}
+
+void swap(vector<int> &values, const size_t i, const size_t j) {
+  size_t temp = values[i];
+  values[i] = values[j];
+  values[j] = temp;
+}
+
+Update fix_update(const Update &update, const Ordering &ordering) {
+  Update result = update;
+  for (size_t i = result.size() - 1; i >= 0; --i) {
+    for (size_t j = 0; j < i; ++j) {
+      if (auto entry = ordering.find(result[j]); entry != ordering.end()) {
+        const vector<int> &expected_before = entry->second;
+        if (contains(expected_before, result[i])) {
+          swap(result, j, i);
+          ++i;
+          break;
+        }
+      }
+    }
+  }
+  cout << "before: " << to_string(update) << ", after: " << to_string(result)
+       << endl;
+  return result;
+}
+
+int solve_day5_pt2(const vector<string> &input) {
+  const auto [ordering, updates] = parse_input(input);
+
+  int result = 0;
+  for (const Update &update : updates) {
+    if (!is_valid(update, ordering)) {
+      const Update fixed = fix_update(update, ordering);
+      const size_t size = fixed.size();
+      const int middle = fixed[size / 2];
       result += middle;
     }
   }

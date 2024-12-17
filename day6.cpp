@@ -97,7 +97,7 @@ bool step(const vector<string> &grid, Guard &guard) {
 }
 
 int solve_day6_pt1(const vector<string> &grid) {
-  Position current = get_current_position(grid);
+  const Position current = get_current_position(grid);
   Guard guard = {current, 'N'};
   unordered_set<Position, PositionHash> result;
   result.insert(current);

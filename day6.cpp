@@ -10,6 +10,14 @@ using namespace std;
 namespace Day6 {
 using Position = tuple<int, int>;
 
+struct PositionHash {
+  size_t operator()(const Position &position) const {
+    const auto [r, c] = position;
+    return 31 * r + 17 * c;
+    ;
+  }
+};
+
 struct Guard {
   Position position;
   char direction;
@@ -91,7 +99,7 @@ bool step(const vector<string> &grid, Guard &guard) {
 int solve_day6_pt1(const vector<string> &grid) {
   Position current = get_current_position(grid);
   Guard guard = {current, 'N'};
-  unordered_set<Position> result;
+  unordered_set<Position, PositionHash> result;
   result.insert(current);
   while (!step(grid, guard)) {
     result.insert(guard.position);

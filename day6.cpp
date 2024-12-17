@@ -13,7 +13,6 @@ struct PositionHash {
   size_t operator()(const Position &position) const {
     const auto [r, c] = position;
     return 31 * r + 17 * c;
-    ;
   }
 };
 

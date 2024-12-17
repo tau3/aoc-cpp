@@ -1,7 +1,7 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 std::vector<std::string> read_file(const std::string &);
 
@@ -15,7 +15,7 @@ bool contains(const std::vector<T> &values, const T &val) {
 bool starts_with(const std::string &, const std::string &);
 
 template <typename T> void print(const T &items) {
-  std::cout << "vector: ";
+  std::cout << "items: ";
   for (const auto &item : items) {
     std::cout << item << " ";
   }
@@ -23,10 +23,9 @@ template <typename T> void print(const T &items) {
 }
 
 template <typename T> std::string to_str(const T &items) {
-  std::string result = "vector: ";
-
-  for (const auto &item : items) {
-    result += to_string(item);
+  std::string result = "items: ";
+  for (const int &item : items) {
+    result += std::to_string(item);
     result += " ";
   }
   return result;

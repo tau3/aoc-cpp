@@ -1,6 +1,9 @@
 #include "string"
+#include "util.hpp"
 #include "vector"
 #include <cstddef>
+#include <iostream>
+#include <string>
 #include <tuple>
 #include <unordered_set>
 #include <vector>
@@ -39,6 +42,12 @@ struct Guard {
     default:
       throw "unknown direction";
     }
+  }
+
+  string to_str() const {
+    const auto [r, c] = position;
+    return "Guard:[" + to_string(direction) + ",(" + to_string(r) + ',' +
+           to_string(c) + ")]";
   }
 };
 
@@ -130,12 +139,21 @@ int solve_day6_pt1(const vector<string> &grid) {
   return result.size();
 }
 
+string to_str(const unordered_set<Guard, GuardHash> &path) {
+  string result = "path: ";
+  for (const auto &item : path) {
+    result += item.to_str();
+    result += " ";
+  }
+  return result;
+}
+
 bool is_loop(const vector<string> &grid) {
   Guard guard = {get_current_position(grid), 'N'};
-  unordered_set<Guard, GuardHash> result;
+  unordered_set<Guard, GuardHash> path;
   while (!step(grid, guard)) {
-    const auto [_, is_already_visited] = result.insert(guard);
-    if (is_already_visited) {
+    const auto [_, is_already_visited] = path.insert(guard);
+    if (!is_already_visited) {
       return true;
     }
   }

@@ -1,12 +1,8 @@
-#include "string"
+#include "day6.hpp"
 #include "util.hpp"
-#include "vector"
 #include <cstddef>
-#include <iostream>
-#include <string>
 #include <tuple>
 #include <unordered_set>
-#include <vector>
 
 using namespace std;
 
@@ -43,12 +39,6 @@ struct Guard {
       throw "unknown direction";
     }
   }
-
-  string to_str() const {
-    const auto [r, c] = position;
-    return "Guard:[" + to_string(direction) + ",(" + to_string(r) + ',' +
-           to_string(c) + ")]";
-  }
 };
 
 bool operator==(const Guard &lhs, const Guard &rhs) {
@@ -65,8 +55,8 @@ struct GuardHash {
 
 bool is_oob(const Position &posititon, const vector<string> &grid) {
   const auto [r, c] = posititon;
-  const size_t w = grid[0].size();
-  const size_t h = grid.size();
+  const int w = grid[0].size();
+  const int h = grid.size();
   return (r < 0) || (c < 0) || (r >= h) || (c >= w);
 }
 
@@ -137,15 +127,6 @@ int solve_day6_pt1(const vector<string> &grid) {
     result.insert(guard.position);
   }
   return result.size();
-}
-
-string to_str(const unordered_set<Guard, GuardHash> &path) {
-  string result = "path: ";
-  for (const auto &item : path) {
-    result += item.to_str();
-    result += " ";
-  }
-  return result;
 }
 
 bool is_loop(const vector<string> &grid) {

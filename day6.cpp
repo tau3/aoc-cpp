@@ -96,7 +96,8 @@ bool step(const vector<string> &grid, Guard &guard) {
   return false;
 }
 
-int solve_day6_pt1(const vector<string> &grid) {
+// TODO inline
+unordered_set<Position, PositionHash> get_trail(const vector<string> &grid) {
   const Position current = get_current_position(grid);
   Guard guard = {current, 'N'};
   unordered_set<Position, PositionHash> result;
@@ -104,8 +105,39 @@ int solve_day6_pt1(const vector<string> &grid) {
   while (!step(grid, guard)) {
     result.insert(guard.position);
   }
+  return result;
+}
 
+int solve_day6_pt1(const vector<string> &grid) {
+  const auto result = get_trail(grid);
   return result.size();
+}
+
+bool is_loop(const vector<string> &grid) {
+  Guard guard = {get_current_position(grid), 'N'};
+  unordered_set<Position, PositionHash> result;
+  while (!step(grid, guard)) {
+    const auto [_, is_already_visited] = result.insert(guard.position);
+    if (is_already_visited) {
+      return true;
+    }
+  }
+  return false;
+}
+
+int solve_day6_pt2(const vector<string> &grid) {
+  unordered_set<Position, PositionHash> trail = get_trail(grid);
+  trail.erase(get_current_position(grid));
+  int result = 0;
+  for (const Position &position : trail) {
+    vector<string> current = grid;
+    const auto [r, c] = position;
+    current[r][c] = '#';
+    if (is_loop(current)) {
+      ++result;
+    }
+  }
+  return result;
 }
 
 } // namespace Day6

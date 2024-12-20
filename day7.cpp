@@ -4,6 +4,7 @@
 #include <string>
 
 namespace Day7 {
+
 target_t concat(const target_t lhs, const target_t rhs) {
   string result = to_string(lhs);
   result += to_string(rhs);
@@ -19,6 +20,9 @@ bool can_produce(const target_t target, queue<target_t> &nums,
   nums.pop();
 
   vector<target_t> memo = {first * second, first + second};
+  if (is_use_concat) {
+    memo.push_back(concat(first, second));
+  }
 
   while (!nums.empty()) {
     vector<target_t> new_memo;

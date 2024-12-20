@@ -4,22 +4,23 @@
 
 namespace Day7 {
 
-bool can_produce(int target, queue<int> &nums) {
-  int first = nums.front();
+bool can_produce(target_t target, queue<target_t> &nums) {
+  target_t first = nums.front();
   nums.pop();
 
-  int second = nums.front();
+  target_t second = nums.front();
   nums.pop();
 
-  vector<int> memo = {first * second, first + second};
+  vector<target_t> memo = {first * second, first + second};
 
   while (!nums.empty()) {
-    vector<int> new_memo(2 * memo.size());
+    vector<target_t> new_memo;
+    new_memo.reserve(memo.size() * 2);
 
-    const int current = nums.front();
+    const target_t current = nums.front();
     nums.pop();
 
-    for (const int val : memo) {
+    for (const target_t val : memo) {
       new_memo.push_back(val * current);
       new_memo.push_back(val + current);
     }
@@ -35,24 +36,23 @@ bool can_produce(int target, queue<int> &nums) {
   return false;
 }
 
-pair<int, queue<int>> parse(const string &line) {
+pair<target_t, queue<target_t>> parse(const string &line) {
   const vector<string> tokens = split(line, " ");
 
   string target_str = tokens[0];
   target_str = target_str.substr(0, target_str.size() - 1);
 
-  int target = stoi(target_str);
+  target_t target = stol(target_str);
 
-  const size_t tokens_size = tokens.size() - 1;
-  queue<int> nums;
-  for (size_t i = 1; i < tokens_size; ++i) {
+  queue<target_t> nums;
+  for (size_t i = 1; i < tokens.size(); ++i) {
     nums.push(stoi(tokens[i]));
   }
   return {target, nums};
 }
 
-int solve_day7_pt1(const vector<string> &input) {
-  int result = 0;
+target_t solve_day7_pt1(const vector<string> &input) {
+  target_t result = 0;
   for (const string &line : input) {
     auto [target, nums] = parse(line);
     if (can_produce(target, nums)) {

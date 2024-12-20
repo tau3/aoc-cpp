@@ -5,9 +5,12 @@
 #include <vector>
 
 namespace Day7 {
+
 using namespace std;
 
-int solve_day7_pt1(const vector<string>&);
+using target_t = long long;
+
+target_t solve_day7_pt1(const vector<string>&);
 } // namespace Day7
 
 #endif

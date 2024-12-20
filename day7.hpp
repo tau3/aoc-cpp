@@ -11,6 +11,7 @@ using namespace std;
 using target_t = long;
 
 target_t solve_day7_pt1(const vector<string>&);
+target_t solve_day7_pt2(const vector<string>&);
 } // namespace Day7
 
 #endif

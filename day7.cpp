@@ -1,10 +1,17 @@
 #include "day7.hpp"
 #include "util.hpp"
 #include <queue>
+#include <string>
 
 namespace Day7 {
+target_t concat(const target_t lhs, const target_t rhs) {
+  string result = to_string(lhs);
+  result += to_string(rhs);
+  return stol(result);
+}
 
-bool can_produce(const target_t target, queue<target_t> &nums) {
+bool can_produce(const target_t target, queue<target_t> &nums,
+                 const bool is_use_concat) {
   const target_t first = nums.front();
   nums.pop();
 
@@ -25,6 +32,11 @@ bool can_produce(const target_t target, queue<target_t> &nums) {
       const target_t sum = val + current;
       new_memo.push_back(mul);
       new_memo.push_back(sum);
+
+      if (is_use_concat) {
+        const target_t cct = concat(val, current);
+        new_memo.push_back(cct);
+      }
     }
 
     memo = new_memo;
@@ -54,14 +66,22 @@ pair<target_t, queue<target_t>> parse(const string &line) {
   return {target, nums};
 }
 
-target_t solve_day7_pt1(const vector<string> &input) {
+target_t solve(const vector<string> &input, const bool is_use_concat) {
   target_t result = 0;
   for (const string &line : input) {
     auto [target, nums] = parse(line);
-    if (can_produce(target, nums)) {
+    if (can_produce(target, nums, is_use_concat)) {
       result += target;
     }
   }
   return result;
+}
+
+target_t solve_day7_pt1(const vector<string> &input) {
+  return solve(input, false);
+}
+
+target_t solve_day7_pt2(const vector<string> &input) {
+  return solve(input, true);
 }
 } // namespace Day7

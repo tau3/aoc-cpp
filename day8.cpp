@@ -1,79 +1,86 @@
-#include <cstddef>
-#include <string>
+#include "day8.hpp"
+#include <array>
+#include <functional>
+#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
-#include <vector>
 
-using namespace std;
+namespace Day8 {
 
-using Point = pair<size_t, size_t>;
+struct Point {
+  int r;
+  int c;
 
-size_t distance(const Point &lhs, const Point &rhs) {
-  const size_t h =
-      lhs.first > rhs.first ? lhs.first - rhs.first : rhs.first - lhs.first;
-  const size_t w = lhs.second > rhs.second ? lhs.second - rhs.second
-                                           : rhs.second - lhs.second;
-  return h + w;
+  explicit Point(const int r, const int c) : r(r), c(c) {}
+
+  bool is_on_grid(const vector<string> &grid) const {
+    return (r >= 0) && (c >= 0) && (r < grid.size()) && (c < grid[0].size());
+  }
 };
 
-bool is_valid_antinode(const Point &antinode, const Point &lhs,
-                       const Point &rhs) {
-  const size_t lhs_distance = distance(antinode, lhs);
-  const size_t rhs_distnace = distance(antinode, rhs);
-  return (rhs_distnace / 2 == lhs_distance) ||
-         (lhs_distance / 2 == rhs_distnace);
+struct PointHash {
+  size_t operator()(const Point &point) const {
+    const auto [r, c] = point;
+    return 31 * r + 17 * c;
+  }
+};
+
+Point operator+(const Point &lhs, const Point &rhs) {
+  return Point(lhs.r + rhs.r, lhs.c + rhs.c);
 }
 
-vector<Point> find_antinodes(const Point &lhs, const Point &rhs,
-                        const Point &bound) {
-  vector<Point> result;
-  Point candidate = {lhs.first, rhs.second};
-  if (is_valid_antinode(candidate, lhs, rhs)) {
-    result.push_back(candidate);
-  }
-  candidate = {lhs.second, rhs.first};
-  if (is_valid_antinode(candidate, lhs, rhs)) {
-    result.push_back(candidate);
-  }
-  return result;
+Point operator-(const Point &lhs, const Point &rhs) {
+  return Point(lhs.r - rhs.r, lhs.c - rhs.c);
 }
 
-int solve(const vector<string> &input) {
-  const size_t w = input[0].size();
-  const size_t h = input.size();
+bool operator==(const Point &lhs, const Point &rhs) {
+  return (lhs.r == rhs.r) && (lhs.c == rhs.c);
+}
+
+array<Point, 2> find_antinodes(const Point &lhs, const Point &rhs) {
+  const Point d = lhs - rhs;
+  return {lhs + d, rhs - d};
+}
+
+int solve_pt1(const vector<string> &grid) {
+  const size_t w = grid[0].size();
+  const size_t h = grid.size();
 
   unordered_map<char, vector<Point>> antennas;
   for (size_t r = 0; r < h; ++r) {
     for (size_t c = 0; c < w; ++c) {
-      const char frequency = input[r][c];
+      const char frequency = grid[r][c];
       if (frequency == '.') {
         continue;
       }
 
       if (auto entry = antennas.find(frequency); entry != antennas.end()) {
         vector<Point> points = entry->second;
-        points.push_back({r, c});
+        points.push_back(Point(r, c));
       } else {
-        const vector<Point> points = {{r, c}};
+        const vector<Point> points = {Point(r, c)};
         antennas[frequency] = points;
       }
     }
   }
 
-  unordered_set<Point> result;
-  const Point bound = {h, w};
+  unordered_set<Point, PointHash> result;
   for (const auto &kv : antennas) {
     const vector<Point> points = kv.second;
     for (size_t i = 0; i < points.size(); ++i) {
       for (size_t j = i + 1; j < points.size(); ++j) {
         const Point &lhs = points[i];
         const Point &rhs = points[j];
-        const vector<Point> antinodes = find_antinodes(lhs, rhs, bound);
-        for (const Point &antinode : antinodes) {
-          result.insert(antinode);
+        const array<Point, 2> antinodes = find_antinodes(lhs, rhs);
+        if (antinodes[0].is_on_grid(grid)) {
+          result.insert(antinodes[0]);
+        }
+        if (antinodes[1].is_on_grid(grid)) {
+          result.insert(antinodes[2]);
         }
       }
     }
   }
   return result.size();
 }
+} // namespace Day8

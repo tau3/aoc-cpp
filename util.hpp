@@ -21,7 +21,7 @@ template <typename T> void print(const T &items) {
   }
   std::cout << std::endl;
 }
-
+	
 template <typename T> std::string to_str(const T &items) {
   std::string result = "items: ";
   for (const int &item : items) {

@@ -8,7 +8,7 @@ namespace Day7 {
 
 using namespace std;
 
-using target_t = long long;
+using target_t = long;
 
 target_t solve_day7_pt1(const vector<string>&);
 } // namespace Day7

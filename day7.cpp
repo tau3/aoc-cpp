@@ -4,11 +4,11 @@
 
 namespace Day7 {
 
-bool can_produce(target_t target, queue<target_t> &nums) {
-  target_t first = nums.front();
+bool can_produce(const target_t target, queue<target_t> &nums) {
+  const target_t first = nums.front();
   nums.pop();
 
-  target_t second = nums.front();
+  const target_t second = nums.front();
   nums.pop();
 
   vector<target_t> memo = {first * second, first + second};
@@ -21,14 +21,16 @@ bool can_produce(target_t target, queue<target_t> &nums) {
     nums.pop();
 
     for (const target_t val : memo) {
-      new_memo.push_back(val * current);
-      new_memo.push_back(val + current);
+      const target_t mul = val * current;
+      const target_t sum = val + current;
+      new_memo.push_back(mul);
+      new_memo.push_back(sum);
     }
 
     memo = new_memo;
   }
 
-  for (const int result : memo) {
+  for (const target_t result : memo) {
     if (result == target) {
       return true;
     }
@@ -42,12 +44,13 @@ pair<target_t, queue<target_t>> parse(const string &line) {
   string target_str = tokens[0];
   target_str = target_str.substr(0, target_str.size() - 1);
 
-  target_t target = stol(target_str);
+  const target_t target = stol(target_str);
 
   queue<target_t> nums;
   for (size_t i = 1; i < tokens.size(); ++i) {
     nums.push(stoi(tokens[i]));
   }
+
   return {target, nums};
 }
 

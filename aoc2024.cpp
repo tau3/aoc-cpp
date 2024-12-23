@@ -1,27 +1,14 @@
-#include "day8.hpp"
+#include "day9.hpp"
 #include "util.hpp"
 #include <iostream>
 
 using namespace std;
-using namespace Day8;
+using namespace Day9;
 
 int main() {
-  const vector<string> input = read_file("../day8_input");
-  // const vector<string> input = {
-  // "............",
-  //   "........0...",
-  //   ".....0......",
-  //   ".......0....",
-  //   "....0.......",
-  //   "......A.....",
-  //   "............",
-  //   "............",
-  //   "........A...",
-  //   ".........A..",
-  //   "............",
-  //   "............",
-  // };
-  cout << solve_pt1(input) << endl;
+  // const vector<string> input = read_file("../day8_input");
+  const vector<string> input = {"2333133121414131402"};
+  cout << solve_pt1(input[0]) << endl;
 
   return 0;
 }

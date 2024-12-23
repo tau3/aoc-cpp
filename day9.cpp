@@ -2,7 +2,6 @@
 #include <cassert>
 #include <optional>
 #include <vector>
-#include <iostream>
 
 namespace Day9 {
 
@@ -121,9 +120,10 @@ long solve_day9_pt1(const string &disk_map) {
   return checksum(individual_blocks);
 }
 
-int find_free_space(vector<int> &individual_blocks, size_t size, size_t end) {
-  if(end < size){
-    return -1;
+optional<int> find_free_space(const vector<int> &individual_blocks,
+                              const size_t size, const size_t end) {
+  if (end < size) {
+    return nullopt;
   }
 
   size_t current = 0;
@@ -131,18 +131,18 @@ int find_free_space(vector<int> &individual_blocks, size_t size, size_t end) {
     if (individual_blocks[i] == FREE_BLOCK) {
       ++current;
       if (current == size) {
+        assert(i > size);
         return i - size + 1;
       }
     } else {
       current = 0;
     }
   }
-  return -1;
+  return nullopt;
 }
 
-void move_space(vector<int> &individual_blocks, size_t from, size_t to,
-                size_t size) {
-  cout << "from=" << from << " to=" << to << " size=" << size << endl;
+void move_space(vector<int> &individual_blocks, const size_t from,
+                const size_t to, const size_t size) {
   assert(from > to);
   assert(from < individual_blocks.size());
 
@@ -154,16 +154,16 @@ void move_space(vector<int> &individual_blocks, size_t from, size_t to,
 
 void move_full_blocks(vector<int> &invdividual_blocks) {
   int current = invdividual_blocks[invdividual_blocks.size() - 1];
-  int size = 1;
+  size_t size = 1;
   for (int i = invdividual_blocks.size() - 2; i >= 0; --i) {
     if (invdividual_blocks[i] == current) {
       ++size;
     } else {
       if (current != FREE_BLOCK) {
-        int free_space = find_free_space(invdividual_blocks, size, i + 1);
-        if (free_space == -1) {
-        } else {
-          move_space(invdividual_blocks, i + 1, free_space, size);
+        optional<int> free_space =
+            find_free_space(invdividual_blocks, size, i + 1);
+        if (free_space.has_value()) {
+          move_space(invdividual_blocks, i + 1, free_space.value(), size);
         }
       }
       current = invdividual_blocks[i];

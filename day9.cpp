@@ -134,6 +134,13 @@ vector<Block> group(const vector<int> &individual_blocks) {
       size = 1;
     }
   }
+  result.push_back({current, size});
+
+  for (const Block &block : result) {
+    cout << "{id=" << block.id << ", size=" << block.size << "}, ";
+  }
+  cout << endl;
+
   return result;
 }
 
@@ -153,6 +160,7 @@ void move_blocks(vector<Block> &grouped_blocks) {
         continue;
       }
 
+      cout << "swap " << i << " and " << j << endl;
       const Block temp = grouped_blocks[i];
       grouped_blocks[i] = grouped_blocks[j];
       grouped_blocks[j] = temp;

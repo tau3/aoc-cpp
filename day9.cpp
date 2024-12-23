@@ -115,83 +115,72 @@ long checksum(const vector<int> &individual_blocks) {
   return result;
 }
 
-struct Block {
-  int id;
-  size_t size;
-};
-
-vector<Block> group(const vector<int> &individual_blocks) {
-  int current = individual_blocks[0];
-  size_t size = 1;
-  vector<Block> result;
-  for (size_t i = 1; i < individual_blocks.size(); ++i) {
-    if (individual_blocks[i] == current) {
-      ++size;
-    } else {
-      const Block block = {current, size};
-      result.push_back(block);
-      current = individual_blocks[i];
-      size = 1;
-    }
-  }
-  result.push_back({current, size});
-
-  for (const Block &block : result) {
-    cout << "{id=" << block.id << ", size=" << block.size << "}, ";
-  }
-  cout << endl;
-
-  return result;
-}
-
-void move_blocks(vector<Block> &grouped_blocks) {
-  for (int i = grouped_blocks.size() - 1; i >= 0; --i) {
-    const Block &current = grouped_blocks[i];
-    if (current.id == FREE_BLOCK) {
-      continue;
-    }
-
-    for (size_t j = 0; j < i; ++j) {
-      const Block &free_block = grouped_blocks[j];
-      if (free_block.id != FREE_BLOCK) {
-        continue;
-      }
-      if (free_block.size < current.size) {
-        continue;
-      }
-
-      cout << "swap " << i << " and " << j << endl;
-      const Block temp = grouped_blocks[i];
-      grouped_blocks[i] = grouped_blocks[j];
-      grouped_blocks[j] = temp;
-      break;
-    }
-  }
-}
-
-long checksum(const vector<Block> &grouped_blocks) {
-  int i = 0;
-  long result = 0;
-  for (const Block &block : grouped_blocks) {
-    for (size_t j = 0; j < block.size; ++i) {
-      result += block.id * (j + i);
-    }
-    i += block.size;
-  }
-  return result;
-}
-
 long solve_day9_pt1(const string &disk_map) {
   vector<int> individual_blocks = build_ivdividual_blocks(disk_map);
   move_blocks(individual_blocks);
   return checksum(individual_blocks);
 }
 
+int find_free_space(vector<int> &individual_blocks, size_t size) {
+  size_t current = 0;
+  for (size_t i = 0; i < individual_blocks.size() - size; ++i) {
+    if (individual_blocks[i] == FREE_BLOCK) {
+      ++current;
+      if (current == size) {
+        return i - size + 1;
+      }
+    } else {
+      current = 0;
+    }
+  }
+  return -1;
+}
+
+void print_blocks(const vector<int> &individual_blocks) {
+  for (const int block : individual_blocks) {
+    if (block == FREE_BLOCK) {
+      cout << '.';
+    } else {
+      cout << block;
+    }
+  }
+  cout << endl;
+}
+
+void move_space(vector<int> &individual_blocks, size_t from, size_t to,
+                size_t size) {
+  print_blocks(individual_blocks);
+  cout << "move block length=" << size << " from " << from << " to " << to << endl;
+  for (size_t i = 0; i < size; ++i) {
+    individual_blocks[to + i] = individual_blocks[from + i];
+    individual_blocks[from + i] = FREE_BLOCK;
+  }
+}
+
+void foo(vector<int> &invdividual_blocks) {
+  int current = invdividual_blocks[invdividual_blocks.size() - 1];
+  int size = 1;
+  for (int i = invdividual_blocks.size() - 2; i >= 0; --i) {
+    if (invdividual_blocks[i] == current) {
+      ++size;
+    } else {
+      int free_space = find_free_space(invdividual_blocks, size);
+      if (free_space == -1) {
+        current = invdividual_blocks[i];
+        size = 1;
+      } else {
+        move_space(invdividual_blocks, i + 1, free_space, size);
+        current = invdividual_blocks[i];
+        size = 1;
+      }
+    }
+  }
+}
+
 long solve_day9_pt2(const string &disk_map) {
-  const vector<int> individual_blocks = build_ivdividual_blocks(disk_map);
-  vector<Block> grouped_blocks = group(individual_blocks);
-  move_blocks(grouped_blocks);
-  return checksum(grouped_blocks);
+  vector<int> individual_blocks = build_ivdividual_blocks(disk_map);
+  foo(individual_blocks);
+  return checksum(individual_blocks);
 }
 
 } // namespace Day9

@@ -1,8 +1,8 @@
 #include "day9.hpp"
-#include "util.hpp"
-#include <cstddef>
-#include <string>
+#include <cassert>
+#include <optional>
 #include <vector>
+#include <iostream>
 
 namespace Day9 {
 
@@ -121,9 +121,13 @@ long solve_day9_pt1(const string &disk_map) {
   return checksum(individual_blocks);
 }
 
-int find_free_space(vector<int> &individual_blocks, size_t size) {
+int find_free_space(vector<int> &individual_blocks, size_t size, size_t end) {
+  if(end < size){
+    return -1;
+  }
+
   size_t current = 0;
-  for (size_t i = 0; i < individual_blocks.size() - size; ++i) {
+  for (size_t i = 0; i < end - size; ++i) {
     if (individual_blocks[i] == FREE_BLOCK) {
       ++current;
       if (current == size) {
@@ -136,50 +140,41 @@ int find_free_space(vector<int> &individual_blocks, size_t size) {
   return -1;
 }
 
-void print_blocks(const vector<int> &individual_blocks) {
-  for (const int block : individual_blocks) {
-    if (block == FREE_BLOCK) {
-      cout << '.';
-    } else {
-      cout << block;
-    }
-  }
-  cout << endl;
-}
-
 void move_space(vector<int> &individual_blocks, size_t from, size_t to,
                 size_t size) {
-  print_blocks(individual_blocks);
-  cout << "move block length=" << size << " from " << from << " to " << to << endl;
+  cout << "from=" << from << " to=" << to << " size=" << size << endl;
+  assert(from > to);
+  assert(from < individual_blocks.size());
+
   for (size_t i = 0; i < size; ++i) {
     individual_blocks[to + i] = individual_blocks[from + i];
     individual_blocks[from + i] = FREE_BLOCK;
   }
 }
 
-void foo(vector<int> &invdividual_blocks) {
+void move_full_blocks(vector<int> &invdividual_blocks) {
   int current = invdividual_blocks[invdividual_blocks.size() - 1];
   int size = 1;
   for (int i = invdividual_blocks.size() - 2; i >= 0; --i) {
     if (invdividual_blocks[i] == current) {
       ++size;
     } else {
-      int free_space = find_free_space(invdividual_blocks, size);
-      if (free_space == -1) {
-        current = invdividual_blocks[i];
-        size = 1;
-      } else {
-        move_space(invdividual_blocks, i + 1, free_space, size);
-        current = invdividual_blocks[i];
-        size = 1;
+      if (current != FREE_BLOCK) {
+        int free_space = find_free_space(invdividual_blocks, size, i + 1);
+        if (free_space == -1) {
+        } else {
+          move_space(invdividual_blocks, i + 1, free_space, size);
+        }
       }
+      current = invdividual_blocks[i];
+      size = 1;
     }
   }
 }
 
 long solve_day9_pt2(const string &disk_map) {
   vector<int> individual_blocks = build_ivdividual_blocks(disk_map);
-  foo(individual_blocks);
+  move_full_blocks(individual_blocks);
   return checksum(individual_blocks);
 }
 

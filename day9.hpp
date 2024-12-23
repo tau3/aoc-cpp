@@ -7,7 +7,7 @@ namespace Day9 {
 
 using namespace std;
 
-int solve_pt1(const string &);
+long solve_day9_pt1(const string &);
 
 } // namespace Day9
 

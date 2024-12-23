@@ -3,7 +3,6 @@
 #include <cassert>
 #include <cstddef>
 #include <iostream>
-#include <iterator>
 #include <vector>
 
 namespace Day9 {
@@ -104,7 +103,7 @@ void move_blocks(vector<int> &individual_blocks) {
     cout << "swap " << i << " of " << swaps_count << ": " << left << " to "
          << right << endl;
     int temp = individual_blocks[left];
-    if(temp != FREE_BLOCK) {
+    if(left > right) {
       break;
     }
     individual_blocks[left] = individual_blocks[right];
@@ -116,15 +115,15 @@ void move_blocks(vector<int> &individual_blocks) {
   }
 }
 
-int checksum(const vector<int> &individual_blocks) {
-  int result = 0;
+long checksum(const vector<int> &individual_blocks) {
+  long result = 0;
   for (size_t i = 0; individual_blocks[i] != FREE_BLOCK; ++i) {
     result += i * individual_blocks[i];
   }
   return result;
 }
 
-int solve_pt1(const string &disk_map) {
+long solve_day9_pt1(const string &disk_map) {
   vector<int> individual_blocks = build_ivdividual_blocks(disk_map);
   print(individual_blocks);
   move_blocks(individual_blocks);

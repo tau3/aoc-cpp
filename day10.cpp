@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ostream>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace Day10 {
 using Point = pair<int, int>;
@@ -13,7 +14,8 @@ struct PointHash {
   }
 };
 
-using Memo = unordered_map<Point, int, PointHash>;
+using Points = unordered_set<Point, PointHash>;
+using Memo = unordered_map<Point, Points, PointHash>;
 
 char get_height(const Grid &grid, const Point &point) {
   const auto [row, column] = point;
@@ -29,15 +31,15 @@ bool is_in_bounds(const Point &point, const Grid &grid) {
   return (row >= 0) && (column >= 0) && (row < height) && (row < width);
 }
 
-int score(const Point &point, const Grid &grid, Memo &memo) {
-  cout << "check (" << point.first << "," << point.second << ")" << endl;
+Points score(const Point &point, const Grid &grid, Memo &memo) {
+  // cout << "check (" << point.first << "," << point.second << ")" << endl;
   if (get_height(grid, point) == '9') {
-    return 1;
+    return {point};
   }
 
   const auto [r, c] = point;
   Point adjacent[] = {{r - 1, c}, {r, c + 1}, {r + 1, c}, {r, c - 1}};
-  int result = 0;
+  Points result;
   for (const Point &current_point : adjacent) {
     if (!is_in_bounds(current_point, grid) ||
         ((get_height(grid, current_point) - 1) != get_height(grid, point))) {
@@ -45,11 +47,11 @@ int score(const Point &point, const Grid &grid, Memo &memo) {
     }
 
     if (const auto &entry = memo.find(current_point); entry != memo.end()) {
-      const int score = entry->second;
-      result += score;
+      const Points& score = entry->second;
+      result.insert(score.begin(), score.end());
     } else {
-      int current_score = score(current_point, grid, memo);
-      result += current_score;
+      const Points& current_score = score(current_point, grid, memo);
+      result.insert(current_score.begin(), current_score.end());
       memo[current_point] = current_score;
     }
   }
@@ -65,18 +67,18 @@ int solve_day10_pt1(const Grid &grid) {
     for (size_t c = 0; c < width; ++c) {
       const Point point = {r, c};
       if (get_height(grid, point) == '0') {
-        int current = score(point, grid, memo);
+        const Points current = score(point, grid, memo);
         // cout << "(" << point.first << ","<<point.second <<")=" <<current <<
         // endl;
-        result += current;
+        result += current.size();
       }
     }
   }
 
-  for (const auto [k, v] : memo) {
-    cout << "(r=" << k.first << ",c=" << k.second
-         << ") h=" << grid[k.first][k.second] << " s=" << v << endl;
-  }
+  // for (const auto [k, v] : memo) {
+    // cout << "(r=" << k.first << ",c=" << k.second
+         // << ") h=" << grid[k.first][k.second] << " s=" << v << endl;
+  // }
 
   return result;
 }

@@ -1,9 +1,10 @@
 #include "day8.hpp"
+#include <algorithm>
 #include <array>
-#include <functional>
-#include <type_traits>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 namespace Day8 {
 
@@ -42,11 +43,11 @@ array<Point, 2> find_antinodes(const Point &lhs, const Point &rhs) {
   return {lhs + d, rhs - d};
 }
 
-int solve_pt1(const vector<string> &grid) {
+unordered_map<char, vector<Point>> group_antennas(const vector<string> &grid) {
   const size_t w = grid[0].size();
   const size_t h = grid.size();
 
-  unordered_map<char, vector<Point>> antennas;
+  unordered_map<char, vector<Point>> result;
   for (size_t r = 0; r < h; ++r) {
     for (size_t c = 0; c < w; ++c) {
       const char frequency = grid[r][c];
@@ -54,19 +55,24 @@ int solve_pt1(const vector<string> &grid) {
         continue;
       }
 
-      if (auto entry = antennas.find(frequency); entry != antennas.end()) {
-        vector<Point> points = entry->second;
+      if (auto entry = result.find(frequency); entry != result.end()) {
+        vector<Point> &points = entry->second;
         points.push_back(Point(r, c));
       } else {
         const vector<Point> points = {Point(r, c)};
-        antennas[frequency] = points;
+        result[frequency] = points;
       }
     }
   }
 
+  return result;
+}
+
+int solve_pt1(const vector<string> &grid) {
+  unordered_map<char, vector<Point>> antennas = group_antennas(grid);
   unordered_set<Point, PointHash> result;
-  for (const auto &kv : antennas) {
-    const vector<Point> points = kv.second;
+  for (const auto &entry : group_antennas(grid)) {
+    const vector<Point> points = entry.second;
     for (size_t i = 0; i < points.size(); ++i) {
       for (size_t j = i + 1; j < points.size(); ++j) {
         const Point &lhs = points[i];

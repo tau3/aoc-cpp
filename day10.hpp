@@ -10,6 +10,8 @@ using namespace std;
 using Grid = vector<string>;
 
 int solve_day10_pt1(const Grid &grid);
+int solve_day10_pt2(const Grid &grid);
+
 } // namespace Day10
 
 #endif

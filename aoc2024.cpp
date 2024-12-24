@@ -17,7 +17,7 @@ int main() {
   //   "01329801",
   //   "10456732",
   // };
-  cout << solve_day10_pt1(input) << endl;
+  cout << solve_day10_pt2(input) << endl;
 
   return 0;
 }

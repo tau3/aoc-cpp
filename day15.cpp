@@ -47,13 +47,24 @@ struct Point {
   }
 };
 
+bool operator==(const Point &lhs, const Point &rhs) {
+  return (lhs.c == rhs.c) && (lhs.r == rhs.r);
+}
+
+struct PointHash {
+  size_t operator()(const Point &point) const {
+    const auto [r, c] = point;
+    return 31 * r + 17 * c;
+  }
+};
+
 void append(vector<Point> &lhs, const vector<Point> &rhs) {
   lhs.insert(lhs.end(), rhs.begin(), rhs.end());
 }
 
 vector<Point> distinct(const vector<Point> &points) {
   vector<Point> result;
-  unordered_set<Point> found;
+  unordered_set<Point, PointHash> found;
   for (const Point &point : points) {
     const auto [_, not_seen] = found.insert(point);
     if (not_seen) {
@@ -135,7 +146,7 @@ class Grid {
       vector<Point> result = {box};
       if (at(next) == '[') {
         append(result, build_chain(next, direction));
-        return result;
+        return distinct(result);
       } else if (at(next) == ']') {
         const Point vertical_left = next.next('<');
         append(result, build_chain(vertical_left, direction));
@@ -143,6 +154,8 @@ class Grid {
         if (at(vertical_right) == '[') {
           append(result, build_chain(vertical_right, direction));
         }
+        return distinct(result);
+      } else {
         return result;
       }
       break;
@@ -179,7 +192,8 @@ class Grid {
       const Point right = box.next('>');
       const Point vertical = box.next(direction);
       assert(at(vertical) == '.');
-      assert(at(right) == '.');
+      assert(at(right) == ']');
+      assert(at(right.next(direction)) == '.');
 
       at(vertical) = '[';
       at(box) = '.';
@@ -190,7 +204,7 @@ class Grid {
     case '<': {
       const Point horizontal = box.next(direction);
       assert(at(horizontal) == '.');
-      at(horizontal.next(direction)) = '[';
+      at(horizontal) = '[';
       at(box) = ']';
       at(box.next('>')) = '.';
       break;
@@ -224,7 +238,6 @@ class Grid {
     Point box =
         at(next_position) == '[' ? next_position : next_position.next('<');
     vector<Point> chain = build_chain(box, direction);
-    // TODO distict
     reverse(chain.begin(), chain.end());
 
     Grid copy = Grid(grid);
@@ -262,6 +275,14 @@ public:
     }
   }
 
+  void simulate_scaled(const vector<string> &moves) {
+    for (const string &line : moves) {
+      for (const char direction : line) {
+        move_scaled(direction);
+      }
+    }
+  }
+
   int sum_gps() const {
     int result = 0;
     for (size_t r = 0; r < grid.size(); ++r) {
@@ -282,8 +303,8 @@ public:
     for (size_t r = 0; r < height; ++r) {
       for (size_t c = 0; c < width; ++c) {
         if (grid[r][c] == '[') {
-          size_t left = r;
-          size_t top = c;
+          size_t left = c;
+          size_t top = r;
           size_t right = width - left - 2;
           assert(right < width);
           size_t bottom = height - top - 2;
@@ -345,6 +366,31 @@ vector<string> scale(const vector<string> &grid) {
     result.push_back(scaled);
   }
   return result;
+}
+
+int solve_day15_pt2(const vector<string> &input) {
+  vector<string> grid_data;
+  vector<string> moves;
+
+  bool is_grid = true;
+  for (const string &line : input) {
+    if (line.empty()) {
+      is_grid = false;
+      continue;
+    }
+
+    if (is_grid) {
+      grid_data.push_back(line);
+    } else {
+      moves.push_back(line);
+    }
+  }
+
+  grid_data = scale(grid_data);
+
+  Grid grid(grid_data);
+  grid.simulate_scaled(moves);
+  return grid.sum_scaled_gps();
 }
 
 } // namespace Day15

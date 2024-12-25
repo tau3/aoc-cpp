@@ -31,12 +31,12 @@ void Robot::move(const Grid &grid) {
 }
 
 int Robot::quadrant(const Grid &grid) const {
-  const int vertical = grid.x / 2 + 1;
+  const int vertical = grid.x / 2;
   if (position.x == vertical) {
     return -1;
   }
 
-  const int horizontal = grid.y / 2 + 1;
+  const int horizontal = grid.y / 2;
   if (position.y == horizontal) {
     return -1;
   }
@@ -74,7 +74,7 @@ int solve(vector<Robot> &robots, const Grid &grid) {
   for (const Robot &robot : robots) {
     const int quadrant = robot.quadrant(grid);
     if (quadrant >= 0) {
-      ++counts[quadrant];
+      ++counts[quadrant - 1];
     }
   }
 

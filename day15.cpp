@@ -1,14 +1,16 @@
+#include "day15.hpp"
+#include <cassert>
 #include <cstddef>
-#include <string>
-#include <vector>
 
-using namespace std;
+namespace Day15 {
 
 struct Point {
-  int r;
-  int c;
+  size_t r;
+  size_t c;
 
   Point next(const char direction) {
+    assert(r > 0);
+    assert(c > 0);
     switch (direction) {
     case '^':
       return {r - 1, c};
@@ -35,7 +37,7 @@ public:
     for (size_t r = 0; r < grid.size(); ++r) {
       for (size_t c = 0; c < grid[0].size(); ++c) {
         if (grid[r][c] == '@') {
-	  robot = {(int)r, (int)c};
+          robot = {r, c};
           return;
         }
       }
@@ -66,7 +68,7 @@ public:
       shifted_boxes.push_back(current);
       current = current.next(direction);
     }
-    if (at(current.next(direction)) == '.') {
+    if (at(current) == '.') {
       for (auto it = shifted_boxes.rbegin(); it != shifted_boxes.rend(); ++it) {
         at(it->next(direction)) = 'O';
       }
@@ -99,7 +101,7 @@ void simulate(Grid &grid, const vector<string> &moves) {
   }
 }
 
-int solve(const vector<string> &input) {
+int solve_day15_pt1(const vector<string> &input) {
   vector<string> grid_data;
   vector<string> moves;
 
@@ -121,3 +123,5 @@ int solve(const vector<string> &input) {
   simulate(grid, moves);
   return grid.sum_gps();
 }
+
+} // namespace Day15

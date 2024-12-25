@@ -1,31 +1,40 @@
-#include "day14.hpp"
+#include "day15.hpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 
 using namespace std;
-using namespace Day14;
+using namespace Day15;
 
 int main() {
-  const vector<string> input = read_file("../day14_input");
+  const vector<string> input = read_file("../day15_input");
   // clang-format off
-  // const vector<string> input = {
-  //   "p=0,4 v=3,-3",
-  //   "p=6,3 v=-1,-3",
-  //   "p=10,3 v=-1,2",
-  //   "p=2,0 v=2,-1",
-  //   "p=0,0 v=1,3",
-  //   "p=3,0 v=-2,-2",
-  //   "p=7,6 v=-1,-3",
-  //   "p=3,0 v=-1,-2",
-  //   "p=9,3 v=2,3",
-  //   "p=7,3 v=-1,2",
-  //   "p=2,4 v=2,-3",
-  //   "p=9,5 v=-3,-3",
-  // };
-  // clang-format on
+//   const vector<string> input = {
+//     "##########",
+//     "#..O..O.O#",
+// "#......O.#",
+// "#.OO..O.O#",
+// "#..O@..O.#",
+// "#O#..O...#",
+// "#O..O..O.#",
+// "#.OO.O.OO#",
+// "#....O...#",
+// "##########",
+// "",
+// "<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^",
+// "vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v",
+// "><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<",
+// "<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^",
+// "^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><",
+// "^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^",
+// ">^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^",
+// "<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>",
+// "^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>",
+// "v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^",
+//   };
+//   // clang-format on
 
-  cout << solve_pt2(input, {101, 103}) << endl;
+  cout << solve_day15_pt1(input) << endl;
 
   return 0;
 }

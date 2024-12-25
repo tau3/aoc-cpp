@@ -60,36 +60,36 @@ vector<Arcade> parse_input(const vector<string> &input) {
   if (ax * by - bx * ay) == 0 => no solution
   a_count = (px - bx * b_count) / ax
 */
-uint64_t solve_equation(const vector<Arcade> &arcades) {
-  int64_t result = 0;
+unit_t solve_equation(const vector<Arcade> &arcades) {
+  unit_t result = 0;
   for (const auto &arcade : arcades) {
     const auto &[a, b, prize] = arcade;
     if (a.x == 0) {
       continue;
     }
 
-    const int64_t divider = a.x * b.y - b.x * a.y;
+    const unit_t divider = a.x * b.y - b.x * a.y;
     if (divider == 0) {
       continue;
     }
-    int64_t divisor = a.x * prize.y - prize.x * a.y;
-    const int64_t b_count = divisor / divider;
+    unit_t divisor = a.x * prize.y - prize.x * a.y;
+    const unit_t b_count = divisor / divider;
     if (b_count * divider != divisor) {
       continue;
     }
 
     divisor = prize.x - b.x * b_count;
-    const int64_t a_count = divisor / a.x;
+    const unit_t a_count = divisor / a.x;
     if (a_count * a.x != divisor) {
       continue;
     }
-    const int64_t spent = a_count * 3 + b_count;
+    const unit_t spent = a_count * 3 + b_count;
     result += spent;
   }
   return result;
 }
 
-int64_t solve(const vector<string> &input, const bool pt2) {
+unit_t solve(const vector<string> &input, const bool pt2) {
   auto arcades = parse_input(input);
   if (pt2) {
     for (auto &arcade : arcades) {
@@ -100,11 +100,11 @@ int64_t solve(const vector<string> &input, const bool pt2) {
   return solve_equation(arcades);
 }
 
-int64_t solve_day13_pt1(const vector<string> &input) {
+unit_t solve_day13_pt1(const vector<string> &input) {
   return solve(input, false);
 }
 
-int64_t solve_day13_pt2(const vector<string> &input) {
+unit_t solve_day13_pt2(const vector<string> &input) {
   return solve(input, true);
 }
 

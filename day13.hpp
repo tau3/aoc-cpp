@@ -9,15 +9,17 @@ namespace Day13 {
 
 using namespace std;
 
+using unit_t = int64_t;
+
 struct Movement {
-  uint64_t x;
-  uint64_t y;
+  unit_t x;
+  unit_t y;
 };
 
-int64_t solve_arcade(const Movement &a_move, const Movement &b_move,
+unit_t solve_arcade(const Movement &a_move, const Movement &b_move,
                       const Movement &prize);
-int64_t solve_day13_pt1(const vector<string> &input);
-int64_t solve_day13_pt2(const vector<string> &input);
+unit_t solve_day13_pt1(const vector<string> &input);
+unit_t solve_day13_pt2(const vector<string> &input);
 } // namespace Day13
 
 #endif

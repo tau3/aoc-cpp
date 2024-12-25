@@ -1,13 +1,7 @@
+#include "day14.hpp"
 #include "util.hpp"
-#include <string>
-#include <vector>
 
-using namespace std;
-
-struct Point {
-  int x;
-  int y;
-};
+namespace Day14 {
 
 Point point_from_string(const string &raw) {
   const auto tokens = split(raw, ",");
@@ -16,51 +10,46 @@ Point point_from_string(const string &raw) {
 
 using Grid = Point;
 
-struct Robot {
-  Point position;
-  Point velocity;
+void Robot::move(const Grid &grid) {
+  const auto [width, height] = grid;
 
-  void move(const Grid &grid) {
-    const auto [width, height] = grid;
-
-    int x = position.x + velocity.x;
-    if (x >= width) {
-      x -= width;
-    } else if (x < 0) {
-      x = width + x;
-    }
-
-    int y = position.y + velocity.y;
-    if (y >= height) {
-      y -= height;
-    } else if (y < 0) {
-      y = height + y;
-    }
-
-    position = {x, y};
+  int x = position.x + velocity.x;
+  if (x >= width) {
+    x -= width;
+  } else if (x < 0) {
+    x = width + x;
   }
 
-  int quadrant(const Grid &grid) const {
-    const int vertical = grid.x / 2 + 1;
-    if (position.x == vertical) {
-      return -1;
-    }
-
-    const int horizontal = grid.y / 2 + 1;
-    if (position.y == horizontal) {
-      return -1;
-    }
-
-    const bool is_left = position.x < vertical;
-    const bool is_top = position.y < horizontal;
-
-    if (is_left) {
-      return is_top ? 1 : 4;
-    } else {
-      return is_top ? 2 : 3;
-    }
+  int y = position.y + velocity.y;
+  if (y >= height) {
+    y -= height;
+  } else if (y < 0) {
+    y = height + y;
   }
-};
+
+  position = {x, y};
+}
+
+int Robot::quadrant(const Grid &grid) const {
+  const int vertical = grid.x / 2 + 1;
+  if (position.x == vertical) {
+    return -1;
+  }
+
+  const int horizontal = grid.y / 2 + 1;
+  if (position.y == horizontal) {
+    return -1;
+  }
+
+  const bool is_left = position.x < vertical;
+  const bool is_top = position.y < horizontal;
+
+  if (is_left) {
+    return is_top ? 1 : 4;
+  } else {
+    return is_top ? 2 : 3;
+  }
+}
 
 Robot robot_from_string(const string &input) {
   const vector<string> tokens = split(input, " ");
@@ -91,3 +80,14 @@ int solve(vector<Robot> &robots, const Grid &grid) {
 
   return counts[0] * counts[1] * counts[2] * counts[3];
 }
+
+int solve_raw_input(const vector<string> &input, const Grid &grid) {
+  vector<Robot> robots;
+  for (const string &line : input) {
+    robots.push_back(robot_from_string(line));
+  }
+
+  return solve(robots, grid);
+}
+
+} // namespace Day14

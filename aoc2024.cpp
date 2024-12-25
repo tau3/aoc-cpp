@@ -1,30 +1,48 @@
-#include "day13.hpp"
+#include "day14.hpp"
 #include "util.hpp"
 #include <iostream>
+#include <ostream>
 
 using namespace std;
-using namespace Day13;
+using namespace Day14;
 
 int main() {
-  const vector<string> input = read_file("../day13_input");
-  // const vector<string> input = {
-  //   "Button A: X+94, Y+34",
-  //   "Button B: X+22, Y+67",
-  //   "Prize: X=8400, Y=5400",
-  //   "",
-  //   "Button A: X+26, Y+66",
-  //   "Button B: X+67, Y+21",
-  //   "Prize: X=12748, Y=12176",
-  //   "",
-  //   "Button A: X+17, Y+86",
-  //   "Button B: X+84, Y+37",
-  //   "Prize: X=7870, Y=6450",
-  //   "",
-  //   "Button A: X+69, Y+23",
-  //   "Button B: X+27, Y+71",
-  //   "Prize: X=18641, Y=10279",
-  // };
-  cout << solve_day13_pt2(input) << endl;
+  // const vector<string> input = read_file("../day14_input");
+  // clang-format off
+  const vector<string> input = {
+    "p=0,4 v=3,-3",
+    "p=6,3 v=-1,-3",
+    "p=10,3 v=-1,2",
+    "p=2,0 v=2,-1",
+    "p=0,0 v=1,3",
+    "p=3,0 v=-2,-2",
+    "p=7,6 v=-1,-3",
+    "p=3,0 v=-1,-2",
+    "p=9,3 v=2,3",
+    "p=7,3 v=-1,2",
+    "p=2,4 v=2,-3",
+    "p=9,5 v=-3,-3",
+  };
+  // clang-format on
+
+  // Robot robot{{2,4}, {2,-3}};
+  // Grid grid {11,7};
+  // robot.move(grid);
+  // cout << "(" << robot.position.x << "," << robot.position.y << ")" << endl;
+  // robot.move(grid);
+  // cout << "(" << robot.position.x << "," << robot.position.y << ")" << endl;
+  // robot.move(grid);
+  // cout << "(" << robot.position.x << "," << robot.position.y << ")" << endl;
+  // robot.move(grid);
+  // cout << "(" << robot.position.x << "," << robot.position.y << ")" << endl;
+  // robot.move(grid);
+  // cout << "(" << robot.position.x << "," << robot.position.y << ")" << endl;
+
+  Robot robot{{5, 0}, {0, 0}};
+  Grid grid{11, 7};
+  cout << "q: " << robot.quadrant(grid) << endl;
+
+  // cout << solve_raw_input(input, {11, 7}) << endl;
 
   return 0;
 }

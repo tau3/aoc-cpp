@@ -1,4 +1,5 @@
 #include "day15.hpp"
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <string>
@@ -13,6 +14,23 @@ struct Point {
   Point next(const char direction) const {
     assert(r > 0);
     assert(c > 0);
+    switch (direction) {
+    case '^':
+      return {r - 1, c};
+    case '>':
+      return {r, c + 1};
+    case 'v':
+      return {r + 1, c};
+    case '<':
+      return {r, c - 1};
+    default:
+      throw "invalid direction " + to_string(direction);
+    }
+  }
+
+  Point next_scaled(const char direction) const {
+    assert(r > 1);
+    assert(c > 1);
     switch (direction) {
     case '^':
       return {r - 1, c};
@@ -122,7 +140,60 @@ class Grid {
     throw "unreachable";
   }
 
-  void chain(const char direction) { Point current = robot.next(direction); }
+  bool can_move_scaled_box(const Point &box, const char direction) {
+    assert(at(box) == '[');
+
+    switch (direction) {
+    case '^':
+    case 'v':
+      return (at(box.next(direction)) == '.') &&
+             (at(box.next(direction).next('>')) == '.');
+    case '<':
+      return (at(box.next(direction)) == '.');
+    case '>':
+      return (at(box.next(direction).next(direction)) == '.');
+    default:
+      throw "unknown direction: " + to_string(direction);
+    }
+  }
+
+  void move_scaled_box(const Point &box, const char direction) {
+    assert(at(box) == '[');
+
+    switch (direction) {
+    case '^':
+    case 'v': {
+      const Point right = box.next('>');
+      const Point vertical = box.next(direction);
+      assert(at(vertical) == '.');
+      assert(at(right) == '.');
+
+      at(vertical) = '[';
+      at(box) = '.';
+      at(right) = '.';
+      at(right.next(direction)) = ']';
+      break;
+    }
+    case '<': {
+      const Point horizontal = box.next(direction);
+      assert(at(horizontal) == '.');
+      at(horizontal.next(direction)) = '[';
+      at(box) = ']';
+      at(box.next('>')) = '.';
+      break;
+    }
+    case '>': {
+      const Point horizontal = box.next(direction).next(direction);
+      assert(at(horizontal) == '.');
+      at(horizontal) = ']';
+      at(box.next(direction)) = '[';
+      at(box) = '.';
+      break;
+    }
+    default:
+      throw "unknown direction: " + to_string(direction);
+    }
+  }
 
   void move_scaled(const char direction) {
     const auto next_position = robot.next(direction);
@@ -137,22 +208,24 @@ class Grid {
       return;
     }
 
-    //   vector<Point> shifted_boxes;
-    //   Point current = next_position;
-    //   while (at(current) == 'O') {
-    //     shifted_boxes.push_back(current);
-    //     current = current.next(direction);
-    //   }
-    //   if (at(current) == '.') {
-    //     for (auto it = shifted_boxes.rbegin(); it != shifted_boxes.rend();
-    //     ++it) {
-    //       at(it->next(direction)) = 'O';
-    //     }
+    Point box =
+        at(next_position) == '[' ? next_position : next_position.next('<');
+    vector<Point> chain = asd(box, direction);
+    // TODO distict
+    reverse(chain.begin(), chain.end());
 
-    //     at(robot) = '.';
-    //     robot = next_position;
-    //     at(next_position) = '@';
-    //   }
+    Grid copy = Grid(grid);
+    for (const Point &box : chain) {
+      if (!copy.can_move_scaled_box(box, direction)) {
+        return;
+      }
+      copy.move_scaled_box(box, direction);
+    }
+    grid = copy.grid;
+
+    at(robot) = '.';
+    robot = next_position;
+    at(next_position) = '@';
   }
 
 public:

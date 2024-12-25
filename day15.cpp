@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstddef>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace Day15 {
@@ -50,6 +51,18 @@ void append(vector<Point> &lhs, const vector<Point> &rhs) {
   lhs.insert(lhs.end(), rhs.begin(), rhs.end());
 }
 
+vector<Point> distinct(const vector<Point> &points) {
+  vector<Point> result;
+  unordered_set<Point> found;
+  for (const Point &point : points) {
+    const auto [_, not_seen] = found.insert(point);
+    if (not_seen) {
+      result.push_back(point);
+    }
+  }
+  return result;
+}
+
 class Grid {
   vector<string> grid;
   Point robot;
@@ -90,7 +103,7 @@ class Grid {
     }
   }
 
-  vector<Point> asd(const Point &box, const char direction) {
+  vector<Point> build_chain(const Point &box, const char direction) {
     assert(at(box) == '[');
 
     switch (direction) {
@@ -100,7 +113,7 @@ class Grid {
         return {box};
       } else {
         vector<Point> result = {box};
-        append(result, asd(next_box, direction));
+        append(result, build_chain(next_box, direction));
         return result;
       }
       break;
@@ -111,7 +124,7 @@ class Grid {
         return {box};
       } else {
         vector<Point> result = {box};
-        append(result, asd(next_box, direction));
+        append(result, build_chain(next_box, direction));
         return result;
       }
       break;
@@ -121,14 +134,14 @@ class Grid {
       const Point next = box.next(direction);
       vector<Point> result = {box};
       if (at(next) == '[') {
-        append(result, asd(next, direction));
+        append(result, build_chain(next, direction));
         return result;
       } else if (at(next) == ']') {
         const Point vertical_left = next.next('<');
-        append(result, asd(vertical_left, direction));
+        append(result, build_chain(vertical_left, direction));
         const Point vertical_right = next.next('>');
         if (at(vertical_right) == '[') {
-          append(result, asd(vertical_right, direction));
+          append(result, build_chain(vertical_right, direction));
         }
         return result;
       }
@@ -210,7 +223,7 @@ class Grid {
 
     Point box =
         at(next_position) == '[' ? next_position : next_position.next('<');
-    vector<Point> chain = asd(box, direction);
+    vector<Point> chain = build_chain(box, direction);
     // TODO distict
     reverse(chain.begin(), chain.end());
 

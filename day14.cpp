@@ -118,7 +118,7 @@ int solve_pt2(const vector<string> &input, const Grid &grid) {
       if (no_duplicates) {
         const auto [_, is_new_element] = positions.insert(robot.position);
         if (!is_new_element) {
-          return no_duplicates = false;
+          no_duplicates = false;
         }
       }
     }
@@ -126,9 +126,6 @@ int solve_pt2(const vector<string> &input, const Grid &grid) {
       return i + 1;
     }
     ++i;
-    if (i && 100 == 0) {
-      cout << "i=" << endl;
-    }
   }
 }
 

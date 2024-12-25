@@ -94,6 +94,7 @@ unit_t solve(const vector<string> &input, const bool pt2) {
   if (pt2) {
     for (auto &arcade : arcades) {
       auto &[_, _, p] = arcade;
+      p.x += 10000000000000;
       p.y += 10000000000000;
     }
   }

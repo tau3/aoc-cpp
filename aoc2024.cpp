@@ -24,7 +24,7 @@ int main() {
   //   "Button B: X+27, Y+71",
   //   "Prize: X=18641, Y=10279",
   // };
-  cout << solve_day13_pt1(input) << endl;
+  cout << solve_day13_pt2(input) << endl;
 
   return 0;
 }

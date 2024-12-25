@@ -1,11 +1,17 @@
 #include "day14.hpp"
 #include "util.hpp"
+#include <unordered_set>
+#include <vector>
 
 namespace Day14 {
 
 Point point_from_string(const string &raw) {
   const auto tokens = split(raw, ",");
   return {stoi(tokens[0]), stoi(tokens[1])};
+}
+
+bool operator==(const Point &lhs, const Point &rhs) {
+  return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
 
 using Grid = Point;
@@ -88,6 +94,42 @@ int solve_raw_input(const vector<string> &input, const Grid &grid) {
   }
 
   return solve(robots, grid);
+}
+
+struct PointHash {
+  size_t operator()(const Point &point) const {
+    const auto [r, c] = point;
+    return 31 * r + 17 * c;
+  }
+};
+
+int solve_pt2(const vector<string> &input, const Grid &grid) {
+  vector<Robot> robots;
+  for (const string &line : input) {
+    robots.push_back(robot_from_string(line));
+  }
+
+  int i = 0;
+  while (true) {
+    unordered_set<Point, PointHash> positions;
+    bool no_duplicates = true;
+    for (Robot &robot : robots) {
+      robot.move(grid);
+      if (no_duplicates) {
+        const auto [_, is_new_element] = positions.insert(robot.position);
+        if (!is_new_element) {
+          return no_duplicates = false;
+        }
+      }
+    }
+    if (no_duplicates) {
+      return i + 1;
+    }
+    ++i;
+    if (i && 100 == 0) {
+      cout << "i=" << endl;
+    }
+  }
 }
 
 } // namespace Day14

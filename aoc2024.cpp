@@ -25,7 +25,7 @@ int main() {
   // };
   // clang-format on
 
-  cout << solve_raw_input(input, {101, 103}) << endl;
+  cout << solve_pt2(input, {101, 103}) << endl;
 
   return 0;
 }

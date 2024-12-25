@@ -24,6 +24,7 @@ struct Robot {
 };
 
 int solve_raw_input(const vector<string> &input, const Grid &grid);
+int solve_pt2(const vector<string> &input, const Grid &grid);
 } // namespace Day14
 
 #endif

@@ -1,6 +1,8 @@
 #include "day15.hpp"
 #include <cassert>
 #include <cstddef>
+#include <string>
+#include <vector>
 
 namespace Day15 {
 
@@ -31,19 +33,6 @@ class Grid {
   Point robot;
 
   Grid();
-
-public:
-  explicit Grid(const vector<string> grid) : grid(grid) {
-    for (size_t r = 0; r < grid.size(); ++r) {
-      for (size_t c = 0; c < grid[0].size(); ++c) {
-        if (grid[r][c] == '@') {
-          robot = {r, c};
-          return;
-        }
-      }
-    }
-    throw "no robot";
-  }
 
   char at(const Point &point) const { return grid[point.r][point.c]; }
 
@@ -79,6 +68,27 @@ public:
     }
   }
 
+public:
+  explicit Grid(const vector<string> grid) : grid(grid) {
+    for (size_t r = 0; r < grid.size(); ++r) {
+      for (size_t c = 0; c < grid[0].size(); ++c) {
+        if (grid[r][c] == '@') {
+          robot = {r, c};
+          return;
+        }
+      }
+    }
+    throw "no robot";
+  }
+
+  void simulate(const vector<string> &moves) {
+    for (const string &line : moves) {
+      for (const char direction : line) {
+        move(direction);
+      }
+    }
+  }
+
   int sum_gps() const {
     int result = 0;
     for (size_t r = 0; r < grid.size(); ++r) {
@@ -91,15 +101,28 @@ public:
     }
     return result;
   }
-};
 
-void simulate(Grid &grid, const vector<string> &moves) {
-  for (const string &line : moves) {
-    for (const char direction : line) {
-      grid.move(direction);
+  int sum_scaled_gps() const {
+    int result = 0;
+    const size_t height = grid.size();
+    const size_t width = grid[0].size();
+    for (size_t r = 0; r < height; ++r) {
+      for (size_t c = 0; c < width; ++c) {
+        if (grid[r][c] == '[') {
+          size_t left = r;
+          size_t top = c;
+          size_t right = width - left - 2;
+          assert(right < width);
+          size_t bottom = height - top - 2;
+          assert(bottom < height);
+          int gps = 100 * min(top, bottom) + min(left, right);
+          result += gps;
+        }
+      }
     }
+    return result;
   }
-}
+};
 
 int solve_day15_pt1(const vector<string> &input) {
   vector<string> grid_data;
@@ -120,8 +143,35 @@ int solve_day15_pt1(const vector<string> &input) {
   }
 
   Grid grid(grid_data);
-  simulate(grid, moves);
+  grid.simulate(moves);
   return grid.sum_gps();
+}
+
+vector<string> scale(const vector<string> &grid) {
+  vector<string> result;
+  for (const string &line : grid) {
+    string scaled;
+    for (const char c : line) {
+      switch (c) {
+      case '#':
+        scaled += "##";
+        break;
+      case 'O':
+        scaled += "[]";
+        break;
+      case '.':
+        scaled += "..";
+        break;
+      case '@':
+        scaled += "@.";
+        break;
+      default:
+        throw "unknown tile: " + to_string(c);
+      }
+    }
+    result.push_back(scaled);
+  }
+  return result;
 }
 
 } // namespace Day15

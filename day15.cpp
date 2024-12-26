@@ -6,6 +6,7 @@
 #include <thread>
 #include <unordered_set>
 
+// too borded to refactor this
 namespace Day15 {
 
 struct Point {

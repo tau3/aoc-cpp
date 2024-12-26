@@ -1,10 +1,10 @@
 #include "day15.hpp"
 #include <algorithm>
 #include <cassert>
-#include <cstddef>
+#include <iostream>
 #include <string>
+#include <thread>
 #include <unordered_set>
-#include <vector>
 
 namespace Day15 {
 
@@ -15,23 +15,6 @@ struct Point {
   Point next(const char direction) const {
     assert(r > 0);
     assert(c > 0);
-    switch (direction) {
-    case '^':
-      return {r - 1, c};
-    case '>':
-      return {r, c + 1};
-    case 'v':
-      return {r + 1, c};
-    case '<':
-      return {r, c - 1};
-    default:
-      throw "invalid direction " + to_string(direction);
-    }
-  }
-
-  Point next_scaled(const char direction) const {
-    assert(r > 1);
-    assert(c > 1);
     switch (direction) {
     case '^':
       return {r - 1, c};
@@ -114,7 +97,7 @@ class Grid {
     }
   }
 
-  vector<Point> build_chain(const Point &box, const char direction) {
+  vector<Point> build_chain(const Point &box, const char direction) const {
     assert(at(box) == '[');
 
     switch (direction) {
@@ -131,7 +114,7 @@ class Grid {
     }
     case '>': {
       const Point next_box = box.next(direction).next(direction);
-      if (at(next_box) != ']') {
+      if (at(next_box) != '[') {
         return {box};
       } else {
         vector<Point> result = {box};
@@ -146,7 +129,7 @@ class Grid {
       vector<Point> result = {box};
       if (at(next) == '[') {
         append(result, build_chain(next, direction));
-        return distinct(result);
+        return result;
       } else if (at(next) == ']') {
         const Point vertical_left = next.next('<');
         append(result, build_chain(vertical_left, direction));
@@ -154,7 +137,7 @@ class Grid {
         if (at(vertical_right) == '[') {
           append(result, build_chain(vertical_right, direction));
         }
-        return distinct(result);
+        return result;
       } else {
         return result;
       }
@@ -166,7 +149,7 @@ class Grid {
     throw "unreachable";
   }
 
-  bool can_move_scaled_box(const Point &box, const char direction) {
+  bool can_move_scaled_box(const Point &box, const char direction) const {
     assert(at(box) == '[');
 
     switch (direction) {
@@ -181,6 +164,15 @@ class Grid {
     default:
       throw "unknown direction: " + to_string(direction);
     }
+  }
+
+  void dump(const char direction) const {
+    system("clear");
+    for (const string &line : grid) {
+      cout << line << endl;
+    }
+    cout << "next move: " << char(direction) << endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
 
   void move_scaled_box(const Point &box, const char direction) {
@@ -222,6 +214,21 @@ class Grid {
     }
   }
 
+  Point find_closest_box_to_robot(const char direction) const {
+    switch (direction) {
+    case '<':
+      return robot.next(direction).next(direction);
+    case '>':
+      return robot.next(direction);
+    case 'v':
+    case '^':
+      return at(robot.next(direction)) == '[' ? robot.next(direction)
+                                              : robot.next(direction).next('<');
+    default:
+      throw "unreachable";
+    }
+  }
+
   void move_scaled(const char direction) {
     const auto next_position = robot.next(direction);
     if (at(next_position) == '#') {
@@ -235,10 +242,10 @@ class Grid {
       return;
     }
 
-    Point box =
-        at(next_position) == '[' ? next_position : next_position.next('<');
-    vector<Point> chain = build_chain(box, direction);
+    const Point closest_box = find_closest_box_to_robot(direction);
+    vector<Point> chain = build_chain(closest_box, direction);
     reverse(chain.begin(), chain.end());
+    chain = distinct(chain);
 
     Grid copy = Grid(grid);
     for (const Point &box : chain) {
@@ -279,6 +286,7 @@ public:
     for (const string &line : moves) {
       for (const char direction : line) {
         move_scaled(direction);
+	dump(direction);
       }
     }
   }

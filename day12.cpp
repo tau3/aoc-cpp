@@ -1,9 +1,6 @@
 #include "day12.hpp"
 #include <algorithm>
 #include <cassert>
-#include <cstddef>
-#include <iostream>
-#include <type_traits>
 #include <unordered_set>
 #include <vector>
 
@@ -49,8 +46,8 @@ public:
     points.erase(
         remove_if(points.begin(), points.end(), [this](const Point &point) {
           return (point.c < 0) || (point.r < 0) || (point.c >= width()) ||
-                 (point.r >= height());
-        }));
+	    (point.r >= height());
+        }), points.end());
   }
 };
 
@@ -64,34 +61,31 @@ unordered_set<Point, PointHash> region(const Grid &grid,
                                        unordered_set<Point, PointHash> &visited,
                                        const Point &current) {
   visited.insert(current);
-  cout << "visit " << grid.at(current) << " (" << current.r << "," << current.c << ")" << endl;
 
   unordered_set<Point, PointHash> result{current};
-  auto adj = current.adjacent();
-  grid.drop_oob(adj);
-  for (const Point &point : adj) {
+  auto adjacent = current.adjacent();
+  grid.drop_oob(adjacent);
+
+  for (const Point &point : adjacent) {
     if (visited.find(point) != visited.end()) {
       continue;
     }
 
     if (grid.at(current) == grid.at(point)) {
-      // result.insert(point);
       add_all(result, region(grid, visited, point));
     }
   }
 
-  // cout << "region: " << result.size();
-
   return result;
 }
 
-int perimeter(const unordered_set<Point, PointHash> &region, const Grid &grid) {
+int calc_perimeter(const unordered_set<Point, PointHash> &region, const Grid &grid) {
   int result = 0;
   for (const Point &current : region) {
-    vector<Point> adj = current.adjacent();
-    grid.drop_oob(adj);
+    vector<Point> adjacent = current.adjacent();
+    grid.drop_oob(adjacent);
     int perimeter = 4;
-    for (const Point &point : adj) {
+    for (const Point &point : adjacent) {
       if (grid.at(point) == grid.at(current)) {
         --perimeter;
       }
@@ -115,17 +109,14 @@ int solve_day12_pt1(const vector<string> &input) {
     }
   }
 
-  // cout << "visited = " << visited.size() << endl;
   assert(visited.size() == grid.width() * grid.height());
 
   int result = 0;
   for (const auto &region : regions) {
-    int p = perimeter(region, grid);
-    int a = region.size();
-    int price = perimeter(region, grid) * region.size();
+    const int perimeter = calc_perimeter(region, grid);
+    const size_t area = region.size();
+    const int price = perimeter * area;
     result += price;
-    cout << "region " << grid.at(*region.begin()) << " " << a << " * " << p
-         << " = " << price << endl;
   }
   return result;
 }

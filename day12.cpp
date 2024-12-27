@@ -1,11 +1,13 @@
+#include "day12.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
-#include <string>
+#include <iostream>
+#include <type_traits>
 #include <unordered_set>
 #include <vector>
 
-using namespace std;
+namespace Day12 {
 
 struct Point {
   int r;
@@ -16,12 +18,18 @@ struct Point {
   }
 };
 
+bool operator==(const Point &lhs, const Point &rhs) {
+  return (lhs.c == rhs.c) && (lhs.r == rhs.r);
+}
+
 struct PointHash {
   size_t operator()(const Point &point) const {
     const auto [r, c] = point;
     return 31 * r + 17 * c;
   }
 };
+
+using Region = unordered_set<Point, PointHash>;
 
 class Grid {
   vector<string> grid;
@@ -37,7 +45,7 @@ public:
 
   size_t height() const { return grid.size(); }
 
-  void drop_oob(vector<Point>& points) const {
+  void drop_oob(vector<Point> &points) const {
     points.erase(
         remove_if(points.begin(), points.end(), [this](const Point &point) {
           return (point.c < 0) || (point.r < 0) || (point.c >= width()) ||
@@ -46,49 +54,80 @@ public:
   }
 };
 
-void add_all(unordered_set<Point, PointHash> &lhs,
-             const unordered_set<Point, PointHash> rhs) {
-  for(const Point& point:rhs){
+void add_all(Region &lhs, const Region &rhs) {
+  for (const Point &point : rhs) {
     lhs.insert(point);
   }
 }
 
-unordered_set<Point, PointHash> expand_region(const Point &start, const Grid &grid,
-					      unordered_set<Point, PointHash> &visited) {
-  unordered_set<Point, PointHash> region = {start};
-  const auto adjacent = start.adjacent();
-  for (const Point &point : adjacent) {
+unordered_set<Point, PointHash> region(const Grid &grid,
+                                       unordered_set<Point, PointHash> &visited,
+                                       const Point &current) {
+  visited.insert(current);
+  cout << "visit " << grid.at(current) << " (" << current.r << "," << current.c << ")" << endl;
+
+  unordered_set<Point, PointHash> result{current};
+  auto adj = current.adjacent();
+  grid.drop_oob(adj);
+  for (const Point &point : adj) {
     if (visited.find(point) != visited.end()) {
       continue;
     }
-    if (grid.at(point) == grid.at(start)) {
-      region.insert(point);
-      visited.insert(point);
-      add_all(region, expand_region(point, grid, visited));
+
+    if (grid.at(current) == grid.at(point)) {
+      // result.insert(point);
+      add_all(result, region(grid, visited, point));
     }
   }
-  return region;
+
+  // cout << "region: " << result.size();
+
+  return result;
 }
 
-int solve(const vector<string> &input) {
-  vector<unordered_set<Point, PointHash>> regions;
-  unordered_set<Point, PointHash> visited;
-  Grid grid(input);
-  for (size_t r = 0; r < input.size(); ++r) {
-    for (size_t c = 0; c < input[0].size(); ++c) {
-      const Point point = {static_cast<int>(r), static_cast<int>(c)};
-      if (const auto &[_, seen] = visited.insert(point); seen) {
-        continue;
-      }
-      regions.push_back(expand_region(point, grid, visited));
-    }
-  }
-
-  assert(visited.size() == grid.height() * grid.width());
-
+int perimeter(const unordered_set<Point, PointHash> &region, const Grid &grid) {
   int result = 0;
-  for(const unordered_set<Point, PointHash>& region: regions){
-    result += region.size();
+  for (const Point &current : region) {
+    vector<Point> adj = current.adjacent();
+    grid.drop_oob(adj);
+    int perimeter = 4;
+    for (const Point &point : adj) {
+      if (grid.at(point) == grid.at(current)) {
+        --perimeter;
+      }
+    }
+    result += perimeter;
   }
   return result;
 }
+
+int solve_day12_pt1(const vector<string> &input) {
+  unordered_set<Point, PointHash> visited;
+  vector<unordered_set<Point, PointHash>> regions;
+  Grid grid(input);
+  for (size_t r = 0; r < input.size(); ++r) {
+    for (size_t c = 0; c < input[0].size(); ++c) {
+      const Point current = {static_cast<int>(r), static_cast<int>(c)};
+      if (visited.find(current) != visited.end()) {
+        continue;
+      }
+      regions.push_back(region(grid, visited, current));
+    }
+  }
+
+  // cout << "visited = " << visited.size() << endl;
+  assert(visited.size() == grid.width() * grid.height());
+
+  int result = 0;
+  for (const auto &region : regions) {
+    int p = perimeter(region, grid);
+    int a = region.size();
+    int price = perimeter(region, grid) * region.size();
+    result += price;
+    cout << "region " << grid.at(*region.begin()) << " " << a << " * " << p
+         << " = " << price << endl;
+  }
+  return result;
+}
+
+} // namespace Day12

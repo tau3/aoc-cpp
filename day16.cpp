@@ -1,29 +1,25 @@
 #include "day16.hpp"
 #include <algorithm>
-#include <cstddef>
-#include <iostream>
 #include <limits>
 #include <vector>
 
 namespace Day16 {
 
 struct Point {
-  size_t r;
-  size_t c;
+  size_t row;
+  size_t col;
 
-  vector<Point> adj() const {
-    return {{r - 1, c}, {r, c + 1}, {r + 1, c}, {r, c - 1}};
+  vector<Point> adjacent() const {
+    return {{row - 1, col}, {row, col + 1}, {row + 1, col}, {row, col - 1}};
   }
 };
 
 bool operator==(const Point &lhs, const Point &rhs) {
-  return lhs.c == rhs.c && lhs.r == rhs.r;
+  return lhs.col == rhs.col && lhs.row == rhs.row;
 }
 
 void dfs(const Point &start, const Point &end, vector<vector<Point>> &solutions,
          vector<Point> &current_path, const vector<string> &grid) {
-  cout << "at (" << start.r << "," << start.c << ")" << endl;
-
   if (start == end) {
     solutions.push_back(current_path);
     return;
@@ -31,19 +27,19 @@ void dfs(const Point &start, const Point &end, vector<vector<Point>> &solutions,
 
   const auto last = current_path[current_path.size() - 1];
 
-  for (const Point &p : last.adj()) {
-    if (grid[p.r][p.c] == '#') {
+  for (const Point &point : last.adjacent()) {
+    if (grid[point.row][point.col] == '#') {
       continue;
     }
 
-    if (find(current_path.begin(), current_path.end(), p) !=
+    if (find(current_path.begin(), current_path.end(), point) !=
         current_path.end()) {
       continue;
     }
 
     vector<Point> new_path = current_path;
-    new_path.push_back(p);
-    dfs(p, end, solutions, new_path, grid);
+    new_path.push_back(point);
+    dfs(point, end, solutions, new_path, grid);
   }
 }
 
@@ -54,21 +50,21 @@ int count_turns(const vector<Point> &path) {
     const Point &current = path[i];
     const Point &next = path[i + 1];
 
-    const bool one_row = (prev.r == current.r) && (current.r == next.r);
-    const bool one_col = (prev.c == current.c) && (current.c == next.c);
+    const bool one_row = (prev.row == current.row) && (current.row == next.row);
+    const bool one_col = (prev.col == current.col) && (current.col == next.col);
     if (!(one_col || one_row)) {
       ++result;
     }
   }
 
-  if (path[0].c == path[1].c) {
+  if (path[0].col == path[1].col) {
     ++result;
   }
 
   return result;
 }
 
-int score(const vector<Point> &path) {
+int calc_score(const vector<Point> &path) {
   const size_t steps = path.size() - 1;
   const int turns = count_turns(path);
   return steps + turns * 1000;
@@ -84,12 +80,8 @@ int solve_day16_pt1(const vector<string> &grid) {
 
   int result = numeric_limits<int>::max();
   for (const auto &path : paths) {
-    const int s = score(path);
-    result = min(result, s);
-  //   for (const Point &p : path) {
-  //     cout << "(" << p.r << "," << p.c << ")-->";
-  //   }
-  //   cout << endl;
+    const int score = calc_score(path);
+    result = min(result, score);
   }
   return result;
 }

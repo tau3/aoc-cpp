@@ -1,40 +1,24 @@
-#include "day15.hpp"
+#include "day17.cpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 
 using namespace std;
-using namespace Day15;
+using namespace Day17;
 
 int main() {
   // const vector<string> input = read_file("../day15_input");
   // clang-format off
   const vector<string> input = {
-    "##########",
-    "#..O..O.O#",
-"#......O.#",
-"#.OO..O.O#",
-"#..O@..O.#",
-"#O#..O...#",
-"#O..O..O.#",
-"#.OO.O.OO#",
-"#....O...#",
-"##########",
+"Register A: 729",
+"Register B: 0",
+"Register C: 0",
 "",
-"<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^",
-"vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v",
-"><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<",
-"<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^",
-"^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><",
-"^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^",
-">^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^",
-"<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>",
-"^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>",
-"v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^",
+"Program: 0,1,5,4,3,0",
   };
   // clang-format on
 
-  cout << solve_day15_pt2(input) << endl;
+  cout << solve_day17_pt1(input) << endl;
 
   return 0;
 }

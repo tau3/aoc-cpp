@@ -18,7 +18,7 @@ class Computer {
   int a;
   int b;
   int c;
-  string out_stream;
+  vector<int> out_stream;
   int pointer;
   vector<int> program;
 
@@ -60,11 +60,8 @@ class Computer {
   void bxc(const int operand) { b ^= c; }
 
   void out(const int operand) {
-    if (!out_stream.empty()) {
-      out_stream += ',';
-    }
     int result = eval_combo_operand(operand) % 8;
-    out_stream += to_string(result);
+    out_stream.push_back(result);
   }
 
   void bdv(const int operand) { b = a / (pow(2, eval_combo_operand(operand))); }
@@ -120,16 +117,16 @@ public:
     }
   }
 
-  void dump_state() const {
-    cout << "state: a=" << a << " b=" << b << " c=" << c << " p=" << pointer
-         << " prog=";
-    for (const auto &op : program) {
-      cout << op << ",";
-    }
-    cout << endl << "out: " << out_stream << endl;
-  }
+  const vector<int> &out_values() const { return out_stream; }
 
-  string output() const { return out_stream; }
+  string output() const {
+    string result = ",";
+    for (const int val : out_stream) {
+      result += to_string(val);
+      result += ",";
+    }
+    return result;
+  }
 };
 
 pair<tuple<int, int, int>, vector<int>>
@@ -149,12 +146,6 @@ parse_input(const vector<string> &input) {
     program.push_back(stoi(program_raw[i]));
   }
 
-  cout << "input: a=" << a << " b=" << b << " c=" << c << " p=";
-  for (const auto &op : program) {
-    cout << op;
-  }
-  cout << endl;
-
   return {{a, b, c}, program};
 }
 
@@ -165,6 +156,30 @@ string solve_day17_pt1(const vector<string> &input) {
   Computer computer(a, b, c, program);
   computer.run();
   return computer.output();
+}
+
+int solve_day17_pt2(const vector<string> &input) {
+  const auto [registers, program] = parse_input(input);
+  auto [a, b, c] = registers;
+  a = 1;
+
+  Computer comp(a, b, c, program);
+  comp.run();
+  vector<int> out = comp.out_values();
+
+  while (out.size() != program.size()) {
+    a *= 2;
+    Computer comp(a, b, c, program);
+    comp.run();
+    out = comp.out_values();
+  }
+
+  for (int i = program.size() - 1; i >= 0; --i) {
+    if (program[i] != out[i]) {
+      a += pow(8, i);
+    }
+  }
+  return a;
 }
 
 } // namespace Day17

@@ -5,6 +5,7 @@
 #include <ostream>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -19,8 +20,7 @@ class Computer {
   int c;
   string out_stream;
   int pointer;
-  // TODO use plaint vector here
-  vector<pair<int, int>> program;
+  vector<int> program;
 
   int eval_combo_operand(const int operand) {
     assert(operand >= 0 && operand < 7);
@@ -50,6 +50,7 @@ class Computer {
 
   void jnz(const int operand) {
     if (a == 0) {
+      pointer += 2;
       return;
     }
 
@@ -59,9 +60,11 @@ class Computer {
   void bxc(const int operand) { b ^= c; }
 
   void out(const int operand) {
+    if (!out_stream.empty()) {
+      out_stream += ',';
+    }
     int result = eval_combo_operand(operand) % 8;
-    out_stream += result;
-    out_stream += ',';
+    out_stream += to_string(result);
   }
 
   void bdv(const int operand) { b = a / (pow(2, eval_combo_operand(operand))); }
@@ -104,26 +107,32 @@ class Computer {
       pointer += 2;
       break;
     }
-
-    cout << "a=" << a << " b=" << b << " c=" << c << endl;
   }
 
 public:
-  Computer(const int a, const int b, const int c,
-           const vector<pair<int, int>> program)
+  Computer(const int a, const int b, const int c, const vector<int> program)
       : a(a), b(b), c(c), pointer(0), program(program) {}
 
   void run() {
     while (pointer < program.size()) {
-      const auto [l, r] = program[pointer];
-      exec(l, r);
+      exec(program[pointer], program[pointer + 1]);
+      // dump_state();
     }
+  }
+
+  void dump_state() const {
+    cout << "state: a=" << a << " b=" << b << " c=" << c << " p=" << pointer
+         << " prog=";
+    for (const auto &op : program) {
+      cout << op << ",";
+    }
+    cout << endl << "out: " << out_stream << endl;
   }
 
   string output() const { return out_stream; }
 };
 
-pair<tuple<int, int, int>, vector<pair<int, int>>>
+pair<tuple<int, int, int>, vector<int>>
 parse_input(const vector<string> &input) {
   const auto a_raw = split(input[0], " ");
   const auto b_raw = split(input[1], " ");
@@ -135,14 +144,14 @@ parse_input(const vector<string> &input) {
   int c = stoi(c_raw[2]);
 
   program_raw = split(program_raw[1], ",");
-  vector<pair<int, int>> program;
-  for (size_t i = 0; i < program_raw.size() / 2; ++i) {
-    program.push_back({stoi(program_raw[i * 2]), stoi(program_raw[i * 2 + 1])});
+  vector<int> program;
+  for (size_t i = 0; i < program_raw.size(); ++i) {
+    program.push_back(stoi(program_raw[i]));
   }
 
   cout << "input: a=" << a << " b=" << b << " c=" << c << " p=";
   for (const auto &op : program) {
-    cout << op.first << "," << op.second << ",";
+    cout << op;
   }
   cout << endl;
 

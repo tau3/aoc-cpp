@@ -1,24 +1,44 @@
-#include "day17.cpp"
+#include "day18.cpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 
 using namespace std;
-using namespace Day17;
+using namespace Day18;
 
 int main() {
-  const vector<string> input = read_file("../day17_input");
+  // const vector<string> input = read_file("../day17_input");
   // clang-format off
-//   const vector<string> input = {
-// "Register A: 2024",
-// "Register B: 0",
-// "Register C: 0",
-// "",
-// "Program: 0,3,5,4,3,0",
-//   };
+  const vector<string> input = {
+"5,4",
+"4,2",
+"4,5",
+"3,0",
+"2,1",
+"6,3",
+"2,4",
+"1,5",
+"0,6",
+"3,3",
+"2,6",
+"5,1",
+"1,2",
+"5,5",
+"2,5",
+"6,5",
+"1,4",
+"0,4",
+"6,4",
+"1,1",
+"6,1",
+"1,0",
+"0,5",
+"1,6",
+"2,0",
+  };
   // clang-format on
 
- cout << solve_day17_pt2(input) << endl;
+  cout << solve_day18_pt1(input, {6,6}, 12) << endl;
 
   return 0;
 }

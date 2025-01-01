@@ -1,5 +1,7 @@
 #include "util.hpp"
 #include <cassert>
+#include <limits>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -31,10 +33,10 @@ class Solver {
 
   Solver() {};
 
-  const Point &exract_min(vector<Point> &queue) const {
+  const Point exract_min(vector<Point> &queue) const {
     assert(!queue.empty());
 
-    Point &result = queue[0];
+    Point result = queue[0];
     int distance = distances.at(result);
     size_t index = 0;
     for (size_t i = 1; i < queue.size(); ++i) {
@@ -53,32 +55,20 @@ class Solver {
 
   vector<Point> adjacent(const Point &point) const {
     const auto [x, y] = point;
+    vector<Point> all = {{x - 1, y}, {x + 1, y}, {x, y + 1}, {x, y - 1}};
+
     vector<Point> result;
-    if (x > 0) {
-      const Point point{x - 1, y};
-      if (!contains(walls, point)) {
-        result.push_back(point);
+    for (const Point &point : all) {
+      if (contains(walls, point)) {
+        continue;
       }
-    }
-    if (x < target.x - 1) {
-      const Point point{x + 1, y};
-      if (!contains(walls, point)) {
-        result.push_back(point);
-      }
-    }
-    if (y > 0) {
-      const Point point({x, y - 1});
-      if (!contains(walls, point)) {
+
+      if ((point.x >= 0) && (point.y >= 0) && (point.x <= target.x) &&
+          (point.y <= target.y)) {
         result.push_back(point);
       }
     }
 
-    if (y < target.y - 1) {
-      const Point point{x, y + 1};
-      if (!contains(walls, point)) {
-        result.push_back(point);
-      }
-    }
     return result;
   }
 
@@ -92,7 +82,8 @@ public:
       for (int y = 0; y <= target.y; ++y) {
         const Point point{x, y};
         if (!contains(walls, point)) {
-          distances[point] = 0;
+          distances[point] = numeric_limits<int>::max() - 100;
+          // distances[point] = numeric_limits<int>::max();
           queue.push_back(point);
         }
       }
@@ -101,9 +92,17 @@ public:
 
     while (!queue.empty()) {
       const Point &u = exract_min(queue);
+      cout << "extract (" << u.x << "," << u.y << ")" << endl;
       for (const Point &v : adjacent(u)) {
-        if (distances[v] > distances[u] + 1) {
-          distances[v] = distances[u] + 1;
+        if (!contains(queue, v)) {
+          continue;
+        }
+        cout << "adj" << endl;
+        int candidate = distances[u] + 1;
+        if (distances[v] > candidate) {
+          distances[v] = candidate;
+          cout << "set dist (" << v.x << "," << v.y << ")=" << candidate
+               << endl;
         }
       }
     }

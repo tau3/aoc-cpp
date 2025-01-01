@@ -1,5 +1,6 @@
 #include "util.hpp"
 #include <cassert>
+#include <cstddef>
 #include <limits>
 #include <string>
 #include <unordered_map>
@@ -104,19 +105,44 @@ public:
 
 int solve(const vector<Point> &bytes, const Point &end) {
   Solver solver(bytes, end);
-  return solver.dijcstra();
+  int result = solver.dijcstra();
+  return result;
+}
+
+Point convert_to_point(const vector<string> &input, const size_t index) {
+  const string &line = input[index];
+  const auto tokens = split(line, ",");
+  return {stoi(tokens[0]), stoi(tokens[1])};
 }
 
 int solve_day18_pt1(const vector<string> &input, const Point &end,
                     const size_t limit) {
   vector<Point> bytes;
   for (size_t i = 0; i < limit; ++i) {
-    const string &line = input[i];
-    const auto tokens = split(line, ",");
-    bytes.push_back({stoi(tokens[0]), stoi(tokens[1])});
+    bytes.push_back(convert_to_point(input, i));
   }
 
   return solve(bytes, end);
+}
+
+string solve_day18_pt2(const vector<string> &input, const Point &end,
+                       const size_t limit) {
+  vector<Point> bytes;
+  for (size_t i = 0; i <= limit; ++i) {
+    bytes.push_back(convert_to_point(input, i));
+  }
+
+  size_t current = limit;
+  Point breaker;
+  // while (solve(bytes, end) != numeric_limits<int>::max()) {
+  // TODO refactor
+  while (solve(bytes, end) > 0) {
+    ++current;
+    breaker = convert_to_point(input, current);
+    bytes.push_back(breaker);
+  }
+
+  return "" + to_string(breaker.x) + ',' + to_string(breaker.y);
 }
 
 } // namespace Day18

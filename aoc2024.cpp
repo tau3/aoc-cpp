@@ -39,7 +39,6 @@ int main() {
   // clang-format on
 
   cout << solve_day18_pt2(input, {70, 70}, 1024) << endl;
-  // cout << solve_day18_pt2(input, {6, 6}, 12) << endl;
 
   return 0;
 }

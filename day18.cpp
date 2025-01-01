@@ -115,34 +115,33 @@ Point convert_to_point(const vector<string> &input, const size_t index) {
   return {stoi(tokens[0]), stoi(tokens[1])};
 }
 
-int solve_day18_pt1(const vector<string> &input, const Point &end,
-                    const size_t limit) {
+vector<Point> bytes_up_to(const vector<string> &input, const size_t limit) {
   vector<Point> bytes;
   for (size_t i = 0; i < limit; ++i) {
     bytes.push_back(convert_to_point(input, i));
   }
+  return bytes;
+}
 
-  return solve(bytes, end);
+int solve_day18_pt1(const vector<string> &input, const Point &end,
+                    const size_t limit) {
+  return solve(bytes_up_to(input, limit), end);
 }
 
 string solve_day18_pt2(const vector<string> &input, const Point &end,
                        const size_t limit) {
-  vector<Point> bytes;
-  for (size_t i = 0; i <= limit; ++i) {
-    bytes.push_back(convert_to_point(input, i));
+  size_t l = limit;
+  size_t r = input.size() - 1;
+  while (l <= r) {
+    const size_t m = (l + r) / 2;
+    const int solution = solve(bytes_up_to(input, m), end);
+    if (solution < 0) {
+      r = m - 1;
+    } else {
+      l = m + 1;
+    }
   }
-
-  size_t current = limit;
-  Point breaker;
-  // while (solve(bytes, end) != numeric_limits<int>::max()) {
-  // TODO refactor
-  while (solve(bytes, end) > 0) {
-    ++current;
-    breaker = convert_to_point(input, current);
-    bytes.push_back(breaker);
-  }
-
-  return "" + to_string(breaker.x) + ',' + to_string(breaker.y);
+  return input[r];
 }
 
 } // namespace Day18

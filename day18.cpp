@@ -1,7 +1,6 @@
 #include "util.hpp"
 #include <cassert>
 #include <limits>
-#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -37,14 +36,14 @@ class Solver {
     assert(!queue.empty());
 
     Point result = queue[0];
-    int distance = distances.at(result);
+    int min_distance = distances.at(result);
     size_t index = 0;
     for (size_t i = 1; i < queue.size(); ++i) {
       const Point &current = queue[i];
-      const int candidate = distances.at(current);
-      if (candidate < distance) {
+      const int distance = distances.at(current);
+      if (distance < min_distance) {
         result = current;
-        distance = candidate;
+        min_distance = distance;
         index = i;
       }
     }
@@ -82,8 +81,7 @@ public:
       for (int y = 0; y <= target.y; ++y) {
         const Point point{x, y};
         if (!contains(walls, point)) {
-          distances[point] = numeric_limits<int>::max() - 100;
-          // distances[point] = numeric_limits<int>::max();
+          distances[point] = numeric_limits<int>::max();
           queue.push_back(point);
         }
       }
@@ -92,17 +90,10 @@ public:
 
     while (!queue.empty()) {
       const Point &u = exract_min(queue);
-      cout << "extract (" << u.x << "," << u.y << ")" << endl;
       for (const Point &v : adjacent(u)) {
-        if (!contains(queue, v)) {
-          continue;
-        }
-        cout << "adj" << endl;
         int candidate = distances[u] + 1;
         if (distances[v] > candidate) {
           distances[v] = candidate;
-          cout << "set dist (" << v.x << "," << v.y << ")=" << candidate
-               << endl;
         }
       }
     }

@@ -21,9 +21,9 @@ int main() {
   //   "brgr",
   //   "bbrgwb",
   // };
-  // clang-format on
+  // // clang-format on
 
-  cout << solve_day19_pt1(input) << endl;
+  cout << solve_day19_pt2(input) << endl;
 
   return 0;
 }

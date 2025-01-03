@@ -40,7 +40,7 @@ class Solver {
     int min_distance = distances.at(result);
     size_t index = 0;
     for (size_t i = 1; i < queue.size(); ++i) {
-      const Point &current = queue[i];
+      const Point current = queue[i];
       const int distance = distances.at(current);
       if (distance < min_distance) {
         result = current;

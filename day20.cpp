@@ -1,13 +1,12 @@
+#include "day20.hpp"
 #include <cassert>
 #include <cstddef>
+#include <iostream>
 #include <limits>
-#include <string>
 #include <unordered_map>
-#include <vector>
+#include <stack>
 
 namespace Day20 {
-
-using namespace std;
 
 struct Point {
     int r;
@@ -25,7 +24,7 @@ struct PointHash {
     }
 };
 
-Point extract_min(vector<Point> queue,
+Point extract_min(vector<Point> &queue,
                   const unordered_map<Point, int, PointHash> distances) {
     assert(!queue.empty());
 
@@ -51,13 +50,13 @@ vector<Point> adjacent(const Point &point, const vector<string> &grid) {
 
     vector<Point> result;
     for (const Point &point : all) {
-        if ((point.r >= 0) && (point.c >= 0) && (point.r <= (int)grid.size()) &&
-            (point.c <= (int)grid[0].size())) {
-            result.push_back(point);
-        }
-
         if (grid[point.r][point.c] == '#') {
             continue;
+        }
+
+        if ((point.r >= 0) && (point.c >= 0) && (point.r < (int)grid.size()) &&
+            (point.c < (int)grid[0].size())) {
+            result.push_back(point);
         }
     }
 
@@ -67,29 +66,36 @@ vector<Point> adjacent(const Point &point, const vector<string> &grid) {
 int run(const Point &start, const vector<string> &grid) {
     vector<Point> queue;
     unordered_map<Point, int, PointHash> distances;
-    for (int r = 0; r <= (int)grid.size(); ++r) {
-        for (int c = 0; c <= (int)grid[0].size(); ++c) {
-            const Point point{r, c};
+    for (int r = 0; r < (int)grid.size(); ++r) {
+        for (int c = 0; c < (int)grid[0].size(); ++c) {
             if (grid[r][c] != '#') {
+                const Point point{r, c};
                 distances[point] = numeric_limits<int>::max();
-                queue.push_back(point);
+                // queue.push_back(point);
             }
         }
     }
     distances[start] = 0;
+
+    cout << "before queue" << endl;
     while (!queue.empty()) {
         const Point u = extract_min(queue, distances);
+        // cout << "pop(" << u.r << "," << u.c << ")" << endl;
+        if (distances.find(u) != distances.end()) {
+            continue;
+        }
         for (const Point &v : adjacent(u, grid)) {
-            int candidate = distances[u] + 1;
+            const int candidate = distances[u] + 1;
             if (distances[v] > candidate) {
                 distances[v] = candidate;
             }
         }
     }
+    cout << "after queue" << endl;
 
     int result = 0;
     vector<Point> path;
-    for (auto [k, v] : distances) {
+    for (const auto &[k, _] : distances) {
         path.push_back(k);
     }
 
@@ -101,6 +107,9 @@ int run(const Point &start, const vector<string> &grid) {
             if (dist == 2) {
                 const int saved = abs(distances[lhs] - distances[rhs]);
                 if (saved >= 100) {
+                    cout << "from(" << lhs.r << "," << lhs.c << ")" << endl;
+                    cout << "to(" << rhs.r << "," << rhs.c << ")" << endl;
+                    cout << "saved " << saved << endl;
                     ++result;
                 }
             }
@@ -111,6 +120,7 @@ int run(const Point &start, const vector<string> &grid) {
 }
 
 int solve_day20_pt1(const vector<string> &input) {
+    cout << "go" << endl;
     Point start;
     for (size_t r = 0; r < input.size(); ++r) {
         for (size_t c = 0; c < input[0].size(); ++c) {
@@ -119,6 +129,7 @@ int solve_day20_pt1(const vector<string> &input) {
             }
         }
     }
+    cout << "start " << start.r << " " << start.c << endl;
     return run(start, input);
 };
 

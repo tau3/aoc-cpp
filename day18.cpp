@@ -92,7 +92,7 @@ public:
     while (!queue.empty()) {
       const Point &u = extract_min(queue);
       for (const Point &v : adjacent(u)) {
-        int candidate = distances[u] + 1;
+        const int candidate = distances[u] + 1;
         if (distances[v] > candidate) {
           distances[v] = candidate;
         }

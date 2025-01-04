@@ -1,4 +1,4 @@
-#include "day20.cpp"
+#include "day20.hpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>

@@ -1,29 +1,34 @@
-#include "day19.cpp"
+#include "day20.cpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 
 using namespace std;
-using namespace Day19;
+using namespace Day20;
 
 int main() {
-  const vector<string> input = read_file("../day19_input");
-  // clang-format off
-  // const vector<string> input = {
-  //   "r, wr, b, g, bwu, rb, gb, br",
-  //   "",
-  //   "brwrr",
-  //   "bggr",
-  //   "gbbr",
-  //   "rrbgbr",
-  //   "ubwu",
-  //   "bwurrg",
-  //   "brgr",
-  //   "bbrgwb",
-  // };
+    // const vector<string> input = read_file("../day19_input");
+    // clang-format off
+  const vector<string> input = {
+"###############",
+"#...#...#.....#",
+"#.#.#.#.#.###.#",
+"#S#...#.#.#...#",
+"#######.#.#.###",
+"#######.#.#...#",
+"#######.#.###.#",
+"###..E#...#...#",
+"###.#######.###",
+"#...###...#...#",
+"#.#####.#.###.#",
+"#.#...#.#.#...#",
+"#.#.#.#.#.#.###",
+"#...#...#...###",
+"###############",
+  };
   // // clang-format on
 
-  cout << solve_day19_pt2(input) << endl;
+  cout << solve_day20_pt1(input) << endl;
 
   return 0;
 }

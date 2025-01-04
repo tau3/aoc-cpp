@@ -33,7 +33,7 @@ class Solver {
 
   Solver() {};
 
-  const Point exract_min(vector<Point> &queue) const {
+  const Point extract_min(vector<Point> &queue) const {
     assert(!queue.empty());
 
     Point result = queue[0];
@@ -90,7 +90,7 @@ public:
     distances[{0, 0}] = 0;
 
     while (!queue.empty()) {
-      const Point &u = exract_min(queue);
+      const Point &u = extract_min(queue);
       for (const Point &v : adjacent(u)) {
         int candidate = distances[u] + 1;
         if (distances[v] > candidate) {

@@ -61,7 +61,7 @@ vector<Point> adjacent(const Point &point, const vector<string> &grid) {
   return result;
 }
 
-int run(const Point &start, const vector<string> &grid) {
+int run(const Point &start, const vector<string> &grid, const bool is_pt_2) {
   stack<pair<Point, int>> s;
   s.push({start, 0});
   unordered_map<Point, int, PointHash> distances;
@@ -87,9 +87,11 @@ int run(const Point &start, const vector<string> &grid) {
       const Point &lhs = path[i];
       const Point &rhs = path[j];
       const int dist = abs(lhs.r - rhs.r) + abs(lhs.c - rhs.c);
-      if (dist == 2) {
-        const int saved = abs(distances[lhs] - distances[rhs]);
-        if (saved >= 100 + dist) {
+      const int saved = abs(distances[lhs] - distances[rhs]);
+      if (saved >= 100 + dist) {
+        if (!is_pt_2 && (dist == 2)) {
+          ++result;
+        } else if (is_pt_2 && (dist <= 20)) {
           ++result;
         }
       }
@@ -99,7 +101,7 @@ int run(const Point &start, const vector<string> &grid) {
   return result;
 }
 
-int solve_day20_pt1(const vector<string> &input) {
+int solve(const vector<string> &input, const bool is_pt_2) {
   Point start;
   for (size_t r = 0; r < input.size(); ++r) {
     for (size_t c = 0; c < input[0].size(); ++c) {
@@ -109,7 +111,10 @@ int solve_day20_pt1(const vector<string> &input) {
       }
     }
   }
-  return run(start, input);
+  return run(start, input, is_pt_2);
 };
 
+int solve_day20_pt1(const vector<string> &input) { return solve(input, false); }
+
+int solve_day20_pt2(const vector<string> &input) { return solve(input, true); }
 } // namespace Day20

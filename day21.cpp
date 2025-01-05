@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <iostream>
 #include <limits>
 #include <string>
 #include <unordered_map>
@@ -16,17 +17,29 @@ const int DOWN = -3;
 const int LEFT = -4;
 const int RIGHT = -5;
 
-const unordered_map<int, vector<int>> NUMERIC_KEYPAD = {
-    {7, {4, 8}},       {8, {7, 9, 5}}, {9, {8, 6}}, {4, {7, 5, 1}},
-    {5, {4, 8, 6, 2}}, {6, {9, 5, 3}}, {1, {2, 4}}, {2, {1, 5, 3, 0}},
-    {3, {6, 2, A}},    {0, {2, A}},    {A, {3, 0}}};
+using Graph = unordered_map<int, vector<pair<int, int>>>;
 
-const unordered_map<int, vector<int>> DIRECTIONAL_KEYPAD = {
-    {UP, {DOWN, A}},
-    {A, {UP, RIGHT}},
-    {LEFT, {DOWN}},
-    {DOWN, {LEFT, RIGHT, UP}},
-    {RIGHT, {DOWN, A}}};
+// clang-format off
+const Graph NUMERIC_KEYPAD = {
+    {7, {{4, DOWN}, {8, RIGHT}}},
+    {8, {{7, LEFT}, {9, RIGHT}, {5, DOWN}}},
+    {9, {{8, LEFT}, {6, DOWN}}},
+    {4, {{7, UP}, {5, RIGHT}, {1, DOWN}}},
+    {5, {{4, LEFT}, {8, UP}, {6, RIGHT}, {2, DOWN}}},
+    {6, {{9, UP}, {5, LEFT}, {3, DOWN}}},
+    {1, {{2, RIGHT}, {4, UP}}},
+    {2, {{1, LEFT}, {5, UP}, {3, RIGHT}, {0, DOWN}}},
+    {3, {{6, UP}, {2, LEFT}, {A, DOWN}}},
+    {0, {{2, UP}, {A, RIGHT}}},
+    {A, {{3, UP}, {0, LEFT}}}};
+// clang-format on
+
+const Graph DIRECTIONAL_KEYPAD = {
+    {UP, {{DOWN, DOWN}, {A, RIGHT}}},
+    {A, {{UP, LEFT}, {RIGHT, DOWN}}},
+    {LEFT, {{DOWN, RIGHT}}},
+    {DOWN, {{LEFT, LEFT}, {RIGHT, RIGHT}, {UP, UP}}},
+    {RIGHT, {{DOWN, LEFT}, {A, UP}}}};
 
 int to_int(const char c) {
   switch (c) {
@@ -82,8 +95,7 @@ int extract_min(vector<int> &queue, const unordered_map<int, int> distances) {
   return result;
 }
 
-string shortest_path(const int start, const int end,
-                     const unordered_map<int, vector<int>> graph) {
+string shortest_path(const int start, const int end, const Graph &graph) {
   unordered_map<int, int> dist;
   unordered_map<int, int> prev;
   vector<int> q;
@@ -91,11 +103,12 @@ string shortest_path(const int start, const int end,
     dist[v] = numeric_limits<int>::max();
     q.push_back(v);
   }
+  dist[start] = 0;
 
   while (!q.empty()) {
     int u = extract_min(q, dist);
 
-    for (int v : graph.at(u)) {
+    for (const auto& [v, _] : graph.at(u)) {
       int alt = dist[u] + 1;
       if (alt < dist[v]) {
         dist[v] = alt;
@@ -111,11 +124,14 @@ string shortest_path(const int start, const int end,
     u = prev[u];
   }
   reverse(s.begin(), s.end());
+
+  cout << "path from " << to_char(start) << " to " << to_char(end) << " = " << s
+       << endl;
+
   return s;
 }
 
-string process_sequence(const string &code,
-                        const unordered_map<int, vector<int>> &graph) {
+string process_sequence(const string &code, const Graph &graph) {
   int start = A;
   string result;
   for (size_t i = 0; i < code.size(); ++i) {

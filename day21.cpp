@@ -1,10 +1,12 @@
+#include <algorithm>
+#include <cassert>
 #include <cstddef>
 #include <limits>
-#include <stack>
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
+
+namespace Day21 {
 
 using namespace std;
 
@@ -43,7 +45,7 @@ int to_int(const char c) {
   }
 }
 
-char to_int(const int i) {
+char to_char(const int i) {
   switch (i) {
   case A:
     return 'A';
@@ -60,6 +62,26 @@ char to_int(const int i) {
   }
 }
 
+int extract_min(vector<int> &queue, const unordered_map<int, int> distances) {
+  assert(!queue.empty());
+
+  int result = queue[0];
+  int min_distance = distances.at(result);
+  size_t index = 0;
+  for (size_t i = 1; i < queue.size(); ++i) {
+    const int current = queue[i];
+    const int distance = distances.at(current);
+    if (distance < min_distance) {
+      result = current;
+      min_distance = distance;
+      index = i;
+    }
+  }
+
+  queue.erase(queue.begin() + index);
+  return result;
+}
+
 string shortest_path(const int start, const int end,
                      const unordered_map<int, vector<int>> graph) {
   unordered_map<int, int> dist;
@@ -71,7 +93,7 @@ string shortest_path(const int start, const int end,
   }
 
   while (!q.empty()) {
-    int u = extract_min(q);
+    int u = extract_min(q, dist);
 
     for (int v : graph.at(u)) {
       int alt = dist[u] + 1;
@@ -88,7 +110,7 @@ string shortest_path(const int start, const int end,
     s += to_char(u);
     u = prev[u];
   }
-  s.reserve();
+  reverse(s.begin(), s.end());
   return s;
 }
 
@@ -115,10 +137,12 @@ int complexity(const string &code) {
   return result.size() * numeric_part;
 }
 
-int solve(const vector<string> &input) {
+int solve_day21_pt1(const vector<string> &input) {
   int result = 0;
   for (const string &code : input) {
     result += complexity(code);
   }
   return result;
 }
+
+} // namespace Day21

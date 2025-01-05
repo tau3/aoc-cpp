@@ -1,7 +1,6 @@
 #include "day20.hpp"
 #include <cassert>
 #include <cstddef>
-#include <iostream>
 #include <stack>
 #include <unordered_map>
 
@@ -66,14 +65,13 @@ int run(const Point &start, const vector<string> &grid) {
   stack<pair<Point, int>> s;
   s.push({start, 0});
   unordered_map<Point, int, PointHash> distances;
-  int d = 0;
   while (!s.empty()) {
-    const auto [v, dd] = s.top();
+    const auto [v, distance] = s.top();
     s.pop();
-    if (distances.find(v) != distances.end()) {
-      distances[v] = d;
-      for (const Point &w : adjacent(v, grid)) {
-        s.push({w, d + 1});
+    if (distances.find(v) == distances.end()) {
+      distances[v] = distance;
+      for (const Point w : adjacent(v, grid)) {
+        s.push({w, distance + 1});
       }
     }
   }
@@ -91,7 +89,7 @@ int run(const Point &start, const vector<string> &grid) {
       const int dist = abs(lhs.r - rhs.r) + abs(lhs.c - rhs.c);
       if (dist == 2) {
         const int saved = abs(distances[lhs] - distances[rhs]);
-        if (saved >= 100) {
+        if (saved >= 100 + dist) {
           ++result;
         }
       }
@@ -102,16 +100,15 @@ int run(const Point &start, const vector<string> &grid) {
 }
 
 int solve_day20_pt1(const vector<string> &input) {
-  cout << "go" << endl;
   Point start;
   for (size_t r = 0; r < input.size(); ++r) {
     for (size_t c = 0; c < input[0].size(); ++c) {
       if (input[r][c] == 'S') {
         start = {int(r), int(c)};
+        break;
       }
     }
   }
-  cout << "start " << start.r << " " << start.c << endl;
   return run(start, input);
 };
 

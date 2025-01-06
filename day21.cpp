@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstddef>
 #include <limits>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -94,21 +95,23 @@ int extract_min(vector<int> &queue, const unordered_map<int, int> &distances) {
   return result;
 }
 
-int get_next(int current, char direction, const Graph &graph) {
+optional<int> get_next(int current, char direction, const Graph &graph) {
   const auto &button_to_direction = graph.at(current);
   for (const auto &[button, current_direction] : button_to_direction) {
     if (current_direction == to_int(direction)) {
       return button;
     }
   }
-  return -666;
+  return nullopt;
 }
 
 bool is_valid_path(const int start, const string &path, const Graph &graph) {
   int current = start;
   for (const auto direction : path) {
-    current = get_next(current, direction, graph);
-    if (current == -666) {
+    optional<int> maybe_next = get_next(current, direction, graph);
+    if (maybe_next.has_value()) {
+      current = maybe_next.value();
+    } else {
       return false;
     }
   }

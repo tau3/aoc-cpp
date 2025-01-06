@@ -3,7 +3,6 @@
 #include <cstddef>
 #include <iostream>
 #include <limits>
-#include <stack>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -76,7 +75,7 @@ char to_char(const int i) {
   }
 }
 
-int extract_min(vector<int> &queue, const unordered_map<int, int> distances) {
+int extract_min(vector<int> &queue, const unordered_map<int, int> &distances) {
   assert(!queue.empty());
 
   int result = queue[0];
@@ -96,8 +95,64 @@ int extract_min(vector<int> &queue, const unordered_map<int, int> distances) {
   return result;
 }
 
+int get_next(int current, char direction, const Graph &graph) {
+  const auto &asd = graph.at(current);
+  for (const auto &[k, v] : asd) {
+    if (v == to_int(direction)) {
+      return k;
+    }
+  }
+  cout << "no next " << current << " " <<to_int(direction) << endl;
+  // throw "asd";
+  return -666;
+}
+
+string optimize(const int start, const int end, const Graph &graph,
+                const string &path) {
+  string v1 = path;
+  sort(v1.begin(), v1.end());
+  string v2 = v1;
+  reverse(v2.begin(), v2.end());
+
+  int current = start;
+  bool v1_valid = true;
+  for (const auto x : v1) {
+    // if (((current == 1) && (x == DOWN)) || (current == 0 && (x == LEFT)) ||
+    //     (current == LEFT && (x == UP)) || ((current == UP) && (x == LEFT))) {
+    //   v1_valid = false;
+    //   break;
+    // }
+    current = get_next(current, x, graph);
+    if(current == -666){
+      v1_valid = false;
+      break;
+    }
+  }
+  if (v1_valid) {
+    return v1;
+  }
+
+  current = start;
+  bool v2_valid = true;
+  for (const auto x : v2) {
+    // if (((current == 1) && (x == DOWN)) || (current == 0 && (x == LEFT)) ||
+        // (current == LEFT && (x == UP)) || ((current == UP) && (x == LEFT))) {
+      // v2_valid = false;
+      // break;
+    // }
+    current = get_next(current, x, graph);
+    if(current == -666){
+      v2_valid = false;
+      break;
+    }
+  }
+  if (v2_valid) {
+    return v2;
+  }
+  return path;
+}
+
 string shortest_path(const int start, const int end, const Graph &graph) {
-  cout << "sp between " << to_char(start) << " and " << to_char(end) << endl;
   unordered_map<int, int> dist;
   unordered_map<int, int> prev;
   vector<int> q;
@@ -126,21 +181,15 @@ string shortest_path(const int start, const int end, const Graph &graph) {
     u = prev[u];
   }
   s.push_back(start);
-  // reverse(s.begin(), s.end());
 
   string result;
-  // string result = to_string(start);
   for (size_t i = 1; i < s.size(); ++i) {
     char from = s[i - 1];
     char to = s[i];
-    // result += graph.at(from).at(to);
-    // result += to_char(graph.at(from).at(to));
     result += to_char(graph.at(to).at(from));
   }
 
-  cout << "path from " << to_char(start) << " to " << to_char(end) << " = " << result << endl;
-
-  return result;
+  return optimize(start, end, graph, result);
 }
 
 string process_sequence(const string &code, const Graph &graph) {
@@ -157,11 +206,18 @@ string process_sequence(const string &code, const Graph &graph) {
 
 int complexity(const string &code) {
   string result = process_sequence(code, NUMERIC_KEYPAD);
+  cout << "code=" << code << " l=" << result << endl;
   result = process_sequence(result, DIRECTIONAL_KEYPAD);
+  cout << "code=" << code << " l=" << result << endl;
   result = process_sequence(result, DIRECTIONAL_KEYPAD);
-  result = process_sequence(result, DIRECTIONAL_KEYPAD);
+  cout << "code=" << code << " l=" << result << endl;
 
-  int numeric_part = stoi(code.substr(0, code.size() - 2));
+  int numeric_part = stoi(code.substr(0, code.size() - 1));
+  cout << "code=" << code << " l=" << result.size()
+       << " numeric=" << numeric_part << endl;
+
+  cout << "code=" << code << " l=" << result << endl;
+
   return result.size() * numeric_part;
 }
 

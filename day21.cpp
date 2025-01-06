@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
-#include <iostream>
 #include <limits>
 #include <string>
 #include <unordered_map>
@@ -96,57 +95,36 @@ int extract_min(vector<int> &queue, const unordered_map<int, int> &distances) {
 }
 
 int get_next(int current, char direction, const Graph &graph) {
-  const auto &asd = graph.at(current);
-  for (const auto &[k, v] : asd) {
-    if (v == to_int(direction)) {
-      return k;
+  const auto &button_to_direction = graph.at(current);
+  for (const auto &[button, current_direction] : button_to_direction) {
+    if (current_direction == to_int(direction)) {
+      return button;
     }
   }
-  cout << "no next " << current << " " <<to_int(direction) << endl;
-  // throw "asd";
   return -666;
+}
+
+bool is_valid_path(const int start, const string &path, const Graph &graph) {
+  int current = start;
+  for (const auto direction : path) {
+    current = get_next(current, direction, graph);
+    if (current == -666) {
+      return false;
+    }
+  }
+  return true;
 }
 
 string optimize(const int start, const int end, const Graph &graph,
                 const string &path) {
   string v1 = path;
   sort(v1.begin(), v1.end());
-  string v2 = v1;
-  reverse(v2.begin(), v2.end());
-
-  int current = start;
-  bool v1_valid = true;
-  for (const auto x : v1) {
-    // if (((current == 1) && (x == DOWN)) || (current == 0 && (x == LEFT)) ||
-    //     (current == LEFT && (x == UP)) || ((current == UP) && (x == LEFT))) {
-    //   v1_valid = false;
-    //   break;
-    // }
-    current = get_next(current, x, graph);
-    if(current == -666){
-      v1_valid = false;
-      break;
-    }
-  }
-  if (v1_valid) {
+  if (is_valid_path(start, v1, graph)) {
     return v1;
   }
-
-  current = start;
-  bool v2_valid = true;
-  for (const auto x : v2) {
-    // if (((current == 1) && (x == DOWN)) || (current == 0 && (x == LEFT)) ||
-        // (current == LEFT && (x == UP)) || ((current == UP) && (x == LEFT))) {
-      // v2_valid = false;
-      // break;
-    // }
-    current = get_next(current, x, graph);
-    if(current == -666){
-      v2_valid = false;
-      break;
-    }
-  }
-  if (v2_valid) {
+  string v2 = v1;
+  reverse(v2.begin(), v2.end());
+  if (is_valid_path(start, v2, graph)) {
     return v2;
   }
   return path;
@@ -206,17 +184,9 @@ string process_sequence(const string &code, const Graph &graph) {
 
 int complexity(const string &code) {
   string result = process_sequence(code, NUMERIC_KEYPAD);
-  cout << "code=" << code << " l=" << result << endl;
   result = process_sequence(result, DIRECTIONAL_KEYPAD);
-  cout << "code=" << code << " l=" << result << endl;
   result = process_sequence(result, DIRECTIONAL_KEYPAD);
-  cout << "code=" << code << " l=" << result << endl;
-
   int numeric_part = stoi(code.substr(0, code.size() - 1));
-  cout << "code=" << code << " l=" << result.size()
-       << " numeric=" << numeric_part << endl;
-
-  cout << "code=" << code << " l=" << result << endl;
 
   return result.size() * numeric_part;
 }

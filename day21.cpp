@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <iostream>
 #include <limits>
+#include <stack>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -17,7 +18,7 @@ const int DOWN = -3;
 const int LEFT = -4;
 const int RIGHT = -5;
 
-using Graph = unordered_map<int, vector<pair<int, int>>>;
+using Graph = unordered_map<int, unordered_map<int, int>>;
 
 // clang-format off
 const Graph NUMERIC_KEYPAD = {
@@ -65,11 +66,11 @@ char to_char(const int i) {
   case UP:
     return '^';
   case LEFT:
-    return LEFT;
+    return '<';
   case DOWN:
-    return DOWN;
+    return 'v';
   case RIGHT:
-    return RIGHT;
+    return '>';
   default:
     return '0' + i;
   }
@@ -96,6 +97,7 @@ int extract_min(vector<int> &queue, const unordered_map<int, int> distances) {
 }
 
 string shortest_path(const int start, const int end, const Graph &graph) {
+  cout << "sp between " << to_char(start) << " and " << to_char(end) << endl;
   unordered_map<int, int> dist;
   unordered_map<int, int> prev;
   vector<int> q;
@@ -108,7 +110,7 @@ string shortest_path(const int start, const int end, const Graph &graph) {
   while (!q.empty()) {
     int u = extract_min(q, dist);
 
-    for (const auto& [v, _] : graph.at(u)) {
+    for (const auto &[v, _] : graph.at(u)) {
       int alt = dist[u] + 1;
       if (alt < dist[v]) {
         dist[v] = alt;
@@ -118,17 +120,27 @@ string shortest_path(const int start, const int end, const Graph &graph) {
   }
 
   int u = end;
-  string s;
+  vector<int> s;
   while (u != start) {
-    s += to_char(u);
+    s.push_back(u);
     u = prev[u];
   }
-  reverse(s.begin(), s.end());
+  s.push_back(start);
+  // reverse(s.begin(), s.end());
 
-  cout << "path from " << to_char(start) << " to " << to_char(end) << " = " << s
-       << endl;
+  string result;
+  // string result = to_string(start);
+  for (size_t i = 1; i < s.size(); ++i) {
+    char from = s[i - 1];
+    char to = s[i];
+    // result += graph.at(from).at(to);
+    // result += to_char(graph.at(from).at(to));
+    result += to_char(graph.at(to).at(from));
+  }
 
-  return s;
+  cout << "path from " << to_char(start) << " to " << to_char(end) << " = " << result << endl;
+
+  return result;
 }
 
 string process_sequence(const string &code, const Graph &graph) {

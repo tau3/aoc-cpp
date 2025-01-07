@@ -7,7 +7,7 @@ using namespace std;
 using namespace Day23;
 
 int main() {
-  // const vector<string> input = read_file("../day22_input");
+  // const vector<string> input = read_file("../day23_input");
   // clang-format off
   const vector<string> input = {
     "kh-tc",

@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <string>
-#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -10,22 +9,6 @@
 namespace Day23 {
 
 using namespace std;
-
-using Graph = unordered_map<string, vector<string>>;
-
-void add_edge(Graph &graph, const string &left, const string &right) {
-  if (graph.find(left) != graph.end()) {
-    graph[left].push_back(right);
-  } else {
-    graph[left] = {right};
-  }
-
-  if (graph.find(right) != graph.end()) {
-    graph[right].push_back(left);
-  } else {
-    graph[right] = {left};
-  }
-}
 
 pair<string, string> make_edge(const string &from, const string &to) {
   if (from < to) {
@@ -52,7 +35,6 @@ size_t solve(vector<pair<string, string>> edges) {
           sort(edges.begin(), edges.end());
           const string cycle = edges[0] + "," + edges[1] + "," + edges[2];
           if (is_valid_cycle(cycle)) {
-            cout << cycle << endl;
             result.insert(cycle);
           }
         }

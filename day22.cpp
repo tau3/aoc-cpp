@@ -1,4 +1,6 @@
 #include <array>
+#include <cstddef>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -42,27 +44,49 @@ num_t solve_day22_pt1(const vector<string> &input) {
   return result;
 }
 
-using Cache = unordered_map<array<int, 4>, int>;
+struct ArrayHash {
+  size_t operator()(const array<int, 4> &arr) const {
+    return 31 * arr[0] + 17 * arr[1] + 11 * arr[2] + 19 * arr[3];
+  }
+};
 
-Cache foo(const num_t secret) {
+using Cache = unordered_map<array<int, 4>, int, ArrayHash>;
+
+Cache build_changes_cache(const num_t secret) {
+  vector<num_t> secrets;
+  secrets.reserve(2000);
+  secrets.push_back(secret);
+  for (size_t i = 1; i < 2000; ++i) {
+    secrets.push_back(next(secrets[i - 1]));
+  }
+
   vector<int> prices;
-  prices.reserve(2000 + 1);
-  prices[0] = secret;
+  prices.reserve(secrets.size());
+  for (size_t i = 0; i < secrets.size(); i++) {
+    const int price = secrets[i] % 10;
+    prices.push_back(price);
+  }
 
-  for (int i = 1; i < 2000; ++i) {
-    prices[i] = generate(prices[i - 1]);
-    prices[i] = prices[i] % 10;
+  vector<int> changes;
+  changes.reserve(prices.size() - 1);
+  for (size_t i = 1; i < prices.size(); ++i) {
+    const int change = prices[i] - prices[i - 1];
+    changes.push_back(change);
   }
 
   Cache cache;
-  for (size_t i = 3; i < prices.size(); ++i) {
-    const int t0 = prices[i - 3];
-    const int t1 = prices[i - 2];
-    const int t2 = prices[i - 1];
-    const int t3 = prices[i];
+  for (size_t i = 3; i < changes.size(); ++i) {
+    const int t0 = changes[i - 3];
+    const int t1 = changes[i - 2];
+    const int t2 = changes[i - 1];
+    const int t3 = changes[i];
 
     const array<int, 4> key = {t0, t1, t2, t3};
-    cache[key] = max(prices[i], cache[key]);
+    if (cache.find(key) != cache.end()) {
+      cache[key] = max(prices[i + 1], cache[key]);
+    } else {
+      cache[key] = prices[i + 1];
+    }
   }
   return cache;
 }
@@ -71,35 +95,37 @@ int solve_day22_pt2(const vector<string> &input) {
   vector<Cache> caches;
   caches.reserve(input.size());
   for (const string &line : input) {
-    const Cache cache = foo(stol(line));
+    const Cache cache = build_changes_cache(stol(line));
     caches.push_back(cache);
   }
 
-  unordered_set<array<int, 4>> all_keys;
+  unordered_set<array<int, 4>, ArrayHash> all_keys;
   for (const Cache &cache : caches) {
-    for (const auto &[k, v] : cache) {
-      all_keys.insert(k);
+    for (const auto &[key, _] : cache) {
+      all_keys.insert(key);
     }
   }
 
-  unordered_map<array<int, 4>, int> result;
+  unordered_map<array<int, 4>, int, ArrayHash> prices;
   for (const array<int, 4> &key : all_keys) {
     for (const Cache &cache : caches) {
       int price = 0;
       if (cache.find(key) != cache.end()) {
         price = cache.at(key);
       }
-      result[key] += price;
+      prices[key] += price;
     }
   }
 
-  int x = 0;
-  for (const auto &[k, v] : result) {
-    if (x < v) {
-      x = v;
+  int result = 0;
+  for (const auto [k, price] : prices) {
+    if (result < price) {
+      result = price;
+      cout << "max at key " << k[0] << " " << k[1] << " " << k[2] << " " << k[3]
+           << " " << endl;
     }
   }
-  return x;
+  return result;
 }
 
 } // namespace Day22

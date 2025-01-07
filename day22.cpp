@@ -1,16 +1,11 @@
+#include "day22.hpp"
 #include <array>
+#include <cassert>
 #include <cstddef>
-#include <iostream>
-#include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <vector>
 
 namespace Day22 {
-
-using namespace std;
-
-using num_t = long;
 
 num_t mix(const num_t val, const num_t secret) { return val ^ secret; }
 
@@ -53,12 +48,14 @@ struct ArrayHash {
 using Cache = unordered_map<array<int, 4>, int, ArrayHash>;
 
 Cache build_changes_cache(const num_t secret) {
+  const size_t length = 2000;
   vector<num_t> secrets;
-  secrets.reserve(2000);
+  secrets.reserve(length + 1);
   secrets.push_back(secret);
-  for (size_t i = 1; i < 2000; ++i) {
+  for (size_t i = 1; i < length + 1; ++i) {
     secrets.push_back(next(secrets[i - 1]));
   }
+  assert(secrets.size() == length + 1);
 
   vector<int> prices;
   prices.reserve(secrets.size());
@@ -73,6 +70,7 @@ Cache build_changes_cache(const num_t secret) {
     const int change = prices[i] - prices[i - 1];
     changes.push_back(change);
   }
+  assert(changes.size() == length);
 
   Cache cache;
   for (size_t i = 3; i < changes.size(); ++i) {
@@ -83,10 +81,9 @@ Cache build_changes_cache(const num_t secret) {
 
     const array<int, 4> key = {t0, t1, t2, t3};
     if (cache.find(key) != cache.end()) {
-      cache[key] = max(prices[i + 1], cache[key]);
-    } else {
-      cache[key] = prices[i + 1];
+      continue;
     }
+    cache[key] = prices[i + 1];
   }
   return cache;
 }
@@ -106,8 +103,9 @@ int solve_day22_pt2(const vector<string> &input) {
     }
   }
 
-  unordered_map<array<int, 4>, int, ArrayHash> prices;
+  Cache prices;
   for (const array<int, 4> &key : all_keys) {
+    prices[key] = 0;
     for (const Cache &cache : caches) {
       int price = 0;
       if (cache.find(key) != cache.end()) {
@@ -118,11 +116,9 @@ int solve_day22_pt2(const vector<string> &input) {
   }
 
   int result = 0;
-  for (const auto [k, price] : prices) {
+  for (const auto [_, price] : prices) {
     if (result < price) {
       result = price;
-      cout << "max at key " << k[0] << " " << k[1] << " " << k[2] << " " << k[3]
-           << " " << endl;
     }
   }
   return result;

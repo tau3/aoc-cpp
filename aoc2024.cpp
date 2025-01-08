@@ -45,7 +45,7 @@ int main() {
   };
   // clang-format on
 
-  cout << solve_day23_pt1(input) << endl;
+  cout << solve_day23_pt2(input) << endl;
 
   return 0;
 }

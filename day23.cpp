@@ -72,12 +72,12 @@ unordered_set<string> intersection(const unordered_set<string> &lhs,
                                    const unordered_set<string> &rhs) {
   unordered_set<string> result;
   set_intersection(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(),
-                   back_inserter(result));
+                   std::inserter(result, result.begin()));
   return result;
 }
 
-unordered_set<string> n(const string &vertice,
-                        const vector<pair<string, string>> &graph) {
+unordered_set<string> neighbour(const string &vertice,
+                                const vector<pair<string, string>> &graph) {
   unordered_set<string> result;
   for (const auto &[lhs, rhs] : graph) {
     if (lhs == vertice) {
@@ -89,7 +89,7 @@ unordered_set<string> n(const string &vertice,
   return result;
 }
 
-void bron_kerbosh(unordered_set<string> &r, unordered_set<string> p,
+void bron_kerbosh(unordered_set<string> &r, unordered_set<string> &p,
                   unordered_set<string> &x,
                   vector<unordered_set<string>> &cliques,
                   const vector<pair<string, string>> &graph) {
@@ -98,24 +98,31 @@ void bron_kerbosh(unordered_set<string> &r, unordered_set<string> p,
   }
 
   for (const string &v : p) {
-    bron_kerbosh(union_set(r, {v}), intersection(p, n(v, graph)),
-                 intersection(x, n(v, graph)), graph);
-    p.extract(v);
+    auto rr = union_set(r, {v});
+    auto pp = intersection(p, neighbour(v, graph));
+    auto xx = intersection(x, neighbour(v, graph));
+    bron_kerbosh(rr, pp, xx, cliques, graph);
+    p.erase(v);
     x.insert(v);
   }
 }
 
 size_t solve_day23_pt2(const vector<string> &input) {
   vector<pair<string, string>> edges;
+  unordered_set<string> x;
   for (const string &line : input) {
     const vector<string> tokens = split(line, "-");
     const string left = tokens[0];
     const string right = tokens[1];
     edges.push_back(make_edge(left, right));
+    x.insert(left);
+    x.insert(right);
   }
 
   vector<unordered_set<string>> cliques;
-  bron_kerbosh({}, {}, cliques, edges);
+  unordered_set<string> r;
+  unordered_set<string> p;
+  bron_kerbosh(r, p, x, cliques, edges);
 
   size_t result = 0;
   for (const auto &clique : cliques) {

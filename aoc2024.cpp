@@ -22,6 +22,4 @@ int main() {
   // clang-format on
 
   cout << solve_day1_pt2(input) << endl;
-
-  return 0;
 }

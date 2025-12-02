@@ -1,3 +1,6 @@
+#ifndef UTIL_H
+#define UTIL_H
+
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -30,3 +33,5 @@ template <typename T> std::string to_str(const T &items) {
   }
   return result;
 }
+
+#endif

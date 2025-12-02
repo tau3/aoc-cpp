@@ -1,5 +1,4 @@
 #include "day1.hpp"
-#include <iostream>
 #include <string>
 
 namespace Day1 {
@@ -11,7 +10,6 @@ int solve_day1_pt1(const vector<string> &rotations) {
   int result = 0;
   for (const string &rotation : rotations) {
     current = apply(current, rotation);
-    cout << rotation << ' ' << current << endl;
     if (current == 0) {
       ++result;
     }
@@ -28,6 +26,7 @@ int solve_day1_pt2(const vector<string> &rotations) {
     result += (amount / 100);
     amount %= 100;
     amount *= direction;
+
     current += amount;
     if (current < 0) {
       current = 99 + current + 1;
@@ -35,10 +34,6 @@ int solve_day1_pt2(const vector<string> &rotations) {
     } else if (current > 99) {
       current = current - 99 - 1;
       ++result;
-    }
-    cout << rotation << ' ' << current << endl;
-    if (current == 0) {
-      // ++result;
     }
   }
   return result;

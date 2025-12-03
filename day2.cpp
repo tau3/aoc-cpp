@@ -32,7 +32,6 @@ long solve_day2_pt1(const vector<string> &input) {
       }
       if (is_invalid) {
         result += i;
-        cout << "invalid " << i << endl;
       }
     }
   }
@@ -42,7 +41,7 @@ long solve_day2_pt1(const vector<string> &input) {
 vector<size_t> possible_pattern_lengths(const string &number) {
   vector<size_t> result;
   const size_t length = number.length();
-  for (size_t i = 1; i < length / 2; i++) {
+  for (size_t i = 1; i <= length / 2; i++) {
     if (length % i == 0) {
       result.push_back(i);
     }
@@ -52,22 +51,22 @@ vector<size_t> possible_pattern_lengths(const string &number) {
 
 bool has_pattern(const string &number, const size_t step) {
   assert(step > 0);
+  const size_t length = number.length();
   for (size_t i = 0; i < step; i++) {
-    const char current = number[i];
-    for (size_t j = i; j < number.length(); j++) {
-      if (number[j] != current) {
-        break;
+    const char digit = number[i];
+    for (size_t j = i + step; j < length; j += step) {
+      if (number[j] != digit) {
+        return false;
       }
     }
-    return true;
   }
-  return false;
+  return true;
 }
 
 bool has_pattern(const long value) {
   const string str_rep = to_string(value);
   const vector<size_t> pattern_lengths = possible_pattern_lengths(str_rep);
-  for (size_t step : pattern_lengths) {
+  for (const size_t step : pattern_lengths) {
     if (has_pattern(str_rep, step)) {
       return true;
     }
@@ -84,7 +83,6 @@ long solve_day2_pt2(const vector<string> &input) {
     const long end = stol(tokens[1]);
     for (long i = start; i <= end; i++) {
       if (has_pattern(i)) {
-	cout << i << endl;
         result += i;
       }
     }

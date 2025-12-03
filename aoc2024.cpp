@@ -1,16 +1,19 @@
-#include "day2.hpp"
+#include "day3.hpp"
 #include "util.hpp"
 
 using namespace std;
-using namespace Day2;
+using namespace Day3;
 
 int main() {
-  const vector<string> input = read_file("../day2_input");
+  const vector<string> input = read_file("../day3_input");
   // clang-format off
   // const vector<string> input = {
-    // "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124",
-// };
-  // clang-format on
+  //   "987654321111111",
+  //   "811111111111119",
+  //   "234234234234278",
+  //   "818181911112111",
+  // };
+  // // clang-format on
 
-  cout << solve_day2_pt2(input) << endl;
+  cout << solve_day3_pt1(input) << endl;
 }

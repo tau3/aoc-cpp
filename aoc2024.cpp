@@ -13,7 +13,7 @@ int main() {
   //   "234234234234278",
   //   "818181911112111",
   // };
-  // // clang-format on
+  // // // clang-format on
 
-  cout << solve_day3_pt1(input) << endl;
+  cout << solve_day3_pt2(input) << endl;
 }

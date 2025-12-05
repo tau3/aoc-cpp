@@ -1,6 +1,8 @@
 #include "day5.hpp"
 #include "util.hpp"
 #include <algorithm>
+#include <deque>
+#include <queue>
 #include <string>
 #include <unordered_set>
 #include <utility>
@@ -10,6 +12,7 @@ namespace Day5 {
 
 using Range = pair<long, long>;
 using Ranges = vector<Range>;
+using RangesQ = deque<Range>;
 
 bool containts(const Ranges &ranges, const long num) {
   for (const auto &[start, end] : ranges) {
@@ -54,8 +57,29 @@ void merge(Range &left, const Range &right) {
   left.second = max(left.second, right.second);
 }
 
+void merge(RangesQ &ranges) {
+  if (ranges.size() <= 1) {
+    return;
+  }
+  bool merges_occured = false;
+  do {
+    const Range current = ranges.front();
+    ranges.pop_front();
+    for (Range &range : ranges) {
+      if (has_overlap(range, current)) {
+        merge(range, current);
+        merges_occured = true;
+        break;
+      }
+    }
+    if (!merges_occured) {
+      ranges.push_back(current);
+    }
+  } while (merges_occured || (ranges.size() > 1));
+}
+
 long solve_day5_pt2(const vector<string> &input) {
-  Ranges ranges;
+  RangesQ ranges;
   for (const string &line : input) {
     if (line.empty()) {
       break;
@@ -65,19 +89,11 @@ long solve_day5_pt2(const vector<string> &input) {
     const long start = stol(tokens[0]);
     const long finish = stol(tokens[1]);
     Range current = {start, finish};
-
-    bool merged = false;
-    for (Range &range : ranges) {
-      if (has_overlap(range, current)) {
-        merge(range, current);
-        merged = true;
-        break;
-      }
-    }
-    if (!merged) {
-      ranges.push_back(current);
-    }
+    ranges.push_back(current);
   }
+
+  merge(ranges);
+
   long result = 0;
   for (const auto &[start, finish] : ranges) {
     result += (finish - start + 1);

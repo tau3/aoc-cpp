@@ -18,14 +18,13 @@ bool starts_with(const string &input, const string &prefix) {
 }
 
 vector<string> split(const string &line, const string &delimiter) {
-
   vector<string> result;
   size_t last = 0;
   size_t next = 0;
   while ((next = line.find(delimiter, last)) != string::npos) {
     const string token = line.substr(last, next - last);
     result.push_back(token);
-    last = next + 1;
+    last = next + delimiter.size();
   }
   result.push_back(line.substr(last));
   return result;

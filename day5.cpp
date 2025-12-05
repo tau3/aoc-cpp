@@ -2,9 +2,7 @@
 #include "util.hpp"
 #include <algorithm>
 #include <deque>
-#include <queue>
 #include <string>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -58,26 +56,27 @@ void merge(Range &left, const Range &right) {
 }
 
 void merge(RangesQ &ranges) {
-  bool merges_occured = false;
+  size_t cycles_no_merge = 0;
   do {
-    if (ranges.size() <= 1) {
+    bool merges_occured = false;
+    if (ranges.size() == 1) {
       break;
     }
     const Range current = ranges.front();
     ranges.pop_front();
     for (Range &range : ranges) {
       if (has_overlap(range, current)) {
-        cout << "merge [" << range.first << ";" << range.second << "] and ["
-             << current.first << ";" << current.second << "]" << endl;
         merge(range, current);
         merges_occured = true;
+        cycles_no_merge = 0;
         break;
       }
     }
     if (!merges_occured) {
       ranges.push_back(current);
+      cycles_no_merge++;
     }
-  } while (merges_occured);
+  } while (cycles_no_merge < ranges.size());
 }
 
 long solve_day5_pt2(const vector<string> &input) {

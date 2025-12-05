@@ -49,7 +49,7 @@ int solve_day5_pt1(const vector<string> &input) {
 }
 
 bool has_overlap(const Range &left, const Range &right) {
-  return (left.first <= right.second) || (left.second >= right.first);
+  return (left.first <= right.second) && (right.first <= left.second);
 }
 
 void merge(Range &left, const Range &right) {
@@ -58,15 +58,17 @@ void merge(Range &left, const Range &right) {
 }
 
 void merge(RangesQ &ranges) {
-  if (ranges.size() <= 1) {
-    return;
-  }
   bool merges_occured = false;
   do {
+    if (ranges.size() <= 1) {
+      break;
+    }
     const Range current = ranges.front();
     ranges.pop_front();
     for (Range &range : ranges) {
       if (has_overlap(range, current)) {
+        cout << "merge [" << range.first << ";" << range.second << "] and ["
+             << current.first << ";" << current.second << "]" << endl;
         merge(range, current);
         merges_occured = true;
         break;
@@ -75,7 +77,7 @@ void merge(RangesQ &ranges) {
     if (!merges_occured) {
       ranges.push_back(current);
     }
-  } while (merges_occured || (ranges.size() > 1));
+  } while (merges_occured);
 }
 
 long solve_day5_pt2(const vector<string> &input) {

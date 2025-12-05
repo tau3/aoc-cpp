@@ -8,7 +8,7 @@ namespace Day4 {
 using namespace std;
 
 int solve_day4_pt1(const vector<string> &);
-// long solve_day3_pt2(const vector<string> &);
+int solve_day4_pt2(vector<string> &);
 } // namespace Day4
 
 #endif

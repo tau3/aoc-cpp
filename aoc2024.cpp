@@ -7,7 +7,7 @@ using namespace Day4;
 int main() {
   const vector<string> input = read_file("../day4_input");
   // clang-format off
-  // const vector<string> input = {
+//  const vector<string> input = {
 // "..@@.@@@@.",
 // "@@@.@.@.@@",
 // "@@@@@.@.@@",
@@ -21,5 +21,5 @@ int main() {
 //   };
   // clang-format on
 
-  cout << solve_day4_pt1(input) << endl;
+  cout << solve_day4_pt2(input) << endl;
 }

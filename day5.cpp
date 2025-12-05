@@ -1,12 +1,15 @@
 #include "day5.hpp"
 #include "util.hpp"
+#include <algorithm>
 #include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
 namespace Day5 {
 
-using Ranges = vector<pair<long, long>>;
+using Range = pair<long, long>;
+using Ranges = vector<Range>;
 
 bool containts(const Ranges &ranges, const long num) {
   for (const auto &[start, end] : ranges) {
@@ -38,6 +41,46 @@ int solve_day5_pt1(const vector<string> &input) {
         result++;
       }
     }
+  }
+  return result;
+}
+
+bool has_overlap(const Range &left, const Range &right) {
+  return (left.first <= right.second) || (left.second >= right.first);
+}
+
+void merge(Range &left, const Range &right) {
+  left.first = min(left.first, right.first);
+  left.second = max(left.second, right.second);
+}
+
+long solve_day5_pt2(const vector<string> &input) {
+  Ranges ranges;
+  for (const string &line : input) {
+    if (line.empty()) {
+      break;
+    }
+
+    const vector<string> tokens = split(line, "-");
+    const long start = stol(tokens[0]);
+    const long finish = stol(tokens[1]);
+    Range current = {start, finish};
+
+    bool merged = false;
+    for (Range &range : ranges) {
+      if (has_overlap(range, current)) {
+        merge(range, current);
+        merged = true;
+        break;
+      }
+    }
+    if (!merged) {
+      ranges.push_back(current);
+    }
+  }
+  long result = 0;
+  for (const auto &[start, finish] : ranges) {
+    result += (finish - start + 1);
   }
   return result;
 }

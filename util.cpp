@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include <cassert>
 #include <fstream>
 #include <string>
 #include <vector>

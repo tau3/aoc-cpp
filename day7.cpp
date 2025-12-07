@@ -34,7 +34,7 @@ int solve_day7_pt1(vector<string> &input) {
   return result;
 }
 
-using Memo = unordered_map<util::Point, uint64_t, util::PointHash>;
+using Memo = unordered_map<util::Point<size_t>, uint64_t, util::PointHash>;
 
 uint64_t count_ways_to(const vector<string> &input, const size_t row,
                        const size_t column, Memo &memo) {

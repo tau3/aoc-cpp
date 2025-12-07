@@ -37,17 +37,18 @@ template <typename T> std::string to_str(const T &items) {
 
 std::vector<std::string> split_by_spaces(const std::string &);
 
-struct Point {
-  size_t row;
-  size_t col;
+template <typename T> struct Point {
+  T row;
+  T col;
 };
 
-inline bool operator==(const Point &lhs, const Point &rhs) {
+template <typename T>
+inline bool operator==(const Point<T> &lhs, const Point<T> &rhs) {
   return (lhs.col == rhs.col) && (lhs.row == rhs.row);
 }
 
 struct PointHash {
-  size_t operator()(const Point &point) const {
+  template <typename T> size_t operator()(const Point<T> &point) const {
     const auto [r, c] = point;
     return 31 * r + 17 * c;
   }

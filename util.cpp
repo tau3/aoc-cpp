@@ -1,9 +1,9 @@
 #include "util.hpp"
 #include <cassert>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
 namespace util {
 

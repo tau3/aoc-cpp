@@ -1,4 +1,11 @@
 #include "day7.hpp"
+#include "util.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace Day7 {
 
@@ -21,6 +28,76 @@ int solve_day7_pt1(vector<string> &input) {
       } else if ((input[row][column] == '.') &&
                  (input[row - 1][column] == '|')) {
         input[row][column] = '|';
+      }
+    }
+  }
+  return result;
+}
+
+struct Point {
+  size_t row;
+  size_t col;
+};
+
+inline bool operator==(const Point &lhs, const Point &rhs) {
+  return (lhs.col == rhs.col) && (lhs.row == rhs.row);
+}
+
+inline ostream &operator<<(ostream &os, const Point &point) {
+  os << "Point{row=" << point.row << ";col=" << point.col << "}";
+  return os;
+}
+
+struct PointHash {
+  size_t operator()(const Point &point) const {
+    const auto [r, c] = point;
+    return 31 * r + 17 * c;
+  }
+};
+
+vector<Point> find_possible_parents(const vector<string> &input,
+                                    const size_t row, const size_t column) {
+  vector<Point> result;
+  for (int r = row - 2; r >= 0; r -= 2) {
+    if ((input[r][column + 1] == '^') && (input[r - 1][column + 1] == '|')) {
+      result.push_back({(size_t)r, column + 1});
+    }
+    if ((input[r][column - 1] == '^') && (input[r - 1][column - 1] == '|')) {
+      result.push_back({(size_t)r, column - 1});
+    }
+    if (!result.empty()) {
+      break;
+    }
+    return result;
+  }
+}
+
+uint64_t solve_day7_pt2(vector<string> &input) {
+  unordered_map<Point, uint64_t, PointHash> memo;
+  uint64_t result = 0;
+  for (size_t row = 0; row < input.size(); row++) {
+    for (size_t column = 1; column < input[0].size(); column++) {
+      if (input[row][column] == 'S') {
+        input[row + 1][column] = '|';
+        memo[{row + 2, column}] = 1;
+        continue;
+      }
+
+      if ((input[row][column] == '^') && (input[row - 1][column] == '|')) {
+        const vector<Point> parents = find_possible_parents(input, row, column);
+        cout << "parents for [" << row << ";" << column << "]" << endl;
+	util::print(parents);
+        uint64_t sum = 0;
+        for (const Point &parent : parents) {
+          sum += memo[parent];
+        }
+        memo[{row, column}] = sum;
+        cout << "[" << row << ";" << column << "]=" << sum << endl;
+        if (row == (input.size() - 2)) {
+          result += sum;
+        }
+        input[row][column - 1] = '|';
+        input[row][column + 1] = '|';
       }
     }
   }

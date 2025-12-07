@@ -29,6 +29,7 @@ uint64_t solve_day6_pt1(const vector<string> &input) {
 }
 
 bool is_all_spaces(const vector<string> &input, const size_t column) {
+  assert((column < input[0].size()) && (column >= 0));
   for (size_t i = 0; i < input.size(); i++) {
     if (input[i][column] != ' ') {
       return false;
@@ -70,9 +71,9 @@ uint64_t process(const vector<string> &input, int start, int end_exclusive) {
 
 uint64_t solve_day6_pt2(const vector<string> &input) {
   uint64_t result = 0;
-  int start = input.size() - 1;
+  int start = input[0].size() - 1;
   int end_exclusive = start;
-  for (size_t i = start; i >= 0; i--) {
+  for (int i = start; i >= 0; i--) {
     if (is_all_spaces(input, i)) {
       end_exclusive = i;
       result += process(input, start, end_exclusive);

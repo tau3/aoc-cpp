@@ -75,10 +75,6 @@ vector<Point> find_possible_parents(const vector<string> &input,
 uint64_t count_ways_to(const vector<string> &input, const size_t row,
                        const size_t column) {
   const char upper = input[row - 1][column];
-  if (upper == '|') {
-    return count_ways_to(input, row - 1, column);
-  }
-
   if (upper == 'S') {
     return 1;
   }
@@ -89,6 +85,9 @@ uint64_t count_ways_to(const vector<string> &input, const size_t row,
   }
   if ((column > 0) && (input[row][column - 1] == '^')) {
     result += count_ways_to(input, row, column - 1);
+  }
+  if (upper == '|') {
+    result += count_ways_to(input, row - 1, column);
   }
   cout << "ways to " << row << " " << column << " = " << result << endl;
   return result;

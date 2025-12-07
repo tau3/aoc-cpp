@@ -68,39 +68,58 @@ vector<Point> find_possible_parents(const vector<string> &input,
     if (!result.empty()) {
       break;
     }
-    return result;
   }
+  return result;
 }
 
 uint64_t solve_day7_pt2(vector<string> &input) {
   unordered_map<Point, uint64_t, PointHash> memo;
-  uint64_t result = 0;
-  for (size_t row = 0; row < input.size(); row++) {
+  for (size_t row = 1; row < input.size(); row++) {
     for (size_t column = 1; column < input[0].size(); column++) {
-      if (input[row][column] == 'S') {
-        input[row + 1][column] = '|';
-        memo[{row + 2, column}] = 1;
+      if (input[row - 1][column] == 'S') {
+        input[row][column] = '|';
+        memo[{row + 1, column}] = 1;
+        input[row + 1][column + 1] = '|';
+        input[row + 1][column - 1] = '|';
         continue;
       }
 
       if ((input[row][column] == '^') && (input[row - 1][column] == '|')) {
+        cout << "^ at " << row << " " << column << endl;
+        if (memo.find({row, column}) != memo.end()) {
+          continue;
+        }
+
         const vector<Point> parents = find_possible_parents(input, row, column);
         cout << "parents for [" << row << ";" << column << "]" << endl;
-	util::print(parents);
+        util::print(parents);
         uint64_t sum = 0;
         for (const Point &parent : parents) {
           sum += memo[parent];
         }
         memo[{row, column}] = sum;
         cout << "[" << row << ";" << column << "]=" << sum << endl;
-        if (row == (input.size() - 2)) {
-          result += sum;
-        }
         input[row][column - 1] = '|';
         input[row][column + 1] = '|';
+      } else if ((input[row][column] == '.') &&
+                 (input[row - 1][column] == '|')) {
+        input[row][column] = '|';
       }
     }
   }
+  util::print(input);
+
+  uint64_t result = 0;
+  for (size_t column = 0; column < input[0].size(); column++) {
+    if (input[input.size() - 1][column] == '|') {
+      const auto parents =
+          find_possible_parents(input, input.size() - 1, column);
+      for (const auto &parent : parents) {
+        result += memo[parent];
+      }
+    }
+  }
+
   return result;
 }
 

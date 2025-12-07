@@ -34,12 +34,14 @@ int solve_day7_pt1(vector<string> &input) {
   return result;
 }
 
-using Memo = unordered_map<util::Point<size_t>, uint64_t, util::PointHash>;
+using Point = util::Point<size_t>;
+using Memo = unordered_map<Point, uint64_t, util::PointHash>;
 
 uint64_t count_ways_to(const vector<string> &input, const size_t row,
                        const size_t column, Memo &memo) {
-  if (memo.find({row, column}) != memo.end()) {
-    return memo[{row, column}];
+  const auto cache_key = Point(row, column);
+  if (memo.find(cache_key) != memo.end()) {
+    return memo[cache_key];
   }
 
   const char upper = input[row - 1][column];
@@ -57,7 +59,7 @@ uint64_t count_ways_to(const vector<string> &input, const size_t row,
   if (upper == '|') {
     result += count_ways_to(input, row - 1, column, memo);
   }
-  memo[{row, column}] = result;
+  memo[cache_key] = result;
   return result;
 }
 

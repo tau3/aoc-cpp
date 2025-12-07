@@ -40,6 +40,8 @@ std::vector<std::string> split_by_spaces(const std::string &);
 template <typename T> struct Point {
   T row;
   T col;
+
+  explicit Point(T row, T col) : row(row), col(col) {}
 };
 
 template <typename T>

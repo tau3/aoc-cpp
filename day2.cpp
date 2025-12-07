@@ -12,8 +12,8 @@ using namespace std;
 long solve_day2_pt1(const vector<string> &input) {
   const string &line = input[0];
   long result = 0;
-  for (const string &range : split(line, ",")) {
-    const vector<string> tokens = split(range, "-");
+  for (const string &range : util::split(line, ",")) {
+    const vector<string> tokens = util::split(range, "-");
     const long start = stol(tokens[0]);
     const long end = stol(tokens[1]);
     for (long i = start; i <= end; i++) {
@@ -77,8 +77,8 @@ bool has_pattern(const long value) {
 long solve_day2_pt2(const vector<string> &input) {
   const string &line = input[0];
   long result = 0;
-  for (const string &range : split(line, ",")) {
-    const vector<string> tokens = split(range, "-");
+  for (const string &range : util::split(line, ",")) {
+    const vector<string> tokens = util::split(range, "-");
     const long start = stol(tokens[0]);
     const long end = stol(tokens[1]);
     for (long i = start; i <= end; i++) {

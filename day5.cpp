@@ -32,7 +32,7 @@ int solve_day5_pt1(const vector<string> &input) {
     }
 
     if (parsing_ranges) {
-      const vector<string> tokens = split(line, "-");
+      const vector<string> tokens = util::split(line, "-");
       const long start = stol(tokens[0]);
       const long finish = stol(tokens[1]);
       ranges.push_back({start, finish});
@@ -86,7 +86,7 @@ long solve_day5_pt2(const vector<string> &input) {
       break;
     }
 
-    const vector<string> tokens = split(line, "-");
+    const vector<string> tokens = util::split(line, "-");
     const long start = stol(tokens[0]);
     const long finish = stol(tokens[1]);
     Range current = {start, finish};

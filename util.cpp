@@ -1,5 +1,10 @@
 #include "util.hpp"
 #include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+
+namespace util {
 
 using namespace std;
 
@@ -29,3 +34,16 @@ vector<string> split(const string &line, const string &delimiter) {
   result.push_back(line.substr(last));
   return result;
 }
+
+vector<string> split_by_spaces(const string &line) {
+  std::stringstream ss(line);
+  std::string word;
+
+  vector<string> result;
+  while (ss >> word) {
+    result.push_back(word);
+  }
+  return result;
+}
+
+} // namespace util

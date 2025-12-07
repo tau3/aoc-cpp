@@ -1,26 +1,19 @@
-#include "day5.hpp"
+#include "day6.hpp"
 #include "util.hpp"
 
 using namespace std;
-using namespace Day5;
+using namespace Day6;
 
 int main() {
-  const vector<string> input = read_file("../day5_input");
+  const vector<string> input = util::read_file("../day6_input");
   // clang-format off
  // const vector<string> input = {
- //   "3-5",
- //   "10-14",
- //   "16-20",
- //   "12-18",
- //   "",
- //   "1",
- //   "5",
- //   "8",
- //   "11",
- //   "17",
- //   "32",
+ //   "123 328  51 64 ",
+ //   " 45 64  387 23 ",
+ //   "  6 98  215 314",
+ //   "*   +   *   +  ",
  //  };
   // clang-format on
 
-  cout << solve_day5_pt2(input) << endl;
+  cout << solve_day6_pt1(input) << endl;
 }

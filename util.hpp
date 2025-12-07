@@ -1,10 +1,11 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
+
+namespace util {
 
 std::vector<std::string> read_file(const std::string &);
 
@@ -24,7 +25,7 @@ template <typename T> void print(const T &items) {
   }
   std::cout << std::endl;
 }
-	
+
 template <typename T> std::string to_str(const T &items) {
   std::string result = "items: ";
   for (const int &item : items) {
@@ -33,5 +34,9 @@ template <typename T> std::string to_str(const T &items) {
   }
   return result;
 }
+
+std::vector<std::string> split_by_spaces(const std::string &);
+
+} // namespace util
 
 #endif

@@ -6,9 +6,7 @@
 #include <cstddef>
 #include <map>
 #include <string>
-#include <unordered_map>
 #include <unordered_set>
-#include <utility>
 #include <vector>
 
 namespace Day8 {
@@ -41,6 +39,15 @@ struct CircuitSizeComparator {
   }
 };
 
+size_t total_connections(const vector<Circuit> &circuits) {
+  size_t result = 0;
+  for (const Circuit &circuit : circuits) {
+    const size_t size = circuit.size();
+    result += (size == 1) ? 0 : size - 1;
+  }
+  return result;
+}
+
 long solve_day8_pt1(const vector<string> &input) {
   Distances distances;
   for (size_t i = 0; i < input.size(); i++) {
@@ -53,10 +60,10 @@ long solve_day8_pt1(const vector<string> &input) {
   }
 
   vector<Circuit> circuits;
-  for (int i = 0; i < 10; i++) {
+  while (total_connections(circuits) < 1000) {
     const auto &[left, right] = distances.erase(distances.begin())->second;
     bool is_new_circuit = true;
-    for (Circuit circuit : circuits) {
+    for (Circuit &circuit : circuits) {
       if ((circuit.find(left) != circuit.end()) ||
           (circuit.find(right) != circuit.end())) {
         circuit.emplace(left);
@@ -72,6 +79,11 @@ long solve_day8_pt1(const vector<string> &input) {
       circuits.push_back(circuit);
     }
   }
+
+  // for (const Circuit &circuit : circuits) {
+  //   cout << circuit.size() << " ";
+  // }
+  // cout << endl;
 
   sort(circuits.begin(), circuits.end(), CircuitSizeComparator());
   return circuits[0].size() * circuits[1].size() * circuits[2].size();

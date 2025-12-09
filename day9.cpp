@@ -1,5 +1,4 @@
 #include "day9.hpp"
-#include "geometry.hpp"
 #include "util.hpp"
 #include <array>
 #include <cassert>
@@ -60,46 +59,52 @@ array<Point, 4> all_rectangle(const Point &left, const Point &right) {
   return {left, right, Point(left.row, right.col), Point(left.col, right.row)};
 }
 
-double euclid(const Point &left, const Point &right) {
-  return sqrt((left.col - right.col) * (left.col - right.col) +
-              (left.row - right.row) * (left.row - right.row));
-}
+bool is_vertical(const Edge &edge) { return edge.first.col == edge.second.col; }
 
 bool contains(const Edge &edge, const Point &point) {
-  return euclid(edge.first, point) + euclid(edge.second, point) ==
-         euclid(edge.first, edge.second);
+  if (is_vertical(edge)) {
+    if (edge.first.col != point.col) {
+      return false;
+    }
+    const auto y1 = edge.first.row;
+    const auto y2 = edge.second.row;
+    const auto y = point.row;
+    return ((y >= y1) && (y <= y2)) || ((y >= y2) && (y <= y1));
+  } else {
+    if (edge.first.row != point.row) {
+      return false;
+    }
+    const auto x1 = edge.first.col;
+    const auto x2 = edge.second.col;
+    const auto x = point.col;
+    return ((x >= x1) && (x <= x2)) || ((x >= x2) && (x <= x1));
+  }
 }
 
-bool is_crossing(const Edge &edge, const Point &point) {
-  geometry::pt left;
-  geometry::pt right;
-  const bool is_intersect_lines = geometry::intersect(
-      {static_cast<double>(edge.first.col),
-       static_cast<double>(edge.first.row)},
-      {static_cast<double>(edge.second.col),
-       static_cast<double>(edge.second.row)},
-      {static_cast<double>(point.col), static_cast<double>(point.row)},
-      {static_cast<double>(point.col + 1), static_cast<double>(point.row - 1)},
-      left, right);
-  if (!is_intersect_lines) {
-    return false;
+bool is_horizontal_crossing(const Edge &edge, const Point &point) {
+  if (!is_vertical(edge)) {
+    return edge.first.row == point.row;
   }
 
-  const Point intersection_point = Point(left.y, left.x);
-  return contains(edge, intersection_point);
+  Point intersection = Point(point.row, edge.first.col);
+  return contains(edge, intersection);
 }
 
-bool in_bounds(const vector<Edge> &edges, const Point &left,
-               const Point &right) {
+bool is_in_area(const vector<Edge> &edges, const Point &point) {
+  int i = 0;
+  for (const Edge &edge : edges) {
+    if (is_horizontal_crossing(edge, point)) {
+      i++;
+    }
+  }
+  return i % 2 != 0;
+}
+
+bool is_rectangle_in_bounds(const vector<Edge> &edges, const Point &left,
+                            const Point &right) {
   const auto rectangle = all_rectangle(left, right);
   for (const Point &point : rectangle) {
-    size_t count = 0;
-    for (const Edge &edge : edges) {
-      if (is_crossing(edge, point)) {
-        count++;
-      }
-    }
-    if ((count % 2) == 0) {
+    if (!is_in_area(edges, point)) {
       return false;
     }
   }
@@ -123,7 +128,7 @@ long solve_day9_pt2(const vector<string> &input) {
       if ((left.col == right.col) || (left.row == right.row)) {
         continue;
       }
-      if (!in_bounds(edges, left, right)) {
+      if (!is_rectangle_in_bounds(edges, left, right)) {
         continue;
       }
       long area = abs(left.col - right.col + 1) * abs(left.row - right.row + 1);

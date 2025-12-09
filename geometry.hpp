@@ -1,23 +1,21 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include "util.hpp"
+#include <cstdlib>
 
 namespace geometry {
 
-using Point = util::Point<long>;
+const double EPS = 1E-9;
 
-struct Line {
-  double a;
-  double b;
-  double c;
+struct pt {
+  double x, y;
 
-  explicit Line(double a, double b, double c) : a(a), b(b), c(c) {}
+  bool operator<(const pt &p) const {
+    return x < p.x - EPS || abs(x - p.x) < EPS && y < p.y - EPS;
+  }
 };
 
-bool intersect(const Line &, const Line &, Point &res);
-
-Line segment_to_line(const Point &, const Point &);
+bool intersect(pt a, pt b, pt c, pt d, pt &left, pt &right);
 
 } // namespace geometry
 

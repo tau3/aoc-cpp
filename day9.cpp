@@ -56,7 +56,7 @@ vector<Edge> to_edges(const vector<Point> &points) {
 }
 
 array<Point, 4> all_rectangle(const Point &left, const Point &right) {
-  return {left, right, Point(left.row, right.col), Point(left.col, right.row)};
+  return {left, right, Point(left.row, right.col), Point(right.row, left.col)};
 }
 
 bool is_vertical(const Edge &edge) { return edge.first.col == edge.second.col; }
@@ -93,15 +93,28 @@ bool is_horizontal_crossing(const Edge &edge, const Point &point) {
 bool is_in_area(const vector<Edge> &edges, const Point &point) {
   int i = 0;
   for (const Edge &edge : edges) {
+    if (contains(edge, point)) {
+      return true;
+    }
     if (is_horizontal_crossing(edge, point)) {
       i++;
     }
   }
+  cout << "[" << point.col << "," << point.row << "] has " << i << endl;
   return i % 2 != 0;
 }
 
 bool is_rectangle_in_bounds(const vector<Edge> &edges, const Point &left,
                             const Point &right) {
+  // if (!(left.col == 9 && (left.row) == 5)) {
+  //   return false;
+  // }
+  // if (!(right.col == 2 && (right.row) == 3)) {
+  //   return false;
+  // }
+  // cout << "l=" << left.col << "," << left.row << endl;
+  // cout << "r=" << right.col << "," << right.row << endl;
+
   const auto rectangle = all_rectangle(left, right);
   for (const Point &point : rectangle) {
     if (!is_in_area(edges, point)) {

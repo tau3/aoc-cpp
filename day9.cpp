@@ -81,22 +81,29 @@ bool contains(const Edge &edge, const Point &point) {
   }
 }
 
-bool is_horizontal_crossing(const Edge &edge, const Point &point) {
+bool is_ray_to_west_crossing(const Edge &edge, const Point &point) {
   if (!is_vertical(edge)) {
-    return edge.first.row == point.row;
+    return (point.col > edge.first.col) || (point.col > edge.second.col);
   }
 
+  if (point.col < edge.first.col) {
+    return false;
+  }
+  if (point.col == edge.first.col) {
+    return false;
+  }
   Point intersection = Point(point.row, edge.first.col);
-  return contains(edge, intersection);
+  return contains(edge, intersection) && (intersection.col < point.col);
 }
 
 bool is_in_area(const vector<Edge> &edges, const Point &point) {
   int i = 0;
+
   for (const Edge &edge : edges) {
     if (contains(edge, point)) {
       return true;
     }
-    if (is_horizontal_crossing(edge, point)) {
+    if (is_ray_to_west_crossing(edge, point)) {
       i++;
     }
   }

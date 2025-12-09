@@ -1,4 +1,5 @@
 #include "day9.hpp"
+#include "geometry.hpp"
 #include "util.hpp"
 #include <array>
 #include <cassert>
@@ -57,9 +58,13 @@ array<Point, 4> all_rectangle(const Point &left, const Point &right) {
   return {left, right, Point(left.row, right.col), Point(left.col, right.row)};
 }
 
-  bool is_crossing(const Edge &edge, const Point &point) {
-    
-  }
+bool is_crossing(const Edge &edge, const Point &point) {
+  const auto line = geometry::segment_to_line(edge.first, edge.second);
+  const auto ray =
+      geometry::segment_to_line(point, Point(point.row, point.col + 1));
+  auto res = Point(0, 0);
+  return geometry::intersect(line, ray, res);
+}
 
 bool in_bounds(const vector<Edge> &edges, const Point &left,
                const Point &right) {

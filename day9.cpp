@@ -2,8 +2,6 @@
 #include "util.hpp"
 #include <array>
 #include <cassert>
-#include <cmath>
-#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -107,21 +105,11 @@ bool is_in_area(const vector<Edge> &edges, const Point &point) {
       i++;
     }
   }
-  cout << "[" << point.col << "," << point.row << "] has " << i << endl;
   return i % 2 != 0;
 }
 
 bool is_rectangle_in_bounds(const vector<Edge> &edges, const Point &left,
                             const Point &right) {
-  // if (!(left.col == 9 && (left.row) == 5)) {
-  //   return false;
-  // }
-  // if (!(right.col == 2 && (right.row) == 3)) {
-  //   return false;
-  // }
-  // cout << "l=" << left.col << "," << left.row << endl;
-  // cout << "r=" << right.col << "," << right.row << endl;
-
   const auto rectangle = all_rectangle(left, right);
   for (const Point &point : rectangle) {
     if (!is_in_area(edges, point)) {

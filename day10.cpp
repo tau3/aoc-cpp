@@ -55,17 +55,17 @@ pair<State, vector<Button>> parse_line(const string &line) {
 int solve_line(const string &line) {
   const auto &[target, buttons] = parse_line(line);
 
-  queue<pair<State, int>> q;
+  queue<pair<State, int>> states;
   const auto initial = vector(target.size(), false);
   assert(initial.size() > 0);
-  q.push({initial, 0});
+  states.push({initial, 0});
 
-  unordered_set<State> seen;
-  while (!q.empty()) {
-    const auto [state, n] = q.front();
-    q.pop();
+  unordered_set<State> cache;
+  while (!states.empty()) {
+    const auto [state, n] = states.front();
+    states.pop();
 
-    if (seen.find(state) != seen.end()) {
+    if (cache.find(state) != cache.end()) {
       continue;
     }
 
@@ -73,11 +73,11 @@ int solve_line(const string &line) {
       return n;
     }
 
-    seen.emplace(state);
+    cache.emplace(state);
 
     for (const Button &button : buttons) {
       const State after_press = press_button(state, button);
-      q.push({after_press, n + 1});
+      states.push({after_press, n + 1});
     }
   }
 

@@ -1,6 +1,7 @@
 #include "day11.hpp"
 #include "util.hpp"
 #include <algorithm>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -24,13 +25,21 @@ int count_paths(const Graph &graph, const string &from,
     return (i == 2) ? 1 : 0;
   }
 
-  vector<string> adjacent = graph.at(from);
+  auto search = graph.find(from);
+  if (search == graph.end()) {
+    return 0;
+  }
+
+  vector<string> adjacent = search->second;
   if (adjacent.empty()) {
     return 0;
   }
 
   for (const string &vertice : path) {
-    adjacent.erase(find(adjacent.begin(), adjacent.end(), vertice));
+    const auto search = find(adjacent.begin(), adjacent.end(), vertice);
+    if (search != adjacent.end()) {
+      adjacent.erase(search);
+    }
   }
 
   int result = 0;
@@ -46,7 +55,7 @@ Graph make_graph(const vector<string> &input) {
   Graph result;
   for (const string &line : input) {
     const vector<string> tokens = util::split(line, " ");
-    const string from = tokens[0].substr(1);
+    const string from = tokens[0].substr(0, tokens[0].length() - 1);
     vector<string> to;
     for (size_t i = 1; i < tokens.size(); i++) {
       to.push_back(tokens[i]);

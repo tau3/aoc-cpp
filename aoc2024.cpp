@@ -6,6 +6,7 @@ using namespace Day11;
 
 int main() {
   const vector<string> input = util::read_file("../day11_input");
+  // const vector<string> input = util::read_file("../day11_example2");
   // clang-format off
  // const vector<string> input = {
  //   "[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}",

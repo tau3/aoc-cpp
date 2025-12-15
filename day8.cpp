@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <map>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -18,10 +17,11 @@ struct BoxHash {
   }
 };
 
-using Distances = map<long, pair<Box, Box>>;
+using Edge = pair<Box, Box>;
+using Edges = vector<Edge>;
 using Circuit = unordered_set<Box, BoxHash>;
 
-long euclid(const Box &left, const Box &right) {
+double euclid(const Box &left, const Box &right) {
   return sqrt((left[0] - right[0]) * (left[0] - right[0]) +
               (left[1] - right[1]) * (left[1] - right[1]) +
               (left[2] - right[2]) * (left[2] - right[2]));
@@ -38,21 +38,28 @@ struct CircuitSizeComparator {
   }
 };
 
+struct EdgeComparator {
+  bool operator()(const Edge &left, const Edge &right) const noexcept {
+    return euclid(left.first, left.second) > euclid(right.first, right.second);
+  }
+};
+
 long solve_day8_pt1(const vector<string> &input) {
-  Distances distances;
+  Edges edges;
   for (size_t i = 0; i < input.size(); i++) {
-    for (size_t j = i; j < input.size(); j++) {
+    for (size_t j = i + 1; j < input.size(); j++) {
       const Box left = to_point(input[i]);
       const Box right = to_point(input[j]);
-      const long distance = euclid(left, right);
-      distances[distance] = {left, right};
+      edges.push_back({left, right});
     }
   }
+  sort(edges.begin(), edges.end(), EdgeComparator());
 
   vector<Circuit> circuits;
   int total_pairs = 0;
   while (total_pairs < 1000) {
-    const auto &[left, right] = distances.erase(distances.begin())->second;
+    const auto &[left, right] = edges.back();
+    edges.pop_back();
     bool is_new_circuit = true;
     for (Circuit &circuit : circuits) {
       if ((circuit.find(left) != circuit.end()) ||

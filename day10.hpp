@@ -9,6 +9,7 @@ namespace Day10 {
 using namespace std;
 
 int solve_day10_pt1(const vector<string> &);
+int solve_day10_pt2(const vector<string> &);
 
 } // namespace Day10
 

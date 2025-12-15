@@ -1,6 +1,7 @@
 #include "day10.hpp"
 #include "gauss.hpp"
 #include "util.hpp"
+#include <algorithm>
 #include <cassert>
 #include <queue>
 #include <tuple>
@@ -108,11 +109,12 @@ vector<vector<Gauss::num_t>> to_matrix(const vector<Button> &buttons,
                                        const Levels &levels) {
   vector<vector<Gauss::num_t>> result;
   for (size_t i = 0; i < levels.size(); i++) {
-    vector<Gauss::num_t> line;
-    for (const Button &button : buttons) {
-      Gauss::num_t val =
-          (find(button.begin(), button.end(), i) != button.end()) ? 1 : 0;
-      line.push_back(val);
+    vector<Gauss::num_t> line(levels.size(), 0);
+    for (size_t j = 0; j < buttons.size(); j++) {
+      const Button button = buttons[j];
+      if (find(button.begin(), button.end(), i) != button.end()) {
+        line[j] = 1;
+      }
     }
     line.push_back(levels[i]);
     result.push_back(line);

@@ -1,58 +1,57 @@
+#include "z3_solver.hpp"
 #include <iostream>
+#include <string>
 #include <vector>
 #include <z3++.h>
 
-std::vector<double>
-solveSystem(const std::vector<std::vector<double>> &coefficients,
-            const std::vector<double> &constants) {
-  z3::context c;
-  // Declare variables
+namespace Z3 {
+
+using num_t = double;
+
+std::vector<num_t>
+solve_system(const std::vector<std::vector<num_t>> &coefficients,
+            const std::vector<num_t> &constants) {
+  z3::context context;
+
   std::vector<z3::expr> vars;
   for (size_t i = 0; i < coefficients[0].size(); ++i) {
-    vars.push_back(c.real_const("x" + std::to_string(i))); // x0, x1, ...
+    std::string name = "x" + std::to_string(i);
+    vars.push_back(context.real_const(name.c_str()));
   }
 
-  // Create optimizer
-  z3::optimize optimizer(c);
-
-  // Minimize the last variable (assumed y)
+  z3::optimize optimizer(context);
   optimizer.minimize(vars.back());
 
-  // Add the equations to the optimizer
   for (size_t i = 0; i < coefficients.size(); ++i) {
-    z3::expr equation = c.int_val(0);
+    z3::expr equation = context.int_val(0);
     for (size_t j = 0; j < coefficients[i].size(); ++j) {
-      equation = equation + coefficients[i][j] * vars[j];
+      equation = equation + context.fpa_val(coefficients[i][j]) * vars[j];
     }
     optimizer.add(equation == constants[i]);
   }
 
-  // Check satisfiability
   if (optimizer.check() == z3::sat) {
-    // Get the model
-    z3::model m = optimizer.get_model();
-    std::vector<double> results;
+    z3::model model = optimizer.get_model();
+    std::vector<num_t> results;
     for (size_t i = 0; i < vars.size(); ++i) {
-      results.push_back(m.eval(vars[i]).get_numeral_double());
+      results.push_back(model.eval(vars[i]).as_double());
     }
-    return results; // Return results as vector
+    return results;
   } else {
     throw std::runtime_error("Unsatisfiable");
   }
 }
 
 int foo() {
-  std::vector<std::vector<double>> coefficients = {
-      {2, 4}, // Coefficients for the first equation
-      {1, 2}, // Coefficients for the second equation
+  std::vector<std::vector<num_t>> coefficients = {
+      {2, 4},
+      {1, 2},
   };
-  std::vector<double> constants = {10, 5}; // Constants on the right-hand side
+  std::vector<num_t> constants = {10, 5};
 
   try {
-    // Call the function to solve the system and get results
-    std::vector<double> results = solveSystem(coefficients, constants);
+    std::vector<num_t> results = solve_system(coefficients, constants);
 
-    // Output the results
     std::cout << "Satisfiable (Infinite Solutions):" << std::endl;
     for (size_t i = 0; i < results.size(); ++i) {
       std::cout << "Variable x" << i << " = " << results[i] << std::endl;
@@ -63,3 +62,5 @@ int foo() {
 
   return 0;
 }
+
+} // namespace Z3

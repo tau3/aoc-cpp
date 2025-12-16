@@ -7,6 +7,7 @@
 #include <tuple>
 #include <unordered_set>
 #include <vector>
+#include "z3_solver.hpp"
 
 namespace Day10 {
 

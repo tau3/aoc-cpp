@@ -1,13 +1,12 @@
 #include "day10.hpp"
-#include "gauss.hpp"
 #include "util.hpp"
+#include "z3_solver.hpp"
 #include <algorithm>
 #include <cassert>
 #include <queue>
 #include <tuple>
 #include <unordered_set>
 #include <vector>
-#include "z3_solver.hpp"
 
 namespace Day10 {
 
@@ -106,18 +105,17 @@ int solve_day10_pt1(const vector<string> &input) {
   return result;
 }
 
-vector<vector<Gauss::num_t>> to_matrix(const vector<Button> &buttons,
-                                       const Levels &levels) {
-  vector<vector<Gauss::num_t>> result;
+vector<vector<double>> to_matrix(const vector<Button> &buttons,
+                                 const Levels &levels) {
+  vector<vector<double>> result;
   for (size_t i = 0; i < levels.size(); i++) {
-    vector<Gauss::num_t> line(levels.size(), 0);
+    vector<double> line(levels.size(), 0);
     for (size_t j = 0; j < buttons.size(); j++) {
       const Button button = buttons[j];
       if (find(button.begin(), button.end(), i) != button.end()) {
         line[j] = 1;
       }
     }
-    line.push_back(levels[i]);
     result.push_back(line);
   }
   return result;
@@ -125,8 +123,9 @@ vector<vector<Gauss::num_t>> to_matrix(const vector<Button> &buttons,
 
 int solve_pt2_line(const string &line) {
   const auto &[_, buttons, levels] = parse_line(line);
-  auto matrix = to_matrix(buttons, levels);
-  const vector<Gauss::num_t> solution = Gauss::gauss(matrix);
+  const auto matrix = to_matrix(buttons, levels);
+  vector<double> foo(levels.begin(), levels.end());
+  const vector<double> solution = Z3::solve_system(matrix, foo);
 
   int result = 0;
   for (size_t i = 0; i < solution.size(); i++) {

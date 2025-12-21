@@ -1,4 +1,5 @@
 #include "z3_solver.hpp"
+#include <iostream>
 #include <string>
 #include <vector>
 #include <z3++.h>
@@ -9,7 +10,7 @@ using num_t = double;
 
 std::vector<num_t>
 solve_system(const std::vector<std::vector<num_t>> &coefficients,
-             const std::vector<num_t> &constants) {
+            const std::vector<num_t> &constants) {
   z3::context context;
 
   std::vector<z3::expr> vars;
@@ -39,6 +40,27 @@ solve_system(const std::vector<std::vector<num_t>> &coefficients,
   } else {
     throw std::runtime_error("Unsatisfiable");
   }
+}
+
+int foo() {
+  std::vector<std::vector<num_t>> coefficients = {
+      {2, 4},
+      {1, 2},
+  };
+  std::vector<num_t> constants = {10, 5};
+
+  try {
+    std::vector<num_t> results = solve_system(coefficients, constants);
+
+    std::cout << "Satisfiable (Infinite Solutions):" << std::endl;
+    for (size_t i = 0; i < results.size(); ++i) {
+      std::cout << "Variable x" << i << " = " << results[i] << std::endl;
+    }
+  } catch (const std::exception &e) {
+    std::cout << e.what() << std::endl;
+  }
+
+  return 0;
 }
 
 } // namespace Z3

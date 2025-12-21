@@ -1,18 +1,35 @@
-#include "day10.hpp"
+#include "day8.hpp"
 #include "util.hpp"
 #include <vector>
 
 using namespace std;
-using namespace Day10;
+using namespace Day8;
 
 int main() {
-  // const vector<string> input = util::read_file("../day10_input");
+  const vector<string> input = util::read_file("../day8_input");
   // clang-format off
- const vector<string> input = {
- "[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}",
- "[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}",
- "[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}",
-  };
+ // const vector<string> input = {
+ //   "162,817,812",
+ //   "57,618,57",
+ //   "906,360,560",
+ //   "592,479,940",
+ //   "352,342,300",
+ //   "466,668,158",
+ //   "542,29,236",
+ //   "431,825,988",
+ //   "739,650,466",
+ //   "52,470,668",
+ //   "216,146,977",
+ //   "819,987,18",
+ //   "117,168,530",
+ //   "805,96,715",
+ //   "346,949,466",
+ //   "970,615,88",
+ //   "941,993,340",
+ //   "862,61,35",
+ //   "984,92,344",
+ //   "425,690,689",
+ //  };
  //  // clang-format on
- cout << solve_day10_pt2(input) << endl;
+ cout << solve_day8_pt1(input) << endl;
 }

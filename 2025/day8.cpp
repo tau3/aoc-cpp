@@ -2,7 +2,6 @@
 #include "util.hpp"
 #include <algorithm>
 #include <array>
-#include <cmath>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -21,10 +20,10 @@ using Edge = pair<Box, Box>;
 using Edges = vector<Edge>;
 using Circuit = unordered_set<Box, BoxHash>;
 
-double euclid(const Box &left, const Box &right) {
-  return sqrt((left[0] - right[0]) * (left[0] - right[0]) +
-              (left[1] - right[1]) * (left[1] - right[1]) +
-              (left[2] - right[2]) * (left[2] - right[2]));
+long euclid(const Box &left, const Box &right) {
+  return (left[0] - right[0]) * (left[0] - right[0]) +
+         (left[1] - right[1]) * (left[1] - right[1]) +
+         (left[2] - right[2]) * (left[2] - right[2]);
 }
 
 Box to_point(const string &line) {

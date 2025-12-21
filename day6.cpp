@@ -3,29 +3,43 @@
 #include <cstddef>
 #include <vector>
 
+#define PT2
+
 namespace Day6 {
 
+using Grid = vector<vector<int>>;
+
 void toggle(const pair<size_t, size_t> &left_top,
-            const pair<size_t, size_t> &right_bottom,
-            vector<vector<bool>> &grid) {
+            const pair<size_t, size_t> &right_bottom, Grid &grid) {
   for (size_t row = left_top.second; row <= right_bottom.second; row++) {
     for (size_t col = left_top.first; col <= right_bottom.first; col++) {
-      grid[col][row] = !grid[col][row];
+#ifdef PT2
+      grid[col][row] += 2;
+#else
+      grid[col][row] = 1 - grid[col][row];
+#endif
     }
   }
 }
 
 void turn(const pair<size_t, size_t> &left_top,
-          const pair<size_t, size_t> &right_bottom, vector<vector<bool>> &grid,
-          const bool val) {
+          const pair<size_t, size_t> &right_bottom, Grid &grid, const int val) {
   for (size_t row = left_top.second; row <= right_bottom.second; row++) {
     for (size_t col = left_top.first; col <= right_bottom.first; col++) {
+#ifdef PT2
+      int &num = grid[col][row];
+      num += val;
+      if (num < 0) {
+        num = 0;
+      }
+#else
       grid[col][row] = val;
+#endif
     }
   }
 }
 
-void apply(const string &line, vector<vector<bool>> &grid) {
+void apply(const string &line, Grid &grid) {
   const vector<string> tokens = util::split(line, " ");
   const string command = tokens[0];
   if (command == "toggle") {
@@ -38,7 +52,7 @@ void apply(const string &line, vector<vector<bool>> &grid) {
     toggle({stol(left_top_tokens[0]), stol(left_top_tokens[1])},
            {stol(right_bottom_tokens[0]), stol(right_bottom_tokens[1])}, grid);
   } else {
-    const bool val = tokens[1] == "on";
+    const int val = tokens[1] == "on" ? 1 : 0;
 
     const string left_top = tokens[2];
     const string right_bottom = tokens[4];
@@ -53,15 +67,15 @@ void apply(const string &line, vector<vector<bool>> &grid) {
 }
 
 int solve_day6_pt1(const vector<string> &input) {
-  vector<vector<bool>> grid(1000, vector<bool>(1000, false));
+  Grid grid(1000, vector<int>(1000, 0));
   for (const string &line : input) {
     apply(line, grid);
   }
 
   int result = 0;
-  for (const vector<bool> &row : grid) {
-    for (const bool val : row) {
-      if (val) {
+  for (const vector<int> &row : grid) {
+    for (const int val : row) {
+      if (val == 1) {
         result++;
       }
     }

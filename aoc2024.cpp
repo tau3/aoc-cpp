@@ -1,12 +1,12 @@
-#include "day8.hpp"
+#include "day6.hpp"
 #include "util.hpp"
 #include <vector>
 
 using namespace std;
-using namespace Day8;
+using namespace Day6;
 
 int main() {
-  const vector<string> input = util::read_file("../day8_input");
+  const vector<string> input = util::read_file("../day6_input");
   // clang-format off
  // const vector<string> input = {
  //   "162,817,812",
@@ -31,5 +31,5 @@ int main() {
  //   "425,690,689",
  //  };
  //  // clang-format on
- cout << solve_day8_pt1(input) << endl;
+ cout << solve_day6_pt1(input) << endl;
 }

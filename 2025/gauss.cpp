@@ -1,8 +1,6 @@
 #include "gauss.hpp"
 #include <cassert>
 #include <cstddef>
-#include <iostream>
-#include <ostream>
 #include <vector>
 
 namespace Gauss {
@@ -62,44 +60,3 @@ vector<num_t> gauss(vector<vector<num_t>> &matrix) {
 }
 
 } // namespace Gauss
-
-/*
-   2  1 -1   8
-  -3 -1  2 -11
-  -2  1  2  -3
-
-// norm l1
-   1  0.5 -0.5   4
-  -3   -1    2 -11
-  -2    1    2  -3
-
-// add l1 to 2 and 3 with multiplication to make 0 at first column
-   1  0.5 -0.5   4
-   0  0.5  0.5   1
-   0    2    1   5
-
-// norm l2
-   1  0.5 -0.5   4
-   0    1    1   2
-   0    2    1   5
-
-// add l2 to 3 with multiplication to make 0 at second column
-   1  0.5 -0.5   4
-   0    1    1   2
-   0    0   -1   1
-
-// norm l3
-   1  0.5 -0.5   4
-   0    1    1   2
-   0    0    1  -1
-
-// add l3 to 2 1 with mutiplication to make 0 at third column
-   1  0.5  0 3.5
-   0    1  0   3
-   0    0  1  -1
-
-// add l2 to 1 with mutiplication to make 0 at third column
-   1  0  0   2
-   0  1  0   3
-   0  0  1  -1
-*/

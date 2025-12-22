@@ -8,7 +8,6 @@ namespace Day6 {
 
 using namespace std;
 
-int solve_day6_pt1(const vector<string> &);
+long solve_day6_pt1(const vector<string> &);
 } // namespace Day6
-
 #endif

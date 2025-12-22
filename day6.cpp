@@ -66,18 +66,22 @@ void apply(const string &line, Grid &grid) {
   }
 }
 
-int solve_day6_pt1(const vector<string> &input) {
+long solve_day6_pt1(const vector<string> &input) {
   Grid grid(1000, vector<int>(1000, 0));
   for (const string &line : input) {
     apply(line, grid);
   }
 
-  int result = 0;
+  long result = 0;
   for (const vector<int> &row : grid) {
     for (const int val : row) {
+#ifdef PT2
+      result += val;
+#else
       if (val == 1) {
         result++;
       }
+#endif
     }
   }
   return result;

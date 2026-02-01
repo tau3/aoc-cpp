@@ -11,6 +11,7 @@ using Value = variant<string, int>;
 using Instructions = unordered_map<string, Value>;
 
 int eval(const string key, Instructions &instructions) {
+  // TODO if is_num(key) then short return
   const Value expr = instructions[key];
   if (holds_alternative<int>(expr)) {
     return get<int>(expr);
@@ -19,7 +20,10 @@ int eval(const string key, Instructions &instructions) {
   const string raw = get<string>(expr);
   const vector<string> tokens = util::split(raw, " ");
   if (tokens.size() == 1) {
-    const int result = stoi(tokens[0]);
+    cout << key << " stoi '" << raw << "'" << endl;
+    const int result = (instructions.find(raw) != instructions.end())
+                           ? eval(raw, instructions)
+                           : stoi(raw);
     instructions[key] = result;
     return result;
   }

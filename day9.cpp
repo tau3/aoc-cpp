@@ -1,6 +1,7 @@
 #include "day9.hpp"
 #include "util.hpp"
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace Day9 {
@@ -40,6 +41,24 @@ public:
   }
 };
 
+void mst_kruskal(const Graph &graph) {
+  unordered_set<Edge> a;
+  DisjointSet vs;
+  for (const string &v : graph.key_set()) {
+    vs.make_set(v);
+  }
+  vector<Edge> edges = graph.edges();
+  edges.sort_ascending_by_weight();
+  for (const Edge &edge : edges) {
+    if (vs.find_set(edge.u()) != vs.find_set(edge.v())) {
+      a.insert(edge);
+      vs.union_(edge.u(), edge.v());
+    }
+  }
+
+  return a;
+}
+
 template <typename K, typename V>
 void compute_if_absent(unordered_map<K, V> &map, const K &key, const V &val) {
   if (map.find(key) == map.end()) {
@@ -60,6 +79,14 @@ int solve_day9_pt1(const vector<string> &input) {
     adj = graph[to];
     adj.push_back({from, distance});
   }
+
+
+  int result = 0;
+  const unordered_set<Edge> mst = mst_kruskal(graph);
+  for (const Edge &edge : mst) {
+    result += graph.weight(edge);
+  }
+  return result;
 }
 
 } // namespace Day9

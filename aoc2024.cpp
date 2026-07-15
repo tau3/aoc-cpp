@@ -19,5 +19,5 @@ int main() {
   // clang-format on
   // cout << solve_day8_pt1(input) << endl;
 
-  cout << look_and_say_step("1211") << endl;
+  cout << solve_day10_pt2("1113222113") << endl;
 }

@@ -10,4 +10,3 @@ file(GLOB aoc
     "*.cpp"
 )
 add_executable(${PROJECT_NAME} ${aoc})
-

@@ -37,6 +37,26 @@ bool is_valid_password(const std::string &password) {
   return has_incr && has_two_pairs;
 }
 
+std::string increment(const std::string &password) {
+  std::string result = password;
+  for (long i = password.length() - 1; i >= 0; i--) {
+    const char current = password[i];
+    if (current != 'z') {
+      result[i] = current + 1;
+      return result;
+    } else {
+      result[i] = 'a';
+    }
+  }
+  throw "unreachable";
+}
 
+std::string solve_day11_pt1(const std::string &password) {
+  std::string result = password;
+  do {
+    result = increment(result);
+  } while (!is_valid_password(result));
+  return result;
+}
 
 }; // namespace Day11

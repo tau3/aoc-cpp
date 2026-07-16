@@ -19,5 +19,5 @@ int main() {
   // clang-format on
   // cout << solve_day8_pt1(input) << endl;
 
-  cout << is_valid_password("ghjaabcc") << endl;
+  cout << solve_day11_pt1("hxbxxyzz") << endl;
 }

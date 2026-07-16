@@ -1,11 +1,11 @@
-#include "day10.hpp"
+#include "day11.hpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day10;
+using namespace Day11;
 
 int main() {
   // const vector<string> input = util::read_file("../day8_input");
@@ -19,5 +19,5 @@ int main() {
   // clang-format on
   // cout << solve_day8_pt1(input) << endl;
 
-  cout << solve_day10_pt2("1113222113") << endl;
+  cout << is_valid_password("ghjaabcc") << endl;
 }

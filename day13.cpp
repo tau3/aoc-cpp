@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -8,7 +9,7 @@ using Index =
 
 int calc_total(const std::vector<std::string> &permutation, const Index &index);
 
-int solve(const std::vector<std::string> &input) {
+Index make_index(const std::vector<std::string> &input) {
   Index index;
   for (const std::string &line : input) {
     const std::vector<std::string> tokens = util::split(line, " ");
@@ -28,13 +29,22 @@ int solve(const std::vector<std::string> &input) {
       index[from] = {{to, points}};
     }
   }
+  return index;
+}
 
-  const std::vector<std::vector<std::string>> permutations =
-      make_permutations(index.key_set());
-  int result = 0;
-  for (const std::vector<std::string> &permutation : permutations) {
-    result = std::max(result, calc_total(permutation, index));
+int solve(const std::vector<std::string> &input) {
+  Index index = make_index(input);
+
+  std::vector<std::string> names;
+  for (const auto &entry : index) {
+    names.push_back(entry.first);
   }
+  std::sort(names.begin(), names.end());
+
+  int result = 0;
+  do {
+    result = std::max(result, calc_total(names, index));
+  } while (std::next_permutation(names.begin(), names.end()));
   return result;
 }
 
@@ -46,25 +56,23 @@ int calc_total(const std::vector<std::string> &permutation,
   for (int i = 0; i < size; i++) {
     size_t left_ix;
     size_t right_ix;
-    switch (i) {
-    case 0:
+
+    if (i == 0) {
       left_ix = last;
       right_ix = 1;
-      break;
-    case last:
+    } else if (i == last) {
       left_ix = last - 1;
       right_ix = 0;
-      break;
-    default:
+    } else {
       left_ix = i - 1;
       right_ix = i + 1;
     }
 
     const std::string &current = permutation[i];
-    const std::string &left = permutation[left];
-    const std::string &right = permutation[right];
-    result += index[current][left];
-    result += index[current][right];
+    const std::string &left = permutation[left_ix];
+    const std::string &right = permutation[right_ix];
+    result += index.at(current).at(left);
+    result += index.at(current).at(right);
   }
 
   return result;

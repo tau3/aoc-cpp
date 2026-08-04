@@ -1,8 +1,10 @@
+#include "day13.hpp"
 #include "util.hpp"
 #include <algorithm>
-#include <string>
 #include <unordered_map>
 #include <vector>
+
+namespace Day13 {
 
 using Index =
     std::unordered_map<std::string, std::unordered_map<std::string, int>>;
@@ -16,7 +18,7 @@ Index make_index(const std::vector<std::string> &input) {
     const std::string from = tokens[0];
 
     std::string to = tokens[10];
-    to.pop_back();
+    to.pop_back(); // remove last dot
 
     int points = std::stoi(tokens[3]);
     if (tokens[2] == "lose") {
@@ -32,7 +34,7 @@ Index make_index(const std::vector<std::string> &input) {
   return index;
 }
 
-int solve(const std::vector<std::string> &input) {
+int solve_day13_pt1(const std::vector<std::string> &input) {
   Index index = make_index(input);
 
   std::vector<std::string> names;
@@ -77,3 +79,5 @@ int calc_total(const std::vector<std::string> &permutation,
 
   return result;
 }
+
+} // namespace Day13

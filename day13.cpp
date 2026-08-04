@@ -11,8 +11,12 @@ using Index =
 
 int calc_total(const std::vector<std::string> &permutation, const Index &index);
 
-Index make_index(const std::vector<std::string> &input) {
+Index make_index(const std::vector<std::string> &input, const bool pt2) {
   Index index;
+  if (pt2) {
+    index["me"] = {};
+  }
+
   for (const std::string &line : input) {
     const std::vector<std::string> tokens = util::split(line, " ");
     const std::string from = tokens[0];
@@ -29,13 +33,18 @@ Index make_index(const std::vector<std::string> &input) {
       index[from][to] = points;
     } else {
       index[from] = {{to, points}};
+      if (pt2) {
+        index[from]["me"] = 0;
+        index["me"][from] = 0;
+      }
     }
   }
+
   return index;
 }
 
-int solve_day13_pt1(const std::vector<std::string> &input) {
-  Index index = make_index(input);
+int solve(const std::vector<std::string> &input, const bool pt2) {
+  Index index = make_index(input, pt2);
 
   std::vector<std::string> names;
   for (const auto &entry : index) {
@@ -48,6 +57,14 @@ int solve_day13_pt1(const std::vector<std::string> &input) {
     result = std::max(result, calc_total(names, index));
   } while (std::next_permutation(names.begin(), names.end()));
   return result;
+}
+
+int solve_day13_pt1(const std::vector<std::string> &input) {
+  return solve(input, false);
+}
+
+int solve_day13_pt2(const std::vector<std::string> &input) {
+  return solve(input, true);
 }
 
 int calc_total(const std::vector<std::string> &permutation,

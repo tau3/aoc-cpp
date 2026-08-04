@@ -7,6 +7,7 @@
 namespace Day13 {
 
 int solve_day13_pt1(const std::vector<std::string> &input);
+int solve_day13_pt2(const std::vector<std::string> &input);
 
 } // namespace Day13
 

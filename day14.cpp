@@ -47,21 +47,26 @@ int solve_day14_pt2(const std::vector<Deer> &deers) {
   std::vector<int> pos(count);
   std::vector<int> all_points(count);
 
-  for (int i = 0; i < 1000; i++) {
+  for (int i = 1; i < 2503; i++) {
     for (size_t j = 0; j < count; j++) {
       const Deer &deer = deers[j];
       pos[j] = distance(deer, i);
     }
 
-    size_t max_pos_ix = 0;
+    std::vector<size_t> max_pos_indexes;
     int max_pos = 0;
     for (size_t j = 0; j < count; j++) {
       if (max_pos < pos[j]) {
         max_pos = pos[j];
-        max_pos_ix = j;
+        max_pos_indexes.clear();
+        max_pos_indexes.push_back(j);
+      } else if (max_pos == pos[j]) {
+        max_pos_indexes.push_back(j);
       }
     }
-    all_points[max_pos_ix]++;
+    for (size_t i : max_pos_indexes) {
+      all_points[i]++;
+    }
   }
 
   int result = 0;

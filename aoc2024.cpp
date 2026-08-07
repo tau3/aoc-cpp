@@ -8,7 +8,7 @@ using namespace std;
 using namespace Day15;
 
 int main() {
-  // const vector<string> input = util::read_file("../day14_input");
+  // const vector<string> input = util::read_file("../day15_input");
   // clang-format off
   const vector<string> input = {
       "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",

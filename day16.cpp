@@ -16,7 +16,8 @@ const std::unordered_map<std::string, int> EXPECTED = {
     {"goldfish", 5},
     {"trees", 3},
     {"cars", 2},
-    {"perfumes", 1}};
+    {"perfumes", 1}
+};
 // clang-format on
 
 bool matches(const std::vector<std::string> &tokens, const size_t key_index) {
@@ -32,17 +33,33 @@ bool matches(const std::vector<std::string> &tokens, const size_t key_index) {
   return expected == actual;
 }
 
-bool matches(const std::string &line) {
-  const std::vector<std::string> tokens = util::split(line, " ");
+bool matches2(const std::vector<std::string> &tokens, const size_t key_index) {
+  std::string key = tokens[key_index];
+  key.pop_back();
 
-  return matches(tokens, 2) && matches(tokens, 4) && matches(tokens, 6);
+  std::string value = tokens[key_index + 1];
+  if (value[value.size() - 1] == ',') {
+    value.pop_back();
+  }
+
+  int actual = std::stoi(value);
+  int expected = EXPECTED.at(key);
+
+  if (key == "cats" || key == "trees") {
+    return actual > expected;
+  } else if (key == "pomeranians" || key == "goldfish") {
+    return actual < expected;
+  }
+
+  return expected == actual;
 }
 
-int solve_day16_pt1(const std::vector<std::string> &input) {
+int solve(const std::vector<std::string> &input, const bool pt2) {
   for (const std::string &line : input) {
     const std::vector<std::string> tokens = util::split(line, " ");
     const bool found =
-        matches(tokens, 2) && matches(tokens, 4) && matches(tokens, 6);
+        pt2 ? matches2(tokens, 2) && matches2(tokens, 4) && matches2(tokens, 6)
+            : matches(tokens, 2) && matches(tokens, 4) && matches(tokens, 6);
     if (found) {
       std::string result = tokens[1];
       result.pop_back();
@@ -50,6 +67,14 @@ int solve_day16_pt1(const std::vector<std::string> &input) {
     }
   }
   throw std::runtime_error("unreachable");
+}
+
+int solve_day16_pt1(const std::vector<std::string> &input) {
+  return solve(input, false);
+}
+
+int solve_day16_pt2(const std::vector<std::string> &input) {
+  return solve(input, true);
 }
 
 } // namespace Day16

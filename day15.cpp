@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cassert>
 #include <numeric>
-#include <vector>
 
 namespace Day15 {
 
@@ -33,7 +32,7 @@ Ingredient parse_line(const std::string &line) {
 }
 
 int calc_total(const std::vector<Ingredient> &ingredients,
-               const std::vector<int> &proportion) {
+               const std::vector<int> &proportion, const bool pt2) {
   assert(ingredients.size() == proportion.size());
   assert(std::accumulate(proportion.begin(), proportion.end(), 0) == 100);
 
@@ -41,24 +40,31 @@ int calc_total(const std::vector<Ingredient> &ingredients,
   int durability = 0;
   int flavor = 0;
   int texture = 0;
+  int calories = 0;
   for (size_t i = 0; i < ingredients.size(); i++) {
     capacity += ingredients[i].capacity * proportion[i];
     durability += ingredients[i].durability * proportion[i];
     flavor += ingredients[i].flavor * proportion[i];
     texture += ingredients[i].texture * proportion[i];
+    calories += ingredients[i].calories * proportion[i];
   }
+
+  if (pt2 && (calories != 500)) {
+    return 0;
+  }
+
   return std::max(capacity, 0) * std::max(durability, 0) * std::max(flavor, 0) *
          std::max(texture, 0);
 }
 
-int solve(const std::vector<Ingredient> &ingredients) {
+int solve(const std::vector<Ingredient> &ingredients, const bool pt2) {
   const int MAX = 100;
   int result = 0;
   for (int i = 0; i < MAX; i++) {
     for (int j = 0; j < MAX - i; j++) {
       for (int k = 0; k < MAX - i - j; k++) {
         const int l = MAX - i - j - k;
-        const int total = calc_total(ingredients, {i, j, k, l});
+        const int total = calc_total(ingredients, {i, j, k, l}, pt2);
         if (total > result) {
           result = total;
         }
@@ -68,14 +74,21 @@ int solve(const std::vector<Ingredient> &ingredients) {
   return result;
 }
 
-int solve_day15_pt1(const std::vector<std::string> &input) {
+int solve(const std::vector<std::string> &input, bool pt2) {
   std::vector<Ingredient> ingredients;
   for (const auto &line : input) {
     const Ingredient ingredient = parse_line(line);
     ingredients.push_back(ingredient);
   }
+  return solve(ingredients, pt2);
+}
 
-  return solve(ingredients);
+int solve_day15_pt1(const std::vector<std::string> &input) {
+  return solve(input, true);
+}
+
+int solve_day15_pt2(const std::vector<std::string> &input) {
+  return solve(input, false);
 }
 
 } // namespace Day15

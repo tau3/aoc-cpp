@@ -1,14 +1,14 @@
-#include "day16.hpp"
+#include "day17.hpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day16;
+using namespace Day17;
 
 int main() {
-  const vector<string> input = util::read_file("../day16_input");
+  // const vector<string> input = util::read_file("../day16_input");
   // clang-format off
   // const vector<string> input = {
   //     "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",
@@ -16,5 +16,7 @@ int main() {
   // };
   // clang-format on
 
-  cout << solve_day16_pt2(input) << endl;
+  // cout << solve_day16_pt2(input) << endl;
+
+  cout << how_many_ways({20, 15, 10, 5, 5}, {}, 25) << endl;
 }

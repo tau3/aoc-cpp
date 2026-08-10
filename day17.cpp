@@ -50,6 +50,9 @@ int solve_day17_pt2(const vector<string> &input) {
       if (test_bit(i, j)) {
         sum += containers[j];
         bits++;
+        if (bits > min_used_bits) {
+          continue;
+        }
       }
     }
     if (sum == 150) {

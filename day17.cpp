@@ -1,30 +1,37 @@
 #include "day17.hpp"
-#include <cstddef>
+#include <cmath>
+#include <string>
 
 namespace Day17 {
 
-int how_many_ways(const vector<int> &containers,
-                  const unordered_map<int, int> &cache, const int limit) {
+bool test_bit(const int num, const int i) {
+  int mask = 1 << i;
+  return num & mask;
+}
+
+int how_many_ways(const vector<int> &containers, int limit) {
+  int counter = pow(2, containers.size());
   int result = 0;
-  for (size_t i = 0; i < containers.size(); i++) {
-    const int current = containers[i];
-    if (current > limit) {
-      continue;
+  for (int i = 1; i < counter; i++) {
+    int sum = 0;
+    for (int j = 0; j < containers.size(); j++) {
+      if (test_bit(i, j)) {
+        sum += containers[j];
+      }
     }
-
-    if (current == limit) {
+    if (sum == limit) {
       result++;
-      continue;
     }
-
-    vector<int> remaining = containers;
-    remaining.erase(remaining.begin() + i);
-
-    const int current_limit = limit - current;
-    result += how_many_ways(remaining, cache, current_limit);
   }
-
   return result;
+}
+
+int solve_day17_pt1(const vector<string> &input) {
+  vector<int> containers;
+  for (const auto &line : input) {
+    containers.push_back(stoi(line));
+  }
+  return how_many_ways(containers, 150);
 }
 
 } // namespace Day17

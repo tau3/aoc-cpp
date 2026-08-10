@@ -1,15 +1,17 @@
 #ifndef INCLUDE_DAY_17_H
 #define INCLUDE_DAY_17_H
 
-#include <unordered_map>
+#include <string>
 #include <vector>
 
 namespace Day17 {
 
 using namespace std;
 
-int how_many_ways(const vector<int> &containers,
-                  const unordered_map<int, int> &cache, const int limit);
+int how_many_ways(const vector<int> &containers, const int limit);
+
+int solve_day17_pt1(const vector<string> &input);
+
 } // namespace Day17
 
 #endif

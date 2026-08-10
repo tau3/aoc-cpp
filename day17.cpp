@@ -34,4 +34,34 @@ int solve_day17_pt1(const vector<string> &input) {
   return how_many_ways(containers, 150);
 }
 
+int solve_day17_pt2(const vector<string> &input) {
+  vector<int> containers;
+  for (const auto &line : input) {
+    containers.push_back(stoi(line));
+  }
+  int all = pow(2, containers.size());
+
+  int result = 0;
+  int min_used_bits = containers.size() + 1;
+  for (int i = 1; i < all; i++) {
+    int bits = 0;
+    int sum = 0;
+    for (int j = 0; j < containers.size(); j++) {
+      if (test_bit(i, j)) {
+        sum += containers[j];
+        bits++;
+      }
+    }
+    if (sum == 150) {
+      if (bits < min_used_bits) {
+        result = 1;
+        min_used_bits = bits;
+      } else if (bits == min_used_bits) {
+        result++;
+      }
+    }
+  }
+  return result;
+}
+
 } // namespace Day17

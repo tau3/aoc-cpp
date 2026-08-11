@@ -2,15 +2,14 @@
 #define INCLUDE_DAY_19_H
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace Day19 {
 
 using namespace std;
 
-size_t solve(const unordered_map<string, string> &replacements,
-             const string &line);
+using Replacements = vector<pair<string, string>>;
+size_t solve(const Replacements &replacements, const string &line);
 size_t solve_day_19_pt1(const vector<string> &input);
 
 } // namespace Day19

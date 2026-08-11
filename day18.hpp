@@ -8,7 +8,7 @@ namespace Day18 {
 
 using namespace std;
 
-int solve(vector<string> grid, const int steps);
+int solve(vector<string> grid, const int steps, const bool pt2);
 
 } // namespace Day18
 

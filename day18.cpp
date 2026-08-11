@@ -1,12 +1,13 @@
 #include "day18.hpp"
+#include <vector>
 
 namespace Day18 {
 
-vector<string> step(const vector<string> &grid);
+vector<string> step(const vector<string> &grid, const bool pt2);
 
-int solve(vector<string> grid, const int steps) {
+int solve(vector<string> grid, const int steps, const bool pt2) {
   for (int i = 0; i < steps; i++) {
-    grid = step(grid);
+    grid = step(grid, pt2);
   }
 
   int result = 0;
@@ -51,11 +52,25 @@ int count_on(const vector<string> &grid, const int row, const int column) {
   return result;
 }
 
-vector<string> step(const vector<string> &grid) {
+bool is_corner(const vector<string> &grid, const int row, const int column) {
+  const int height = grid.size();
+  const int width = grid[0].size();
+
+  return (row == 0 && column == 0) || (row == 0 && column == width - 1) ||
+         (row == height - 1 & column == 0) ||
+         (row == height - 1 && column == width - 1);
+}
+
+vector<string> step(const vector<string> &grid, const bool pt2) {
   vector<string> result;
   for (int row = 0; row < grid.size(); row++) {
     string line = "";
     for (int column = 0; column < grid[0].size(); column++) {
+      if (pt2 && is_corner(grid, row, column)) {
+        line += "#";
+        continue;
+      }
+
       const int neighbors_on = count_on(grid, row, column);
       if (grid[row][column] == '#') {
         if (neighbors_on == 2 || neighbors_on == 3) {

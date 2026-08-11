@@ -1,25 +1,23 @@
-#include "day18.hpp"
+#include "day19.hpp"
 #include "util.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day18;
+using namespace Day19;
 
 int main() {
-  const vector<string> input = util::read_file("../day18_input");
+  // const vector<string> input = util::read_file("../day19_input");
   // clang-format off
-  // const vector<string> input = {
-  //   ".#.#.#",
-  //   "...##.",
-  //   "#....#",
-  //   "..#...",
-  //   "#.#..#",
-  //   "####.."
-  // };
-  // // clang-format on
+  const vector<string> input = {
+    "H => HO",
+    "H => OH",
+    "O => HH",
+    "HOH",
+  };
+  // clang-format on
 
   // cout << solve_day18_pt1(input) << endl;
-  cout << solve(input, 100) << endl;
+  cout << solve_day_19_pt1(input) << endl;
 }

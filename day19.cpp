@@ -56,12 +56,6 @@ unordered_set<string> make_all_replacements(const unordered_set<string> &vs,
   return result;
 }
 
-void add_all(unordered_set<string> &left, const unordered_set<string> &right) {
-  for (const auto &r : right) {
-    left.emplace(r);
-  }
-}
-
 size_t solve_day19_pt2(const vector<string> &input) {
   Replacements replacements;
   for (size_t i = 0; i < input.size() - 2; i++) {
@@ -75,17 +69,21 @@ size_t solve_day19_pt2(const vector<string> &input) {
   size_t i = 0;
   while (true) {
     unordered_set<string> new_variants;
-    for (const auto &[from, to] : replacements) {
-      unordered_set<string> new_variants_1 =
-          make_all_replacements(variants, from, to);
-      for (const auto &v : new_variants_1) {
-        cout << v << endl;
-        if (v == molecule) {
-          return i + 1;
+    for (const auto &[key, value] : replacements) {
+      for (const auto &variant : variants) {
+        size_t from = variant.find(key, 0);
+        while (from != variant.npos) {
+          auto copy = variant;
+          copy.replace(from, key.size(), value);
+
+          if (copy == molecule) {
+            return i + 1;
+          }
+
+          new_variants.emplace(copy);
+          from = variant.find(key, from + key.size());
         }
       }
-      add_all(new_variants, new_variants_1);
-      cout << i << endl;
     }
     i++;
     variants = new_variants;

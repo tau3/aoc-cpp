@@ -2,9 +2,11 @@
 #include "util.hpp"
 #include <cstddef>
 #include <deque>
+#include <future>
 #include <iterator>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -92,8 +94,15 @@ size_t solve_day19_pt2(const vector<string> &input) {
   size_t i = 0;
   while (true) {
     Container new_variants;
+    vector<future<Container>> futures;
     for (const auto &[key, value] : replacements) {
-      const auto new_items = iterate_variants(variants, value, key);
+      future<Container> future = std::async(
+          std::launch::async, iterate_variants, variants, value, key);
+      futures.push_back(std::move(future));
+    }
+
+    for (auto &future : futures) {
+      Container new_items = future.get();
       for (const auto &variant : new_items) {
         if (variant == "e") {
           return i + 1;

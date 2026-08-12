@@ -2,6 +2,7 @@
 #include "util.hpp"
 #include <cstddef>
 #include <deque>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -57,6 +58,27 @@ Container make_all_replacements(const Container &vs, const string &key,
   return result;
 }
 
+Container iterate_variants(const Container &variants, const string &value,
+                           const string &key) {
+  Container new_variants;
+  for (const auto &variant : variants) {
+    size_t from = variant.find(value, 0);
+    while (from != variant.npos) {
+      auto copy = variant;
+      copy.replace(from, value.size(), key);
+      new_variants.emplace(copy);
+      from = variant.find(key, from + key.size());
+    }
+  }
+  return new_variants;
+}
+
+void add_all(Container &left, const Container &right) {
+  for (const auto &item : right) {
+    left.emplace(item);
+  }
+}
+
 size_t solve_day19_pt2(const vector<string> &input) {
   Replacements replacements;
   for (size_t i = 0; i < input.size() - 2; i++) {
@@ -71,25 +93,16 @@ size_t solve_day19_pt2(const vector<string> &input) {
   while (true) {
     Container new_variants;
     for (const auto &[key, value] : replacements) {
-      for (const auto &variant : variants) {
-        size_t from = variant.find(value, 0);
-        while (from != variant.npos) {
-          auto copy = variant;
-          copy.replace(from, value.size(), key);
-
-          cout << copy.size() << endl;
-          if (copy == "e") {
-            return i + 1;
-          }
-
-          new_variants.emplace(copy);
-          from = variant.find(key, from + key.size());
+      const auto new_items = iterate_variants(variants, value, key);
+      for (const auto &variant : new_items) {
+        if (variant == "e") {
+          return i + 1;
         }
       }
+      add_all(new_variants, new_items);
     }
     i++;
     variants = new_variants;
-    cout << variants.size() << endl;
   }
   throw runtime_error("unreachable");
 }

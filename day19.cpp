@@ -40,10 +40,11 @@ size_t solve_day19_pt1(const vector<string> &input) {
   return solve(replacements, molecule);
 }
 
-unordered_set<string> make_all_replacements(const unordered_set<string> &vs,
-                                            const string &key,
-                                            const string &value) {
-  unordered_set<string> result;
+using Container = unordered_set<string>;
+
+Container make_all_replacements(const Container &vs, const string &key,
+                                const string &value) {
+  Container result;
   for (const auto &molecule : vs) {
     size_t from = molecule.find(key, 0);
     while (from != molecule.npos) {
@@ -65,18 +66,19 @@ size_t solve_day19_pt2(const vector<string> &input) {
 
   const auto molecule = input[input.size() - 1];
 
-  unordered_set<string> variants = {"e"};
+  Container variants = {molecule};
   size_t i = 0;
   while (true) {
-    unordered_set<string> new_variants;
+    Container new_variants;
     for (const auto &[key, value] : replacements) {
       for (const auto &variant : variants) {
-        size_t from = variant.find(key, 0);
+        size_t from = variant.find(value, 0);
         while (from != variant.npos) {
           auto copy = variant;
-          copy.replace(from, key.size(), value);
+          copy.replace(from, value.size(), key);
 
-          if (copy == molecule) {
+          cout << copy.size() << endl;
+          if (copy == "e") {
             return i + 1;
           }
 
@@ -87,6 +89,7 @@ size_t solve_day19_pt2(const vector<string> &input) {
     }
     i++;
     variants = new_variants;
+    cout << variants.size() << endl;
   }
   throw runtime_error("unreachable");
 }

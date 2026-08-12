@@ -10,7 +10,8 @@ using namespace std;
 
 using Replacements = vector<pair<string, string>>;
 size_t solve(const Replacements &replacements, const string &line);
-size_t solve_day_19_pt1(const vector<string> &input);
+size_t solve_day19_pt1(const vector<string> &input);
+size_t solve_day19_pt2(const vector<string> &input);
 
 } // namespace Day19
 

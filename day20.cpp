@@ -1,9 +1,6 @@
 #include "day20.hpp"
-#include <climits>
+#include <cmath>
 #include <future>
-#include <iostream>
-#include <mutex>
-#include <stdexcept>
 #include <vector>
 
 namespace Day20 {
@@ -12,11 +9,9 @@ using namespace std;
 
 const int THREADS = 10;
 
-std::mutex m;
-
 int calc_presents(const int house_number) {
   int result = 1 + house_number;
-  for (int i = 2; i <= house_number / 2; i++) {
+  for (int i = 2; i <= sqrt(house_number); i++) {
     if (house_number % i == 0) {
       result += i;
     }
@@ -24,10 +19,11 @@ int calc_presents(const int house_number) {
   return result * 10;
 }
 
-int calc_block(int from_inclusive, int size, int presents) {
-  for (int i = from_inclusive; i < from_inclusive + size; i++) {
+int calc_block(const int from_inclusive, const int block_size,
+               const int presents) {
+  for (int i = from_inclusive; i < from_inclusive + block_size; i++) {
     const int current = calc_presents(i);
-    if (current == presents) {
+    if (current >= presents) {
       return i;
     }
   }
@@ -35,22 +31,23 @@ int calc_block(int from_inclusive, int size, int presents) {
 }
 
 int solve_day20_pt1(const int presents) {
-  const int block_size = INT_MAX / THREADS;
+  const int block_size = presents / THREADS;
 
   vector<future<int>> futures;
   for (int i = 0; i < THREADS; i++) {
-    std::future<int> future =
-        std::async(calc_block, i * block_size, block_size, presents);
+    future<int> future =
+        async(calc_block, i * block_size, block_size, presents);
     futures.push_back(std::move(future));
   }
 
+  int result = presents;
   for (future<int> &future : futures) {
-    const int result = future.get();
-    if (result != -1) {
-      return result;
+    const int current = future.get();
+    if (current != -1 && current < result) {
+      result = current;
     }
   }
-  throw runtime_error("failure");
+  return result;
 }
 
 } // namespace Day20

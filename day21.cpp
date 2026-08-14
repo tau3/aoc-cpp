@@ -17,15 +17,15 @@ bool turn(Warrior &attacker, Warrior &defender) {
   return !defender.is_alive();
 }
 
-bool fight(Player *player, Boss *boss) {
-  Warrior *attacker = player;
-  Warrior *defender = boss;
+bool fight(Player &player, Boss &boss) {
+  Warrior *attacker = &player;
+  Warrior *defender = &boss;
 
   while (!turn(*attacker, *defender)) {
     swap(attacker, defender);
   }
 
-  return attacker == player;
+  return attacker == &player;
 }
 
 vector<Weapon> weapons() {
@@ -93,7 +93,7 @@ int solve_day21_pt1() {
 
           Player player(100, weapon, armor, left_ring, right_ring);
           Boss current_boss(boss);
-          bool is_player_won = fight(&player, &current_boss);
+          bool is_player_won = fight(player, current_boss);
           if (is_player_won) {
             const int equip_cost = player.equip_cost();
             if (equip_cost < result) {

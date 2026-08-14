@@ -51,7 +51,6 @@ public:
                 const int armor)
       : Item(name, cost, damage, armor) {};
 
-  // TODO move from class
   inline bool operator==(const Ring &other) const {
     return name == other.name && cost == other.cost && damage == other.damage &&
            armor == other.armor;
@@ -175,7 +174,7 @@ public:
   int get_armor() const override { return armor; }
 };
 
-bool fight(Player *player, Boss *boss);
+bool fight(Player &player, Boss &boss);
 
 int solve_day21_pt1();
 

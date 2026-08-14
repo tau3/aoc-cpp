@@ -26,12 +26,14 @@ int main() {
 
   // cout << solve_day20_pt1(29000000) << endl;
 
-  Weapon weapon = Weapon("Shortsword", 10, 5, 0);
-  Armor armor = Armor("Platemail", 102, 0, 5);
-  Player player = Player(8, weapon, armor, nullopt, nullopt);
-  Boss boss = Boss(12, 7, 2);
+  // Weapon weapon = Weapon("Shortsword", 10, 5, 0);
+  // Armor armor = Armor("Platemail", 102, 0, 5);
+  // Player player = Player(8, weapon, armor, nullopt, nullopt);
+  // Boss boss = Boss(12, 7, 2);
 
-  cout << fight(&player, &boss) << endl;
+  // cout << fight(&player, &boss) << endl;
+
+  cout << solve_day21_pt1() << endl;
 
   return 0;
 }

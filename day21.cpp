@@ -1,5 +1,7 @@
 #include "day21.hpp"
 #include <climits>
+#include <optional>
+#include <vector>
 
 namespace Day21 {
 
@@ -65,27 +67,40 @@ vector<Ring> rings() {
   return rings;
 }
 
-void solve_day21_pt1() {
-  const Boss boss = Boss(1, 2, 3);
+template <typename T> vector<optional<T>> add_empty(const vector<T> &items) {
+  vector<optional<T>> result;
+  for (const T &item : items) {
+    result.push_back(optional<T>(item));
+  }
+  result.push_back(nullopt);
+  return result;
+}
+
+int solve_day21_pt1() {
+  const Boss boss = Boss(103, 9, 2);
+
   int result = INT_MAX;
-  for (const Weapon &weapon : weapons()) {
-    for (const Armor &armor : armors()) {
-      for (const Ring &left_ring : rings()) {
-        for (const Ring &right_ring : rings()) {
-          if (left_ring == right_ring) {
+
+  for (const optional<Weapon> &weapon : add_empty(weapons())) {
+    for (const optional<Armor> &armor : add_empty(armors())) {
+      for (const optional<Ring> &left_ring : add_empty(rings())) {
+        for (const optional<Ring> &right_ring : add_empty(rings())) {
+          if (left_ring.has_value() && (left_ring == right_ring)) {
             continue;
           }
 
           Player player(100, weapon, armor, left_ring, right_ring);
-          bool is_player_won = fight(player, boss);
-          const int equip_price = player.equip_price();
-          if (is_player_won && equip_price < result) {
-            result = equip_price;
+          Boss current_boss(boss);
+          bool is_player_won = fight(&player, &current_boss);
+          const int equip_cost = player.equip_cost();
+          if (is_player_won && equip_cost < result) {
+            result = equip_cost;
           }
         }
       }
     }
   }
+  return result;
 }
 
 } // namespace Day21

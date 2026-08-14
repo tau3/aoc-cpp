@@ -28,6 +28,7 @@ public:
 public:
   inline int get_damage() const { return damage; }
   inline int get_armor() const { return armor; }
+  inline int get_cost() const { return cost; }
 };
 
 class Weapon : public Item {
@@ -65,8 +66,10 @@ vector<Ring> rings();
 
 class Warrior {
 private:
-  int hp;
   Warrior() {};
+
+protected:
+  int hp;
 
 public:
   virtual int get_damage() const = 0;
@@ -136,6 +139,23 @@ public:
     }
     return result;
   }
+
+  inline int equip_cost() const {
+    int result = 0;
+    if (weapon) {
+      result += weapon.value().get_cost();
+    }
+    if (armor) {
+      result += armor.value().get_cost();
+    }
+    if (left_ring) {
+      result += left_ring.value().get_cost();
+    }
+    if (right_ring) {
+      result += left_ring.value().get_cost();
+    }
+    return result;
+  }
 };
 
 class Boss : public Warrior {
@@ -145,6 +165,9 @@ class Boss : public Warrior {
   Boss() = delete;
 
 public:
+  explicit Boss(const Boss &other)
+      : Warrior(other.hp), damage(other.damage), armor(other.armor) {}
+
   explicit Boss(const int hp, const int damage, const int armor)
       : Warrior(hp), damage(damage), armor(armor) {}
   int get_damage() const override { return damage; }
@@ -153,6 +176,8 @@ public:
 };
 
 bool fight(Player *player, Boss *boss);
+
+int solve_day21_pt1();
 
 } // namespace Day21
 

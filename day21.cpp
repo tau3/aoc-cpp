@@ -30,11 +30,12 @@ bool fight(Player *player, Boss *boss) {
 
 vector<Weapon> weapons() {
   // clang-format off
-  static vector<Weapon> weapons = {
+  static const vector<Weapon> weapons = {
       Weapon("Dagger", 8, 4, 0),
       Weapon("Shortsword", 10, 5, 0),
       Weapon("Warhammer", 25, 6, 0),
       Weapon("Longsword", 40, 7, 0),
+      Weapon("Greataxe", 74, 8, 0),
   };
   // clang-format on
   return weapons;
@@ -42,7 +43,7 @@ vector<Weapon> weapons() {
 
 vector<Armor> armors() {
   // clang-format off
-  static vector<Armor> armors = {
+  static const vector<Armor> armors = {
       Armor("Leather", 13, 0, 1),
       Armor("Chainmail", 31, 0, 2),
       Armor("Splintmail", 53, 0, 3),
@@ -55,7 +56,7 @@ vector<Armor> armors() {
 
 vector<Ring> rings() {
   // clang-format off
-  static vector<Ring> rings = {
+  static const vector<Ring> rings = {
       Ring("Damage +1", 25, 1, 0),
       Ring("Damage +2", 50, 2, 0),
       Ring("Damage +3", 100, 3, 0),
@@ -81,10 +82,11 @@ int solve_day21_pt1() {
 
   int result = INT_MAX;
 
+  const vector<optional<Ring>> ring_choices = add_empty(rings());
   for (const optional<Weapon> &weapon : add_empty(weapons())) {
     for (const optional<Armor> &armor : add_empty(armors())) {
-      for (const optional<Ring> &left_ring : add_empty(rings())) {
-        for (const optional<Ring> &right_ring : add_empty(rings())) {
+      for (const optional<Ring> &left_ring : ring_choices) {
+        for (const optional<Ring> &right_ring : ring_choices) {
           if (left_ring.has_value() && (left_ring == right_ring)) {
             continue;
           }
@@ -92,9 +94,11 @@ int solve_day21_pt1() {
           Player player(100, weapon, armor, left_ring, right_ring);
           Boss current_boss(boss);
           bool is_player_won = fight(&player, &current_boss);
-          const int equip_cost = player.equip_cost();
-          if (is_player_won && equip_cost < result) {
-            result = equip_cost;
+          if (is_player_won) {
+            const int equip_cost = player.equip_cost();
+            if (equip_cost < result) {
+              result = equip_cost;
+            }
           }
         }
       }

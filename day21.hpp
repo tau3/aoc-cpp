@@ -118,7 +118,7 @@ public:
       result += left_ring.value().get_damage();
     }
     if (right_ring) {
-      result += left_ring.value().get_damage();
+      result += right_ring.value().get_damage();
     }
     return result;
   }
@@ -135,7 +135,7 @@ public:
       result += left_ring.value().get_armor();
     }
     if (right_ring) {
-      result += left_ring.value().get_armor();
+      result += right_ring.value().get_armor();
     }
     return result;
   }
@@ -152,7 +152,7 @@ public:
       result += left_ring.value().get_cost();
     }
     if (right_ring) {
-      result += left_ring.value().get_cost();
+      result += right_ring.value().get_cost();
     }
     return result;
   }

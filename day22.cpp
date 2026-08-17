@@ -1,8 +1,6 @@
-#include <algorithm>
 #include <cassert>
 #include <deque>
-#include <stdexcept>
-#include <vector>
+#include <unordered_map>
 
 namespace Day22 {
 
@@ -14,7 +12,6 @@ struct Player {
   int hp;
   int armor;
   int mana;
-  vector<pair<Spell, int>> effects;
 };
 
 struct Boss {
@@ -22,45 +19,12 @@ struct Boss {
   int damage;
 };
 
-void turn(Player &attacker, Boss &defender) {
-  for (pair<Spell, int> &effect : attacker.effects) {
-    const Spell spell = effect.first;
-
-    switch (spell) {
-
-    case Spell::MAGIC_MISSLE:
-      throw runtime_error("magic missle is not a dot");
-    case Spell::DRAIN:
-      throw runtime_error("drain is not a dot");
-    case Spell::SHIELD:
-      break;
-    case Spell::POISON:
-      defender.hp -= 3;
-      break;
-    case Spell::RECHARGE:
-      attacker.mana += 101;
-      break;
-    }
-
-    effect.second -= 1;
-  }
-
-  // TODO attack somehow
-  // ...
-
-  attacker.effects.erase(std::remove_if(
-      attacker.effects.begin(), attacker.effects.end(),
-      [](const pair<Spell, int> &effect) { return effect.second == 0; }));
-}
-
 struct State {
   Player player;
   Boss boss;
   bool is_player;
   int mana_spent;
-  int shield;
-  int poison;
-  int recharge;
+  unordered_map<Spell, int> dots;
 };
 
 void maybe_enque_magic_missle(const State &state, std::deque<State> &states) {
@@ -76,7 +40,9 @@ void maybe_enque_magic_missle(const State &state, std::deque<State> &states) {
 
   Boss new_boss = state.boss;
   new_boss.hp -= 4;
-  State new_state = {new_player, new_boss, false, state.mana_spent + price};
+
+  State new_state = {new_player, new_boss, false, state.mana_spent + price,
+                     state.dots};
 
   states.push_back(new_state);
 }
@@ -95,65 +61,60 @@ void maybe_enque_drain(const State &state, std::deque<State> &states) {
 
   Boss new_boss = state.boss;
   new_boss.hp -= 2;
-  State new_state = {new_player, new_boss, false, state.mana_spent + price};
+
+  State new_state = {new_player, new_boss, false, state.mana_spent + price,
+                     state.dots};
 
   states.push_back(new_state);
 }
 
-void maybe_enque_shield(const State &state, std::deque<State> &states) {
+void maybe_enque_dot(const State &state, std::deque<State> &states,
+                     const int price, const Spell spell, const int ticks) {
   assert(state.is_player);
 
-  const int price = 113;
-  if (state.player.mana < price || state.player.has_effect(Spell::SHIELD)) {
+  if (state.player.mana < price || state.dots.at(spell) > 0) {
     return;
   }
 
-  Player new_player = state.player;
-  new_player.add_effect(Spell::SHIELD, 6);
-  State new_state = {new_player, state.boss, false, state.mana_spent + price};
+  unordered_map<Spell, int> new_dots = state.dots;
+  new_dots.emplace(spell, ticks);
+  State new_state = {state.player, state.boss, false, state.mana_spent + price,
+                     new_dots};
 
   states.push_back(new_state);
 }
 
-void maybe_enque_poison(const State &state, std::deque<State> &states) {
-  assert(state.is_player);
-
-  const int price = 173;
-  if (state.player.mana < price || state.player.has_effect(Spell::POISON)) {
-    return;
+void apply_effects(State &state) {
+  if (state.dots[Spell::SHIELD] > 0) {
+    state.dots[Spell::SHIELD]--;
   }
 
-  Player new_player = state.player;
-  new_player.add_effect(Spell::POISON, 6);
-  State new_state = {new_player, state.boss, false, state.mana_spent + price};
-
-  states.push_back(new_state);
-}
-
-void maybe_enque_recharge(const State &state, std::deque<State> &states) {
-  assert(state.is_player);
-
-  const int price = 229;
-  if (state.player.mana < price || state.player.has_effect(Spell::RECHARGE)) {
-    return;
+  if (state.dots[Spell::POISON] > 0) {
+    state.dots[Spell::POISON]--;
+  }
+  if (state.dots[Spell::POISON] > 0) {
+    state.boss.hp -= 3;
   }
 
-  Player new_player = state.player;
-  new_player.add_effect(Spell::RECHARGE, 5);
-  State new_state = {new_player, state.boss, false, state.mana_spent + price};
-
-  states.push_back(new_state);
+  if (state.dots[Spell::RECHARGE] > 0) {
+    state.dots[Spell::RECHARGE]--;
+  }
+  if (state.dots[Spell::RECHARGE] > 0) {
+    state.player.mana += 101;
+  }
 }
-
-void apply_effects(State &state) {}
 
 void enque_boss_turn(const State &state, std::deque<State> &states) {
-  int damage = state.boss.damage - state.player.shield();
+  int damage = state.boss.damage;
+  if (state.dots.at(Spell::SHIELD) > 0) {
+    damage -= 7;
+  }
   if (damage <= 0) {
     damage = 1;
   }
 
-  State new_state = {state.player, state.boss, true, state.mana_spent};
+  State new_state = {state.player, state.boss, true, state.mana_spent,
+                     state.dots};
   states.push_back(new_state);
 }
 
@@ -177,10 +138,9 @@ int solve(std::deque<State> &states) {
     maybe_enque_magic_missle(state, states);
     maybe_enque_drain(state, states);
 
-    // TODO one function
-    maybe_enque_shield(state, states);
-    maybe_enque_poison(state, states);
-    maybe_enque_recharge(state, states);
+    maybe_enque_dot(state, states, 113, Spell::SHIELD, 6);
+    maybe_enque_dot(state, states, 173, Spell::POISON, 7);
+    maybe_enque_dot(state, states, 229, Spell::RECHARGE, 5);
   }
 
   return solve(states);

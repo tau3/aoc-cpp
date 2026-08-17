@@ -58,6 +58,9 @@ struct State {
   Boss boss;
   bool is_player;
   int mana_spent;
+  int shield;
+  int poison;
+  int recharge;
 };
 
 void maybe_enque_magic_missle(const State &state, std::deque<State> &states) {
@@ -142,11 +145,24 @@ void maybe_enque_recharge(const State &state, std::deque<State> &states) {
   states.push_back(new_state);
 }
 
+void apply_effects(State &state) {}
+
+void enque_boss_turn(const State &state, std::deque<State> &states) {
+  int damage = state.boss.damage - state.player.shield();
+  if (damage <= 0) {
+    damage = 1;
+  }
+
+  State new_state = {state.player, state.boss, true, state.mana_spent};
+  states.push_back(new_state);
+}
+
 int solve(std::deque<State> &states) {
   State state = states.front();
   states.pop_front();
 
   apply_effects(state);
+
   if (state.player.hp <= 0 || state.player.mana <= 0) {
     return MAX_INT;
   }
@@ -155,13 +171,7 @@ int solve(std::deque<State> &states) {
   }
 
   if (!state.is_player) {
-    int damage = state.boss.damage - state.player.shield();
-    if (damage <= 0) {
-      damage = 1;
-    }
-
-    State new_state = {state.player, state.boss, true, state.mana_spent};
-    states.push_back(new_state);
+    enque_boss_turn(state, states);
   } else {
     // TODO 1 function?
     maybe_enque_magic_missle(state, states);

@@ -25,22 +25,13 @@ int main() {
 
   // cout << solve_day19_pt2(input) << endl;
 
-  // cout << solve_day20_pt1(29000000) << endl;
-
-  // Weapon weapon = Weapon("Shortsword", 10, 5, 0);
-  // Armor armor = Armor("Platemail", 102, 0, 5);
-  // Player player = Player(8, weapon, armor, nullopt, nullopt);
-  // Boss boss = Boss(12, 7, 2);
-
-  // cout << fight(&player, &boss) << endl;
-
   deque<State> states;
   State state = {
       {50, 500},
       {58, 9},
       true,
       0,
-      {{Effects::POISON, 0}, {Effects::RECHARGE, 0}, {Effects::SHIELD, 0}}};
+      {{Effect::POISON, 0}, {Effect::RECHARGE, 0}, {Effect::SHIELD, 0}}};
   states.push_back(state);
 
   cout << solve(states) << endl;

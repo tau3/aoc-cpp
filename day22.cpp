@@ -1,6 +1,5 @@
 #include "day22.hpp"
 #include <cassert>
-#include <iostream>
 
 namespace Day22 {
 
@@ -48,14 +47,14 @@ void maybe_enque_drain(const State &state, std::deque<State> &states) {
 }
 
 void maybe_enque_dot(const State &state, std::deque<State> &states,
-                     const int price, const Effects spell, const int ticks) {
+                     const int price, const Effect spell, const int ticks) {
   assert(state.is_player);
 
   if (state.player.mana < price || state.dots.at(spell) > 0) {
     return;
   }
 
-  unordered_map<Effects, int> new_dots = state.dots;
+  unordered_map<Effect, int> new_dots = state.dots;
   new_dots.emplace(spell, ticks);
 
   State new_state = {state.player, state.boss, false, state.mana_spent + price,
@@ -65,21 +64,21 @@ void maybe_enque_dot(const State &state, std::deque<State> &states,
 }
 
 void apply_effects(State &state) {
-  if (state.dots[Effects::SHIELD] > 0) {
-    state.dots[Effects::SHIELD]--;
+  if (state.dots.at(Effect::SHIELD) > 0) {
+    state.dots[Effect::SHIELD]--;
   }
 
-  if (state.dots[Effects::POISON] > 0) {
-    state.dots[Effects::POISON]--;
+  if (state.dots.at(Effect::POISON) > 0) {
+    state.dots[Effect::POISON]--;
   }
-  if (state.dots[Effects::POISON] > 0) {
+  if (state.dots.at(Effect::POISON) > 0) {
     state.boss.hp -= 3;
   }
 
-  if (state.dots[Effects::RECHARGE] > 0) {
-    state.dots[Effects::RECHARGE]--;
+  if (state.dots.at(Effect::RECHARGE) > 0) {
+    state.dots[Effect::RECHARGE]--;
   }
-  if (state.dots[Effects::RECHARGE] > 0) {
+  if (state.dots.at(Effect::RECHARGE) > 0) {
     state.player.mana += 101;
   }
 }
@@ -88,7 +87,7 @@ void enque_boss_turn(const State &state, std::deque<State> &states) {
   assert(!state.is_player);
 
   int damage = state.boss.damage;
-  if (state.dots.at(Effects::SHIELD) > 0) {
+  if (state.dots.at(Effect::SHIELD) > 0) {
     damage -= 7;
   }
   if (damage <= 0) {
@@ -119,9 +118,9 @@ int solve(std::deque<State> &states) {
     maybe_enque_magic_missle(state, states);
     maybe_enque_drain(state, states);
 
-    maybe_enque_dot(state, states, 113, Effects::SHIELD, 6);
-    maybe_enque_dot(state, states, 173, Effects::POISON, 6);
-    maybe_enque_dot(state, states, 229, Effects::RECHARGE, 5);
+    maybe_enque_dot(state, states, 113, Effect::SHIELD, 6);
+    maybe_enque_dot(state, states, 173, Effect::POISON, 6);
+    maybe_enque_dot(state, states, 229, Effect::RECHARGE, 5);
   }
 
   return solve(states);

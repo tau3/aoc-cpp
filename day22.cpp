@@ -1,5 +1,7 @@
 #include "day22.hpp"
 #include <cassert>
+#include <deque>
+#include <stdexcept>
 
 namespace Day22 {
 
@@ -50,12 +52,14 @@ void maybe_enque_dot(const State &state, std::deque<State> &states,
                      const int price, const Effect spell, const int ticks) {
   assert(state.is_player);
 
-  if (state.player.mana < price || state.dots.at(spell) > 0) {
+  if ((state.player.mana < price) || (state.dots.at(spell) > 0)) {
     return;
   }
 
   unordered_map<Effect, int> new_dots = state.dots;
-  new_dots.emplace(spell, ticks);
+  new_dots[spell] = ticks;
+
+  assert(new_dots.at(spell) == ticks);
 
   State new_state = {state.player, state.boss, false, state.mana_spent + price,
                      new_dots};
@@ -94,36 +98,43 @@ void enque_boss_turn(const State &state, std::deque<State> &states) {
     damage = 1;
   }
 
-  State new_state = {state.player, state.boss, true, state.mana_spent,
+  Player new_player = state.player;
+  new_player.hp -= damage;
+
+  State new_state = {new_player, state.boss, true, state.mana_spent,
                      state.dots};
   states.push_back(new_state);
 }
 
-int solve(std::deque<State> &states) {
-  State state = states.front();
-  states.pop_front();
+int solve(const State &initial) {
+  std::deque<State> states;
+  states.push_back(initial);
 
-  apply_effects(state);
+  while (!states.empty()) {
+    State state = states.front();
+    states.pop_front();
 
-  if (state.player.hp <= 0 || state.player.mana <= 0) {
-    return solve(states);
+    apply_effects(state);
+
+    if ((state.player.hp <= 0) || (state.player.mana <= 0)) {
+      continue;
+    }
+    if (state.boss.hp <= 0) {
+      return state.mana_spent;
+    }
+
+    if (!state.is_player) {
+      enque_boss_turn(state, states);
+    } else {
+      maybe_enque_magic_missle(state, states);
+      maybe_enque_drain(state, states);
+
+      maybe_enque_dot(state, states, 113, Effect::SHIELD, 6);
+      maybe_enque_dot(state, states, 173, Effect::POISON, 6);
+      maybe_enque_dot(state, states, 229, Effect::RECHARGE, 5);
+    }
   }
-  if (state.boss.hp <= 0) {
-    return state.mana_spent;
-  }
-
-  if (!state.is_player) {
-    enque_boss_turn(state, states);
-  } else {
-    maybe_enque_magic_missle(state, states);
-    maybe_enque_drain(state, states);
-
-    maybe_enque_dot(state, states, 113, Effect::SHIELD, 6);
-    maybe_enque_dot(state, states, 173, Effect::POISON, 6);
-    maybe_enque_dot(state, states, 229, Effect::RECHARGE, 5);
-  }
-
-  return solve(states);
+  throw std::runtime_error("unreachable!");
 }
 
 } // namespace Day22

@@ -35,7 +35,12 @@ int main() {
   // cout << fight(&player, &boss) << endl;
 
   deque<State> states;
-  State state = {{50, 500}, {58, 9}, true, 0, {}};
+  State state = {
+      {50, 500},
+      {58, 9},
+      true,
+      0,
+      {{Effects::POISON, 0}, {Effects::RECHARGE, 0}, {Effects::SHIELD, 0}}};
   states.push_back(state);
 
   cout << solve(states) << endl;

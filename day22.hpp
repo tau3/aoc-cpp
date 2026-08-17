@@ -8,7 +8,7 @@ namespace Day22 {
 
 using namespace std;
 
-enum class Dots { SHIELD, POISON, RECHARGE };
+enum class Effects { SHIELD, POISON, RECHARGE };
 
 struct Player {
   int hp;
@@ -25,7 +25,7 @@ struct State {
   Boss boss;
   bool is_player;
   int mana_spent;
-  unordered_map<Dots, int> dots;
+  unordered_map<Effects, int> dots;
 };
 
 int solve(deque<State> &states);

@@ -12,7 +12,6 @@ enum class Dots { SHIELD, POISON, RECHARGE };
 
 struct Player {
   int hp;
-  int armor;
   int mana;
 };
 

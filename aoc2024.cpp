@@ -1,12 +1,13 @@
-#include "day21.hpp"
+#include "day22.hpp"
 #include "util.hpp"
+#include <deque>
 #include <iostream>
 #include <optional>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day21;
+using namespace Day22;
 
 int main() {
   // const vector<string> input = util::read_file("../day19_input");
@@ -33,7 +34,11 @@ int main() {
 
   // cout << fight(&player, &boss) << endl;
 
-  cout << solve_day21_pt1() << endl;
+  deque<State> states;
+  State state = {{50, 500}, {58, 9}, true, 0, {}};
+  states.push_back(state);
+
+  cout << solve(states) << endl;
 
   return 0;
 }

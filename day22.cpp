@@ -56,6 +56,7 @@ void maybe_enque_dot(const State &state, std::deque<State> &states,
 
   unordered_map<Dots, int> new_dots = state.dots;
   new_dots.emplace(spell, ticks);
+
   State new_state = {state.player, state.boss, false, state.mana_spent + price,
                      new_dots};
 
@@ -118,7 +119,7 @@ int solve(std::deque<State> &states) {
     maybe_enque_drain(state, states);
 
     maybe_enque_dot(state, states, 113, Dots::SHIELD, 6);
-    maybe_enque_dot(state, states, 173, Dots::POISON, 7);
+    maybe_enque_dot(state, states, 173, Dots::POISON, 6);
     maybe_enque_dot(state, states, 229, Dots::RECHARGE, 5);
   }
 

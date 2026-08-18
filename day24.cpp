@@ -1,42 +1,41 @@
-#include <climits>
-#include <string>
-#include <vector>
+#include "day24.hpp"
+#include <cstdint>
+#include <limits>
 
 namespace Day24 {
 
-using namespace std;
-
-int calc_product(const vector<int> &numbers) {
-  int result = 1;
-  for (const int number : numbers) {
+uint64_t calc_product(const vector<uint64_t> &numbers) {
+  uint64_t result = 1;
+  for (const uint64_t number : numbers) {
     result *= number;
   }
   return result;
 }
 
-int solve_day24_pt1(const vector<string> &input) {
-  vector<int> numbers;
-  int sum = 0;
+uint64_t solve_day24_pt1(const vector<string> &input) {
+  vector<uint64_t> numbers;
+  uint64_t sum = 0;
   for (const string &line : input) {
-    const int number = stoi(line);
+    const uint64_t number = stoi(line);
     numbers.push_back(number);
     sum += number;
   }
 
-  const int group_sum = sum / 3;
+  const uint64_t group_sum = sum / 3;
 
-  vector<vector<int>> candidates;
+  vector<vector<uint64_t>> candidates;
   size_t min_length = numbers.size();
-  for (size_t i = 1; i < 1 << numbers.size(); i++) {
-    vector<int> combination;
+  const uint64_t all = 1 << numbers.size(); 
+  for (uint64_t i = 1; i < all; i++) {
+    vector<uint64_t> combination;
     for (size_t j = 0; j < numbers.size(); j++) {
       if (i & (1 << j)) {
         combination.push_back(numbers[j]);
       }
     }
 
-    int combination_sum = 0;
-    for (const int j : combination) {
+    uint64_t combination_sum = 0;
+    for (const uint64_t j : combination) {
       combination_sum += j;
     }
     if (combination_sum == group_sum) {
@@ -50,9 +49,9 @@ int solve_day24_pt1(const vector<string> &input) {
     }
   }
 
-  int result = INT_MAX;
-  for (const vector<int> &combination : candidates) {
-    const int product = calc_product(combination);
+  uint64_t result = numeric_limits<uint64_t>::max();
+  for (const vector<uint64_t> &combination : candidates) {
+    const uint64_t product = calc_product(combination);
     if (product < result) {
       result = product;
     }

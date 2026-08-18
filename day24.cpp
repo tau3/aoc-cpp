@@ -12,7 +12,7 @@ uint64_t calc_product(const vector<uint64_t> &numbers) {
   return result;
 }
 
-uint64_t solve_day24_pt1(const vector<string> &input) {
+uint64_t solve(const vector<string> &input, const int count) {
   vector<uint64_t> numbers;
   uint64_t sum = 0;
   for (const string &line : input) {
@@ -21,11 +21,11 @@ uint64_t solve_day24_pt1(const vector<string> &input) {
     sum += number;
   }
 
-  const uint64_t group_sum = sum / 3;
+  const uint64_t group_sum = sum / count;
 
   vector<vector<uint64_t>> candidates;
   size_t min_length = numbers.size();
-  const uint64_t all = 1 << numbers.size(); 
+  const uint64_t all = 1 << numbers.size();
   for (uint64_t i = 1; i < all; i++) {
     vector<uint64_t> combination;
     for (size_t j = 0; j < numbers.size(); j++) {
@@ -58,6 +58,14 @@ uint64_t solve_day24_pt1(const vector<string> &input) {
   }
 
   return result;
+}
+
+uint64_t solve_day24_pt1(const vector<string> &input) {
+  return solve(input, 3);
+}
+
+uint64_t solve_day24_pt2(const vector<string> &input) {
+  return solve(input, 4);
 }
 
 } // namespace Day24

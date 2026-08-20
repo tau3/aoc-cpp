@@ -1,9 +1,11 @@
 #include "day1.hpp"
 #include "util.hpp"
 #include <array>
+#include <cstddef>
 #include <cstdlib>
 #include <format>
 #include <stdexcept>
+#include <unordered_set>
 #include <vector>
 
 namespace Day1 {
@@ -36,8 +38,11 @@ int solve_day1_pt1(const string &input) {
   int y = 0;
 
   vector<string> tokens = util::split(input, " ");
-  for (string &token : tokens) {
-    token.pop_back();
+  for (size_t i = 0; i < tokens.size(); i++) {
+    string &token = tokens[i];
+    if (i != tokens.size() - 1) {
+      token.pop_back();
+    }
     const char current_turn = token[0];
     token.erase(0, 1);
     const int distance = stoi(token);
@@ -61,6 +66,72 @@ int solve_day1_pt1(const string &input) {
     }
   }
   return abs(x) + abs(y);
+}
+
+int solve_day1_pt2(const string &input) {
+  char direction = 'n';
+  int x = 0;
+  int y = 0;
+
+  vector<string> tokens = util::split(input, " ");
+  unordered_set<util::Point<int>, util::PointHash> visited;
+  for (size_t i = 0; i < tokens.size(); i++) {
+    string &token = tokens[i];
+    if (i != tokens.size() - 1) {
+      token.pop_back();
+    }
+    const char current_turn = token[0];
+    token.erase(0, 1);
+    const int distance = stoi(token);
+
+    direction = turn(direction, current_turn);
+    switch (direction) {
+    case 'n':
+      y -= distance;
+      for (int i = 0; i < distance; i++) {
+        const int y_1 = y + distance - i;
+        cout << "emplace " << x << " " << y_1 << endl;
+        if (!visited.emplace(util::Point<int>{x, y_1}).second) {
+          return abs(x) + abs(y_1);
+        }
+      }
+      break;
+    case 'w':
+      x -= distance;
+      for (int i = 0; i < distance; i++) {
+        const int x_1 = x + distance - i;
+        cout << "emplace " << x_1 << " " << y << endl;
+        if (!visited.emplace(util::Point<int>{x_1, y}).second) {
+          return abs(x_1) + abs(y);
+        }
+      }
+      break;
+    case 's':
+      y += distance;
+      for (int i = 0; i < distance; i++) {
+        const int y_1 = y - distance + i;
+        cout << "emplace " << x << " " << y_1 << endl;
+        if (!visited.emplace(util::Point<int>{x, y_1}).second) {
+          return abs(x) + abs(y_1);
+        }
+      }
+      break;
+    case 'e':
+      x += distance;
+      for (int i = 0; i < distance; i++) {
+        const int x_1 = x - distance + i;
+        cout << "emplace " << x_1 << " " << y << endl;
+        if (!visited.emplace(util::Point<int>{x_1, y}).second) {
+          return abs(x_1) + abs(y);
+        }
+      }
+      break;
+    default:
+      throw runtime_error(std::format("unexpected direction: {}", direction));
+    }
+  }
+
+  throw runtime_error("unreachable!");
 }
 
 } // namespace Day1

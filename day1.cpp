@@ -32,6 +32,8 @@ char turn(const char direction, const char turn) {
   throw runtime_error(std::format("invalid turn: {} {}", direction, turn));
 }
 
+int dist(const int x, const int y) { return abs(x) + abs(y); }
+
 int solve_day1_pt1(const string &input) {
   char direction = 'n';
   int x = 0;
@@ -65,7 +67,15 @@ int solve_day1_pt1(const string &input) {
       throw runtime_error(std::format("unexpected direction: {}", direction));
     }
   }
-  return abs(x) + abs(y);
+  return dist(x, y);
+}
+
+using Points = unordered_set<util::Point<int>, util::PointHash>;
+
+bool emplace(Points &points, const int x, const int y) {
+  const util::Point<int> point = util::Point<int>{x, y};
+  const auto result = points.emplace(point);
+  return result.second;
 }
 
 int solve_day1_pt2(const string &input) {
@@ -74,7 +84,7 @@ int solve_day1_pt2(const string &input) {
   int y = 0;
 
   vector<string> tokens = util::split(input, " ");
-  unordered_set<util::Point<int>, util::PointHash> visited;
+  Points visited;
   for (size_t i = 0; i < tokens.size(); i++) {
     string &token = tokens[i];
     if (i != tokens.size() - 1) {
@@ -87,43 +97,42 @@ int solve_day1_pt2(const string &input) {
     direction = turn(direction, current_turn);
     switch (direction) {
     case 'n':
+      for (int i = 0; i < distance; i++) {
+        if (!emplace(visited, x, y)) {
+          return dist(x, y);
+        }
+        y++;
+      }
       y -= distance;
       for (int i = 0; i < distance; i++) {
         const int y_1 = y + distance - i;
-        cout << "emplace " << x << " " << y_1 << endl;
-        if (!visited.emplace(util::Point<int>{x, y_1}).second) {
+        if (!emplace(visited, x, y_1)) {
           return abs(x) + abs(y_1);
         }
       }
       break;
     case 'w':
-      x -= distance;
       for (int i = 0; i < distance; i++) {
-        const int x_1 = x + distance - i;
-        cout << "emplace " << x_1 << " " << y << endl;
-        if (!visited.emplace(util::Point<int>{x_1, y}).second) {
-          return abs(x_1) + abs(y);
+        if (!emplace(visited, x, y)) {
+          return dist(x, y);
         }
+        x--;
       }
       break;
     case 's':
-      y += distance;
       for (int i = 0; i < distance; i++) {
-        const int y_1 = y - distance + i;
-        cout << "emplace " << x << " " << y_1 << endl;
-        if (!visited.emplace(util::Point<int>{x, y_1}).second) {
-          return abs(x) + abs(y_1);
+        if (!emplace(visited, x, y)) {
+          return dist(x, y);
         }
+        y--;
       }
       break;
     case 'e':
-      x += distance;
       for (int i = 0; i < distance; i++) {
-        const int x_1 = x - distance + i;
-        cout << "emplace " << x_1 << " " << y << endl;
-        if (!visited.emplace(util::Point<int>{x_1, y}).second) {
-          return abs(x_1) + abs(y);
+        if (!emplace(visited, x, y)) {
+          return dist(x, y);
         }
+        x++;
       }
       break;
     default:

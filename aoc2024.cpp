@@ -1,12 +1,10 @@
-#include "day25.hpp"
+#include "day1.hpp"
 #include "util.hpp"
 #include <cassert>
-#include <iostream>
-#include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day25;
+using namespace Day1;
 
 int main() {
   // const vector<string> input = util::read_file("../day24_input");
@@ -26,9 +24,8 @@ int main() {
   // clang-format on
 
   // assert(!input.empty());
-  cout << solve_day25_pt1(2947, 3029) << endl;
 
-  // cout << iterate(1, 6, 1, [](const auto x) -> auto { return x + 1; }) <<
-  // endl;
+  cout << solve_day1_pt1("R5, L5, R5, R3") << endl;
+
   return 0;
 }

@@ -40,11 +40,11 @@ int move(const int current, const char direction) {
   throw std::runtime_error(std::format("invalid direction: {}", direction));
 }
 
-int move2(const int current, const char direction) {
+char move2(const char current, const char direction) {
   // up, down, left, right
   // clang-format off
   const static std::array<std::array<char, 5>, 13> moves = {
-      {'1', '1', '3', '1', '1'},
+      std::array<char,5>{'1', '1', '3', '1', '1'},
       {'2', '2', '6', '2', '3'},
       {'3', '1', '7', '2', '4'},
       {'4', '4', '8', '3', '4'},
@@ -61,16 +61,16 @@ int move2(const int current, const char direction) {
   size_t index = 0;
   switch(direction){
   case 'U':
-    index = 0;
-    break;
-  case 'D':
     index = 1;
     break;
-  case 'L':
+  case 'D':
     index = 2;
     break;
-  case 'R':
+  case 'L':
     index = 3;
+    break;
+  case 'R':
+    index = 4;
     break;
   default:
   throw runtime_error(std::format("invalid direction {}", direction));
@@ -82,18 +82,18 @@ int move2(const int current, const char direction) {
     }
     return line[index];
   }
-  throw runtime_error("unreachable");
+  throw runtime_error(std::format("invalid button {}", current));
 }
 
 std::string solve(const std::vector<std::string> &input,
                   std::function<int(int, char)> keypad) {
   std::string result = "";
-  int current = 5;
+  char current = '5';
   for (const std::string &line : input) {
     for (const char letter : line) {
       current = keypad(current, letter);
     }
-    result += std::to_string(current);
+    result += current;
   }
   return result;
 }

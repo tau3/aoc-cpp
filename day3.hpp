@@ -10,6 +10,7 @@ namespace Day3 {
 using namespace std;
 
 size_t solve_day3_pt1(const vector<string> &input);
+size_t solve_day3_pt2(const vector<string> &input);
 
 } // namespace Day3
 

@@ -1,24 +1,24 @@
-#include "day3.hpp"
+#include "day4.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day3;
+using namespace Day4;
 
 int main() {
-  const vector<string> input = util::read_file("../day3_input");
+  // const vector<string> input = util::read_file("../day3_input");
   // clang-format off
-  // const vector<string> input = {
-  //   "ULL",
-  //   "RRDDD",
-  //   "LURDL",
-  //   "UUUUD",
-  // };
-  // // clang-format on
+  const vector<string> input = {
+    "aaaaa-bbb-z-y-x-123[abxyz]",
+    "a-b-c-d-e-f-g-h-987[abcde]",
+    "not-a-real-room-404[oarel]",
+    "totally-real-room-200[decoy]",
+  };
+  // clang-format on
 
   assert(!input.empty());
-  cout << solve_day3_pt2(input) << endl;
+  cout << solve_day4_pt1(input) << endl;
 
   return 0;
 }

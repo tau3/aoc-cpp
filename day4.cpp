@@ -2,6 +2,7 @@
 #include "util.hpp"
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <vector>
 
@@ -50,7 +51,7 @@ string print_checksum(const Checksum &checksum) {
 #endif
 
 Checksum calc_actual_checksum(const vector<string> &tokens) {
-  array<size_t, ENGLISH_LETTERS> counter;
+  array<size_t, ENGLISH_LETTERS> counter = {};
   for (size_t i = 0; i < tokens.size() - 1; i++) {
     for (const char current : tokens[i]) {
       counter[current - 'a']++;
@@ -59,7 +60,7 @@ Checksum calc_actual_checksum(const vector<string> &tokens) {
 
   Checksum named_counter;
   for (size_t i = 0; i < ENGLISH_LETTERS; i++) {
-    named_counter[i] = {'a' + i, i};
+    named_counter[i] = {'a' + i, counter[i]};
   }
 
   sort(named_counter.begin(), named_counter.end(),
@@ -70,7 +71,7 @@ Checksum calc_actual_checksum(const vector<string> &tokens) {
          if (left.second < right.second) {
            return false;
          }
-         return left.first > right.first;
+         return left.first < right.first;
        });
 
   return named_counter;

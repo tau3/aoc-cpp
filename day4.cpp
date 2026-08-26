@@ -4,9 +4,10 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <string>
 #include <vector>
 
-#define DEBUG 1
+// #define DEBUG 1
 
 namespace Day4 {
 
@@ -108,6 +109,38 @@ int solve_day4_pt1(const vector<string> &input) {
   }
 
   return result;
+}
+
+void shift_cypher(string &line, int times) {
+  assert(times >= 0);
+  times = times % ENGLISH_LETTERS;
+
+  for (char &current : line) {
+    current += times;
+    if (current > 'z') {
+      current -= 'z';
+    }
+  }
+}
+
+string decrypt(const string &name) {
+  vector<string> tokens = util::split(name, "-");
+  const auto [sector_id, expected_checksum] = parse_sector_and_hash(tokens);
+
+  string result = "";
+  for (size_t i = 0; i < tokens.size() - 1; i++) {
+    shift_cypher(tokens[i], sector_id);
+    result += tokens[i];
+    result += ' ';
+  }
+  return result;
+}
+
+int solve_day4_pt2(const vector<string> &input) {
+  for (const string &line : input) {
+    cout << decrypt(line) << endl;
+  }
+  return 0;
 }
 
 } // namespace Day4

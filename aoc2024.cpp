@@ -7,7 +7,7 @@ using namespace std;
 using namespace Day4;
 
 int main() {
-  // const vector<string> input = util::read_file("../day3_input");
+  // const vector<string> input = util::read_file("../day4_input");
   // clang-format off
   const vector<string> input = {
     "aaaaa-bbb-z-y-x-123[abxyz]",
@@ -18,7 +18,7 @@ int main() {
   // clang-format on
 
   assert(!input.empty());
-  cout << solve_day4_pt1(input) << endl;
+  cout << solve_day4_pt2(input) << endl;
 
   return 0;
 }

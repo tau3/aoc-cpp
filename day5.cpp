@@ -38,11 +38,15 @@ string md5(const string &str) {
     throw runtime_error(format("failed to calc md5 for {}", str));
   }
 
+  for (unsigned int i = 0; i < uiMdLength; i++) {
+    sprintf(&md5hex[i * 2], "%02x", unMdValue[i]);
+  }
+
   return md5hex;
 }
 
-string solve(const string &doorId) {
-  size_t i = 0;
+string solve_day5_pt1(const string &doorId) {
+  uint64_t i = 0;
   int j = 0;
 
   string result = "";
@@ -53,6 +57,28 @@ string solve(const string &doorId) {
       result += md5_hash[5];
       j++;
     };
+    i++;
+  }
+  return result;
+}
+
+string solve_day5_pt2(const string &doorId) {
+  string result = "        ";
+
+  uint64_t i = 0;
+  int j = 0;
+
+  while (j < 8) {
+    const string current = doorId + to_string(i);
+    const string md5_hash = md5(current);
+    if (util::starts_with(md5_hash, "00000")) {
+      const size_t index = md5_hash[5] - '0';
+      if (result[index] != ' ') {
+        result[index] = md5_hash[6];
+        j++;
+      }
+    }
+    i++;
   }
   return result;
 }

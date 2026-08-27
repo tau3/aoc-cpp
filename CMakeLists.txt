@@ -11,3 +11,7 @@ file(GLOB aoc
     "*.cpp"
 )
 add_executable(${PROJECT_NAME} ${aoc})
+
+# 26.05
+find_package(OpenSSL REQUIRED)
+target_link_libraries(${PROJECT_NAME} OpenSSL::SSL)

@@ -1,24 +1,31 @@
-#include "day4.hpp"
+#include "day5.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day4;
+using namespace Day5;
 
 int main() {
-  // const vector<string> input = util::read_file("../day4_input");
+  const vector<string> input = util::read_file("../day4_input");
   // clang-format off
-  const vector<string> input = {
-    "aaaaa-bbb-z-y-x-123[abxyz]",
-    "a-b-c-d-e-f-g-h-987[abcde]",
-    "not-a-real-room-404[oarel]",
-    "totally-real-room-200[decoy]",
-  };
+  // const vector<string> input = {
+    // "aaaaa-bbb-z-y-x-123[abxyz]",
+    // "a-b-c-d-e-f-g-h-987[abcde]",
+    // "not-a-real-room-404[oarel]",
+    // "totally-real-room-200[decoy]",
+
+    // "qzmt-zixmtkozy-ivhz-343",
+
+    // "qzmt-zixmtkozy-ivhz-343[",
+  // };
   // clang-format on
 
-  assert(!input.empty());
-  cout << solve_day4_pt2(input) << endl;
+  // assert(!input.empty());
+  // cout << solve_day4_pt2(input) << endl;
 
+  computeMD5FromString("abc3231929");
+  string x = "abc3231929";
+  foo(x);
   return 0;
 }

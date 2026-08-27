@@ -116,9 +116,14 @@ void shift_cypher(string &line, int times) {
   times = times % ENGLISH_LETTERS;
 
   for (char &current : line) {
-    current += times;
-    if (current > 'z') {
-      current -= 'z';
+    const auto dist_to_z = 'z' - current;
+    if (dist_to_z < times) {
+      current = 'a';
+      current += times;
+      current -= dist_to_z;
+      current--;
+    } else {
+      current += times;
     }
   }
 }
@@ -133,6 +138,7 @@ string decrypt(const string &name) {
     result += tokens[i];
     result += ' ';
   }
+  result += to_string(sector_id);
   return result;
 }
 

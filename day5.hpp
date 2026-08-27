@@ -8,9 +8,9 @@ namespace Day5 {
 
 using namespace std;
 
-void computeMD5FromString(const string &str);
+string md5(const string &str);
+string solve(const string &doorId);
 
-int foo(const string &s);
 } // namespace Day5
 
 #endif

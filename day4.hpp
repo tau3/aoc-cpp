@@ -11,6 +11,7 @@ using namespace std;
 int solve_day4_pt1(const vector<string> &input);
 int solve_day4_pt2(const vector<string> &input);
 
+  string md5(const string &str);
 } // namespace Day4
 
 #endif

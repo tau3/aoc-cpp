@@ -24,8 +24,6 @@ int main() {
   // assert(!input.empty());
   // cout << solve_day4_pt2(input) << endl;
 
-  computeMD5FromString("abc3231929");
-  string x = "abc3231929";
-  foo(x);
+  cout << solve("abc") << endl;
   return 0;
 }

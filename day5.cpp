@@ -1,29 +1,14 @@
 #include "day5.hpp"
+#include "util.hpp"
 #include <cstring>
-#include <iomanip>
-#include <iostream>
+#include <format>
 #include <openssl/evp.h>
-#include <openssl/md5.h>
 #include <string>
 
 namespace Day5 {
 
-void print_MD5(unsigned char *md, long size = MD5_DIGEST_LENGTH) {
-  for (int i = 0; i < size; i++) {
-    cout << hex << setw(2) << setfill('0') << (int)md[i];
-  }
-  cout << endl;
-}
-
-void computeMD5FromString(const string &str) {
-  unsigned char result[MD5_DIGEST_LENGTH];
-  MD5((unsigned char *)str.c_str(), str.length(), result);
-
-  cout << "MD5 of '" << str << "' : ";
-  print_MD5(result);
-}
-
-int foo(const string &s) {
+// https://ladydebug.com/blog/2022/11/29/calculate-md5-programmatically/
+string md5(const string &str) {
 
   char md5hex[EVP_MAX_MD_SIZE * 2 + 1];
   EVP_MD_CTX *pEvpContext;
@@ -37,7 +22,7 @@ int foo(const string &s) {
   EVP_DigestInit_ex(pEvpContext, EVP_md5(), NULL);
 
   // Calculate MD5 for given string
-  EVP_DigestUpdate(pEvpContext, s.c_str(), s.size());
+  EVP_DigestUpdate(pEvpContext, str.c_str(), str.size());
 
   // Save MD5 into temp variable
   EVP_DigestFinal_ex(pEvpContext, unMdValue, &uiMdLength);
@@ -50,14 +35,26 @@ int foo(const string &s) {
 
   // if the size is bigger than the return buffer size, just exit
   if (2 * uiMdLength > md5hexSize) {
-    return false;
+    throw runtime_error(format("failed to calc md5 for {}", str));
   }
 
-  for (unsigned int i = 0; i < uiMdLength; i++) {
-    sprintf(&md5hex[i * 2], "%02x", unMdValue[i]);
+  return md5hex;
+}
+
+string solve(const string &doorId) {
+  size_t i = 0;
+  int j = 0;
+
+  string result = "";
+  while (j < 8) {
+    const string current = doorId + to_string(i);
+    const string md5_hash = md5(current);
+    if (util::starts_with(md5_hash, "00000")) {
+      result += md5_hash[5];
+      j++;
+    };
   }
-  printf("Line: %s\nIts MD5: %s\n", s.c_str(), md5hex);
-  return 0;
+  return result;
 }
 
 } // namespace Day5

@@ -1,5 +1,6 @@
 #include "day5.hpp"
 #include "util.hpp"
+#include <cstddef>
 #include <cstring>
 #include <format>
 #include <openssl/evp.h>
@@ -63,19 +64,25 @@ string solve_day5_pt1(const string &doorId) {
 }
 
 string solve_day5_pt2(const string &doorId) {
-  string result = "        ";
+  const size_t result_size = 8;
+  string result = "";
+  for (size_t i = 0; i < result_size; i++) {
+    result += ' ';
+  }
 
   uint64_t i = 0;
-  int j = 0;
+  size_t j = 0;
 
-  while (j < 8) {
+  while (j < result_size) {
     const string current = doorId + to_string(i);
     const string md5_hash = md5(current);
     if (util::starts_with(md5_hash, "00000")) {
-      const size_t index = md5_hash[5] - '0';
-      if (result[index] != ' ') {
-        result[index] = md5_hash[6];
-        j++;
+      const size_t index = (md5_hash[5] - '0');
+      if (index < result_size) {
+        if (result[index] == ' ') {
+          result[index] = md5_hash[6];
+          j++;
+        }
       }
     }
     i++;

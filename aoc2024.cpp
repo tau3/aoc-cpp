@@ -24,7 +24,6 @@ int main() {
   // assert(!input.empty());
   // cout << solve_day4_pt2(input) << endl;
 
-  // cout << solve_day5_pt1("ojvtpuvg") << endl;
-  cout << solve_day5_pt2("abc") << endl;
+  cout << solve_day5_pt2("ojvtpuvg") << endl;
   return 0;
 }

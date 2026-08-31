@@ -1,4 +1,3 @@
-
 #ifndef INCLUDE_DAY_5_H
 #define INCLUDE_DAY_5_H
 

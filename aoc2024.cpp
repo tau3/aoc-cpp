@@ -1,29 +1,36 @@
-#include "day5.hpp"
+#include "day6.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day5;
+using namespace Day6;
 
 int main() {
-  const vector<string> input = util::read_file("../day4_input");
+  const vector<string> input = util::read_file("../day6_input");
   // clang-format off
   // const vector<string> input = {
-    // "aaaaa-bbb-z-y-x-123[abxyz]",
-    // "a-b-c-d-e-f-g-h-987[abcde]",
-    // "not-a-real-room-404[oarel]",
-    // "totally-real-room-200[decoy]",
-
-    // "qzmt-zixmtkozy-ivhz-343",
-
-    // "qzmt-zixmtkozy-ivhz-343[",
+  //   "eedadn",
+  //   "drvtee",
+  //   "eandsr",
+  //   "raavrd",
+  //   "atevrs",
+  //   "tsrnev",
+  //   "sdttsa",
+  //   "rasrtv",
+  //   "nssdts",
+  //   "ntnada",
+  //   "svetve",
+  //   "tesnvt",
+  //   "vntsnd",
+  //   "vrdear",
+  //   "dvrsen",
+  //   "enarar",
   // };
   // clang-format on
 
-  // assert(!input.empty());
-  // cout << solve_day4_pt2(input) << endl;
+  assert(!input.empty());
+  cout << solve_day6(input) << endl;
 
-  cout << solve_day5_pt2("ojvtpuvg") << endl;
   return 0;
 }

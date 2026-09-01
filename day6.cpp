@@ -8,7 +8,7 @@
 
 namespace Day6 {
 
-string solve_day6(const vector<string> &input) {
+string solve_day6(const vector<string> &input, const bool pt1) {
   static const size_t width = 8;
   static const size_t english_letters = 26;
 
@@ -24,15 +24,16 @@ string solve_day6(const vector<string> &input) {
 
   string result = "";
   for (size_t i = 0; i < width; i++) {
-    char current = 'a';
-    size_t max = numeric_limits<size_t>::max();
+    char letter = 'a';
+    size_t current = pt1 ? 0 : numeric_limits<size_t>::max();
     for (size_t j = 0; j < english_letters; j++) {
-      if (indexes[i][j] < max) {
-        max = indexes[i][j];
-        current = j + 'a';
+      if ((pt1 && indexes[i][j] > current) ||
+          (!pt1 && indexes[i][j] < current)) {
+        current = indexes[i][j];
+        letter = j + 'a';
       }
     }
-    result += current;
+    result += letter;
   }
 
   return result;

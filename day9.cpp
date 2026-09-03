@@ -15,8 +15,8 @@ void repeat(string &prefix, const string &suffix, const size_t count);
 string decompress(const string &str) {
   State state = State::NONE;
   string result = "";
-  string prefix = "";
-  string suffix = "";
+  size_t repeated_size = 0;
+  size_t repeats_count = 0;
   for (size_t i = 0; i < str.size(); i++) {
     const char c = str[i];
     switch (c) {
@@ -37,18 +37,18 @@ string decompress(const string &str) {
       result += c;
       break;
     case State::MARKER_PREFIX:
-      prefix += c;
+      repeated_size *= 10;
+      repeated_size += (c - '0');
       break;
     case State::MARKER_SUFFIX:
-      suffix += c;
+      repeats_count *= 10;
+      repeats_count += (c - '0');
       break;
     case State::MARKER_EXIT:
-      const size_t repeated_size = stol(prefix);
-      const size_t repeats_count = stol(suffix);
       const string repeated_line = str.substr(i, repeated_size);
       repeat(result, repeated_line, repeats_count);
-      suffix = "";
-      prefix = "";
+      repeats_count = 0;
+      repeated_size = 0;
       i += repeated_size - 1;
       state = State::NONE;
       break;

@@ -1,6 +1,5 @@
 #include "day9.hpp"
 #include <cstddef>
-#include <iostream>
 
 namespace Day9 {
 
@@ -29,7 +28,8 @@ string decompress(const string &str) {
       continue;
     case ')':
       state = State::MARKER_EXIT;
-      continue;
+      i++;
+      break;
     };
 
     switch (state) {
@@ -43,14 +43,13 @@ string decompress(const string &str) {
       suffix += c;
       break;
     case State::MARKER_EXIT:
-      const size_t subsequent = stol(prefix);
-      const size_t repeats = stol(suffix);
-      const string repeated = str.substr(i, subsequent);
-      cout << "repeated=" << repeated << ", repeats=" << repeats << endl;
-      repeat(result, repeated, repeats);
+      const size_t repeated_size = stol(prefix);
+      const size_t repeats_count = stol(suffix);
+      const string repeated_line = str.substr(i, repeated_size);
+      repeat(result, repeated_line, repeats_count);
       suffix = "";
       prefix = "";
-      i += subsequent - 1;
+      i += repeated_size - 1;
       state = State::NONE;
       break;
     }

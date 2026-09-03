@@ -1,14 +1,13 @@
+#include "day8.hpp"
 #include "util.hpp"
 #include <array>
 #include <cstddef>
 #include <queue>
-#include <string>
-#include <vector>
 
-using namespace std;
+namespace Day8 {
 
-const size_t WIDTH = 7;
-const size_t HEIGHT = 3;
+const size_t WIDTH = 50;
+const size_t HEIGHT = 6;
 
 using Screen = array<array<bool, WIDTH>, HEIGHT>;
 
@@ -16,8 +15,8 @@ void rect(Screen &screen, const size_t a, const size_t b);
 void rotate_row(Screen &screen, const size_t row, const size_t shift);
 void rotate_col(Screen &screen, const size_t col, const size_t shift);
 
-size_t solve(const vector<string> &input) {
-  Screen screen;
+size_t solve_day8_pt1(const vector<string> &input) {
+  Screen screen = {};
 
   for (const string &line : input) {
     const vector<string> tokens = util::split(line, " ");
@@ -99,3 +98,5 @@ void rotate_col(Screen &screen, const size_t col, const size_t shift) {
     screen[i][col] = current;
   }
 }
+
+} // namespace Day8

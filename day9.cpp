@@ -1,8 +1,7 @@
+#include "day9.hpp"
 #include <cstddef>
-#include <queue>
-#include <string>
 
-using namespace std;
+namespace Day9 {
 
 enum class State {
   NONE,
@@ -13,7 +12,7 @@ enum class State {
 
 void repeat(string &prefix, const string &suffix, const size_t count);
 
-void decompress(const string &str) {
+string decompress(const string &str) {
   State state = State::NONE;
   string result = "";
   string prefix = "";
@@ -53,6 +52,7 @@ void decompress(const string &str) {
       break;
     }
   }
+  return result;
 }
 
 void repeat(string &prefix, const string &suffix, const size_t count) {
@@ -60,3 +60,5 @@ void repeat(string &prefix, const string &suffix, const size_t count) {
     prefix += suffix;
   }
 }
+
+} // namespace Day9

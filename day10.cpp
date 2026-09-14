@@ -52,6 +52,7 @@ public:
     const int lower = min(value.value(), chip);
     const int higher = max(value.value(), chip);
     if (lower == 17 && higher == 61) {
+      cout << "pt1: " << get_id() << endl;
       return true;
     }
 
@@ -88,7 +89,15 @@ public:
                                       value.value(), chip));
     }
 
+    value = chip;
     return false;
+  }
+
+  int get_value() const {
+    if (!value) {
+      throw runtime_error(std::format("no value in {}", get_id()));
+    }
+    return value.value();
   }
 
   virtual string display() const override {
@@ -115,7 +124,7 @@ shared_ptr<Node> get(unordered_map<string, shared_ptr<Node>> &nodes,
   return nodes[key];
 }
 
-int solve_day10_pt1(const vector<string> &input) {
+int solve_day10(const vector<string> &input) {
   unordered_map<string, shared_ptr<Node>> nodes;
 
   vector<string> commands;
@@ -144,14 +153,14 @@ int solve_day10_pt1(const vector<string> &input) {
     const int value = stoi(tokens[1]);
     const string key = "b" + tokens[5];
     shared_ptr<Node> bot = nodes[key];
-    if (bot->accept_chip(value)) {
-      return bot->get_id();
-    };
+    bot->accept_chip(value);
   }
 
-  for (const auto &[k, v] : nodes) {
-    cout << v->display() << endl;
-  }
+  const int result = static_pointer_cast<Output>(nodes["o0"])->get_value() *
+                     static_pointer_cast<Output>(nodes["o1"])->get_value() *
+                     static_pointer_cast<Output>(nodes["o2"])->get_value();
+  cout << "pt2: " << result << endl;
+
   return 0;
 }
 

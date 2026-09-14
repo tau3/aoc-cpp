@@ -22,7 +22,7 @@ public:
 
   Node(const int id) : id(id) {}
 
-  virtual bool accept_chip(const int chip) = 0;
+  virtual void accept_chip(const int chip) = 0;
 
   virtual string display() const = 0;
 
@@ -41,26 +41,24 @@ private:
 public:
   Bot(const int id) : Node(id) {}
 
-  bool accept_chip(const int chip) override {
+  void accept_chip(const int chip) override {
     assert(low && high);
 
     if (!value.has_value()) {
       value = chip;
-      return false;
+      return;
     }
 
     const int lower = min(value.value(), chip);
     const int higher = max(value.value(), chip);
     if (lower == 17 && higher == 61) {
       cout << "pt1: " << get_id() << endl;
-      return true;
     }
 
     value.reset();
 
     low->accept_chip(lower);
     high->accept_chip(higher);
-    return false;
   }
 
   void setup(shared_ptr<Node> lower, shared_ptr<Node> higher) {
@@ -83,14 +81,13 @@ private:
 public:
   Output(const int id) : Node(id) {}
 
-  bool accept_chip(const int chip) override {
+  void accept_chip(const int chip) override {
     if (value.has_value()) {
       throw runtime_error(std::format("output {} contains {}, received {}", id,
                                       value.value(), chip));
     }
 
     value = chip;
-    return false;
   }
 
   int get_value() const {

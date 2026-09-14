@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <vector>
+
+namespace Day10 {
 
 using namespace std;
 
@@ -21,7 +22,7 @@ public:
 
   Node(const int id) : id(id) {}
 
-  virtual void accept_chip(const int chip) = 0;
+  virtual bool accept_chip(const int chip) = 0;
 
   virtual string display() const = 0;
 
@@ -40,21 +41,25 @@ private:
 public:
   Bot(const int id) : Node(id) {}
 
-  void accept_chip(const int chip) override {
+  bool accept_chip(const int chip) override {
     assert(low && high);
 
     if (!value.has_value()) {
       value = chip;
-      return;
+      return false;
     }
 
     const int lower = min(value.value(), chip);
     const int higher = max(value.value(), chip);
+    if (lower == 17 && higher == 61) {
+      return true;
+    }
 
     value.reset();
 
     low->accept_chip(lower);
     high->accept_chip(higher);
+    return false;
   }
 
   void setup(shared_ptr<Node> lower, shared_ptr<Node> higher) {
@@ -64,9 +69,9 @@ public:
 
   virtual string display() const override {
     assert(low && high);
-    return "bot, low=" + to_string(low->get_id()) +
+    return "bot " + to_string(get_id()) + ", low=" + to_string(low->get_id()) +
            " high=" + to_string(high->get_id()) +
-           "val=" + (value ? to_string(value.value()) : "null");
+           " val=" + (value ? to_string(value.value()) : "null");
   }
 };
 
@@ -77,15 +82,18 @@ private:
 public:
   Output(const int id) : Node(id) {}
 
-  void accept_chip(const int chip) override {
+  bool accept_chip(const int chip) override {
     if (value.has_value()) {
       throw runtime_error(std::format("output {} contains {}, received {}", id,
                                       value.value(), chip));
     }
+
+    return false;
   }
 
   virtual string display() const override {
-    return "output val=" + (value ? to_string(value.value()) : "null");
+    return "output " + to_string(get_id()) +
+           ", val=" + (value ? to_string(value.value()) : "null");
   }
 };
 
@@ -107,7 +115,7 @@ shared_ptr<Node> get(unordered_map<string, shared_ptr<Node>> &nodes,
   return nodes[key];
 }
 
-void solve(const vector<string> &input) {
+int solve_day10_pt1(const vector<string> &input) {
   unordered_map<string, shared_ptr<Node>> nodes;
 
   vector<string> commands;
@@ -135,6 +143,16 @@ void solve(const vector<string> &input) {
     const vector<string> tokens = util::split(command, " ");
     const int value = stoi(tokens[1]);
     const string key = "b" + tokens[5];
-    nodes[key]->accept_chip(value);
+    shared_ptr<Node> bot = nodes[key];
+    if (bot->accept_chip(value)) {
+      return bot->get_id();
+    };
   }
+
+  for (const auto &[k, v] : nodes) {
+    cout << v->display() << endl;
+  }
+  return 0;
 }
+
+} // namespace Day10

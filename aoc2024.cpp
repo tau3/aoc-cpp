@@ -1,40 +1,26 @@
-#include "day9.hpp"
+#include "day10.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day9;
-
-void check_decompress(const string &input, const string &expected) {
-  const string actual = decompress(input);
-  const string result = (actual == expected) ? "true" : "false";
-  cout << result << " " << input << " -> act=" << actual << ", exp=" << expected
-       << " " << endl;
-}
+using namespace Day10;
 
 int main() {
-  const vector<string> input = util::read_file("../day9_input");
+  // const vector<string> input = util::read_file("../day9_input");
   // clang-format off
-  // const vector<string> input = {
-  //   "rect 3x2",
-  //   "rotate column x=1 by 1",
-  //   "rotate row y=0 by 4",
-  //   "rotate column x=1 by 1",
-  // };
+  const vector<string> input = {
+    "value 5 goes to bot 2",
+    "bot 2 gives low to bot 1 and high to bot 0",
+    "value 3 goes to bot 1",
+    "bot 1 gives low to output 1 and high to bot 0",
+    "bot 0 gives low to output 2 and high to output 0",
+    "value 2 goes to bot 2",
+  };
   // clang-format on
 
   assert(!input.empty());
-  // cout << solve_day8_pt1(input) << endl;
-
-  cout << decompress(input[0]).size() << endl;
-
-  // check_decompress("ADVENT", "ADVENT");
-  // check_decompress("A(1x5)BC", "ABBBBBC");
-  // check_decompress("(3x3)XYZ", "XYZXYZXYZ");
-  // check_decompress("A(2x2)BCD(2x2)EFG", "ABCBCDEFEFG");
-  // check_decompress("(6x1)(1x3)A", "(1x3)A");
-  // check_decompress("X(8x2)(3x3)ABCY", "X(3x3)ABC(3x3)ABCY");
+  cout << solve_day10_pt1(input) << endl;
 
   return 0;
 }

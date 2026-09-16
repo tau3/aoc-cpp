@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -85,26 +86,29 @@ public:
     return true;
   };
 
-  void adjacent() const {
+  vector<State> adjacent() const {
     vector<State> result;
 
     const vector<string> floor = floors[elevator];
-    const size_t size = floor.size();
-    const size_t max_flag = pow(2, size);
+    const size_t items_on_floor = floor.size();
+    const size_t max_flag = pow(2, items_on_floor);
     for (size_t i = 1; i <= max_flag; i++) {
       vector<string> moved;
-      vector<string> keeped;
-      for (size_t j = 0; j < size; j++) {
+      for (size_t j = 0; j < items_on_floor; j++) {
         if (test_bit(i, j)) {
           moved.push_back(floor[j]);
-        } else {
-          keeped.push_back(floor[j]);
         }
       }
-      if (elevator < 4) {
-        const size_t new_elevator = elevator + 1;
+
+      if (elevator != 0) {
+        result.push_back(move_elevator(false, moved));
+      }
+      if (elevator != floor.size() - 1) {
+        result.push_back(move_elevator(true, moved));
       }
     }
+
+    return result;
   }
 
   bool operator==(const State &other) const {
@@ -123,7 +127,16 @@ struct StateHash {
   size_t operator()(const State &state) const { return state.hash(); }
 };
 
-vector<State> generate_valid_states(const State &state) {}
+vector<State> generate_valid_states(const State &state) {
+  vector<State> adjacent = state.adjacent();
+  vector<State> result;
+  for (const State &state : adjacent) {
+    if (state.is_valid()) {
+      result.push_back(state);
+    }
+  }
+  return result;
+}
 
 int solve(const State &initial, const State &target) {
   queue<pair<State, int>> q;

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstddef>
 #include <functional>
+#include <initializer_list>
 #include <queue>
 #include <stdexcept>
 #include <string>
@@ -16,7 +17,74 @@ namespace Day11 {
 
 using namespace std;
 
-using Floors = array<vector<string>, 4>;
+class Floor {
+private:
+  vector<string> floor;
+
+public:
+  Floor(initializer_list<string> floor) : floor(floor) {};
+
+  Floor() {};
+
+  bool contains(const string &item) const {
+    return find(floor.begin(), floor.end(), item) != floor.end();
+  }
+
+  void add_all(const vector<string> &items) { util::add_all(floor, items); }
+
+  void remove_all(const vector<string> &items) {
+    util::remove_all(floor, items);
+  }
+
+  string to_string() const {
+    string result = "";
+    for (const string &item : floor) {
+      result += item;
+      result += ' ';
+    }
+    return result;
+  }
+
+  bool is_valid() const {
+    for (const string &item : floor) {
+      if (item[1] == 'M') {
+        bool has_own_generator = false;
+        bool has_another_generator = false;
+        for (size_t j = 0; j < floor.size(); j++) {
+          const string current = floor[j];
+          if (current[1] == 'G') {
+            if (current[0] == item[0]) {
+              has_own_generator = true;
+            } else {
+              has_another_generator = true;
+            }
+          }
+        }
+        if (has_another_generator && !has_own_generator) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  size_t size() const { return floor.size(); }
+
+  const string &operator[](size_t index) const { return floor[index]; }
+
+  bool operator==(const Floor &other) const {
+    return unordered_set(floor.begin(), floor.end()) ==
+           unordered_set(other.floor.begin(), other.floor.end());
+  }
+
+  size_t hash_code() const {
+    const unordered_set<string> distict(floor.begin(), floor.end());
+    const function<size_t(const string &)> h = hash<string>();
+    return util::hash_code(distict, h);
+  }
+};
+
+using Floors = array<Floor, 4>;
 
 class State {
 private:
@@ -33,9 +101,10 @@ private:
       assert(elevator > 0);
     }
 
-    vector<string> floor = floors[elevator];
+    // TODO contains all
+    Floor floor = floors[elevator];
     for (const string &item : items) {
-      assert(find(floor.begin(), floor.end(), item) != floor.end());
+      assert(floor.contains(item));
     }
 
     Floors new_floors;
@@ -43,9 +112,9 @@ private:
     for (size_t i = 0; i < size; i++) {
       new_floors[i] = floors[i];
       if (i == new_elevator) {
-        util::add_all(new_floors[i], items);
+        new_floors[i].add_all(items);
       } else {
-        util::remove_all(new_floors[i], items);
+        new_floors[i].remove_all(items);
       }
     }
 
@@ -65,34 +134,16 @@ public:
         cout << "E ";
       }
 
-      for (const string &item : floors[i]) {
-        cout << item << " ";
-      }
+      cout << floors[i].to_string();
       cout << endl;
     }
     cout << endl;
   }
 
   bool is_valid() const {
-    for (const vector<string> &floor : floors) {
-      for (const string &item : floor) {
-        if (item[1] == 'M') {
-          bool has_own_generator = false;
-          bool has_another_generator = false;
-          for (size_t j = 0; j < floor.size(); j++) {
-            const string current = floor[j];
-            if (current[1] == 'G') {
-              if (current[0] == item[0]) {
-                has_own_generator = true;
-              } else {
-                has_another_generator = true;
-              }
-            }
-          }
-          if (has_another_generator && !has_own_generator) {
-            return false;
-          }
-        }
+    for (const Floor &floor : floors) {
+      if (!floor.is_valid()) {
+        return false;
       }
     }
     return true;
@@ -120,7 +171,7 @@ public:
   vector<State> adjacent() const {
     vector<State> result;
 
-    const vector<string> floor = floors[elevator];
+    const Floor floor = floors[elevator];
     const size_t items_on_floor = floor.size();
     const size_t max_flag = pow(2, items_on_floor) - 1;
     for (size_t i = 1; i <= max_flag; i++) {
@@ -162,11 +213,9 @@ public:
 
   size_t hash() const {
     size_t result = 17;
-    std::function<size_t(const vector<string> &)> floors_hash =
-        [](const vector<string> &floor) {
-          std::function<size_t(const string &)> vec_hash = std::hash<string>();
-          return util::hash_code(floor, vec_hash);
-        };
+    std::function<size_t(const Floor &)> floors_hash = [](const Floor &floor) {
+      return floor.hash_code();
+    };
     result = 31 * util::hash_code(floors, floors_hash);
     result = 31 * result + std::hash<size_t>()(elevator);
     return result;

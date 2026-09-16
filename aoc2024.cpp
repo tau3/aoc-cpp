@@ -22,8 +22,8 @@ int main() {
   // assert(!input.empty());
   // cout << solve_day10(input) << endl;
 
-  // cout << solve_pt1_example() << endl;
-  debug();
+  cout << solve_pt1_example() << endl;
+  // debug();
   
   return 0;
 }

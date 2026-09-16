@@ -1,4 +1,7 @@
+#include <algorithm>
 #include <array>
+#include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <functional>
 #include <queue>
@@ -9,12 +12,54 @@
 
 using namespace std;
 
+using Floors = array<vector<string>, 4>;
+
 class State {
 private:
-  array<vector<string>, 4> floors;
+  Floors floors;
   size_t elevator;
 
+  State() = delete;
+
+  State move_elevator(const bool up, vector<string> &items) const {
+    const size_t size = floors.size();
+    if (up) {
+      assert(elevator < (size - 1));
+    } else {
+      assert(elevator > 0);
+    }
+
+    vector<string> floor = floors[elevator];
+    for (const string &item : items) {
+      assert(find(floor.begin(), floor.end(), item) != floor.end());
+    }
+
+    Floors new_floors;
+    const size_t new_elevator = up ? (elevator + 1) : (elevator - 1);
+    for (size_t i = 0; i < size; i++) {
+      if (i != elevator && i != new_elevator) {
+        // TODO refactor
+        new_floors[i] = floors[i];
+      } else {
+        if (i == new_elevator) {
+          new_floors[i] = floors[i];
+          new_floors[i].add_all(items);
+        } else {
+          new_floors[i] = floors[i];
+          new_floors[i].remove_all(items);
+        }
+      }
+    }
+
+    return State(new_floors, new_elevator);
+  }
+
 public:
+  State(const Floors &floors, const size_t elevator)
+      : floors(floors), elevator(elevator) {
+    assert(elevator >= 0 && elevator < floors.size());
+  };
+
   bool is_valid() const {
     for (const vector<string> &floor : floors) {
       for (const string &item : floor) {
@@ -39,6 +84,28 @@ public:
     }
     return true;
   };
+
+  void adjacent() const {
+    vector<State> result;
+
+    const vector<string> floor = floors[elevator];
+    const size_t size = floor.size();
+    const size_t max_flag = pow(2, size);
+    for (size_t i = 1; i <= max_flag; i++) {
+      vector<string> moved;
+      vector<string> keeped;
+      for (size_t j = 0; j < size; j++) {
+        if (test_bit(i, j)) {
+          moved.push_back(floor[j]);
+        } else {
+          keeped.push_back(floor[j]);
+        }
+      }
+      if (elevator < 4) {
+        const size_t new_elevator = elevator + 1;
+      }
+    }
+  }
 
   bool operator==(const State &other) const {
     return floors == other.floors && elevator == other.elevator;

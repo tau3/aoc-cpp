@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <algorithm>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -55,6 +57,26 @@ struct PointHash {
     return 31 * r + 17 * c;
   }
 };
+
+// TODO rewrite like below
+template <typename T>
+void remove_all(std::vector<T> &from, const std::vector<T> &items) {
+  from.erase(std::remove_if(from.begin(), from.end(),
+                            [&items](const T &value) {
+                              return std::find(items.begin(), items.end(),
+                                               value) != items.end();
+                            }),
+             from.end());
+}
+
+template <typename C, typename I = typename C::value_type>
+size_t hash_code(const C &items, const std::function<size_t(const I &)> &h) {
+  size_t result = 1;
+  for (const I &item : items) {
+    result = 31 * result + h(item);
+  }
+  return result;
+}
 
 } // namespace util
 

@@ -1,3 +1,4 @@
+#include "util.hpp"
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -38,17 +39,11 @@ private:
     Floors new_floors;
     const size_t new_elevator = up ? (elevator + 1) : (elevator - 1);
     for (size_t i = 0; i < size; i++) {
-      if (i != elevator && i != new_elevator) {
-        // TODO refactor
-        new_floors[i] = floors[i];
+      new_floors[i] = floors[i];
+      if (i == new_elevator) {
+        new_floors[i].insert(new_floors[i].end(), items.begin(), items.end());
       } else {
-        if (i == new_elevator) {
-          new_floors[i] = floors[i];
-          new_floors[i].add_all(items);
-        } else {
-          new_floors[i] = floors[i];
-          new_floors[i].remove_all(items);
-        }
+        util::remove_all(new_floors[i], items);
       }
     }
 
@@ -58,7 +53,7 @@ private:
 public:
   State(const Floors &floors, const size_t elevator)
       : floors(floors), elevator(elevator) {
-    assert(elevator >= 0 && elevator < floors.size());
+    assert(elevator < floors.size());
   };
 
   bool is_valid() const {
@@ -95,7 +90,7 @@ public:
     for (size_t i = 1; i <= max_flag; i++) {
       vector<string> moved;
       for (size_t j = 0; j < items_on_floor; j++) {
-        if (test_bit(i, j)) {
+        if (i && (1 << j) != 0) {
           moved.push_back(floor[j]);
         }
       }
@@ -117,7 +112,9 @@ public:
 
   size_t hash() const {
     size_t result = 17;
-    result = 31 * std::hash<array<vector<string>, 4>>()(floors);
+    const auto p =
+        util::hash_code(floors, [](const vector<string> &x) { return 1; });
+    // result = 31 * std::hash<array<vector<string>, 4>>()(floors);
     result = 31 * result + std::hash<size_t>()(elevator);
     return result;
   }

@@ -60,7 +60,7 @@ struct PointHash {
 
 template <typename T, typename V> void remove_all(T &from, const V &items) {
   from.erase(std::remove_if(from.begin(), from.end(),
-                            [&items](const T::value_type &value) {
+                            [&items](const typename T::value_type &value) {
                               return std::find(items.begin(), items.end(),
                                                value) != items.end();
                             }),

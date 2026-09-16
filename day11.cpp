@@ -78,7 +78,7 @@ public:
 
   size_t size() const { return floor.size(); }
 
-  const string &operator[](size_t index) const { return floor[index]; }
+  const string &operator[](const size_t index) const { return floor[index]; }
 
   bool operator==(const Floor &other) const { return floor == other.floor; }
 
@@ -120,7 +120,7 @@ private:
       new_floors[i] = floors[i];
       if (i == new_elevator) {
         new_floors[i].add_all(items);
-      } else {
+      } else if (i == elevator) {
         new_floors[i].remove_all(items);
       }
     }
@@ -148,9 +148,10 @@ public:
 
     vector<vector<string>> perms;
     const Floor &floor = floors[elevator];
-    for (size_t i = 0; i < floor.size(); i++) {
+    const size_t size = floor.size();
+    for (size_t i = 0; i < size; i++) {
       perms.push_back({floor[i]});
-      for (size_t j = i + 1; j < floor.size(); j++) {
+      for (size_t j = i + 1; j < size; j++) {
         perms.push_back({floor[i], floor[j]});
       }
     }
@@ -168,7 +169,7 @@ public:
   }
 
   bool operator==(const State &other) const {
-    return floors == other.floors && elevator == other.elevator;
+    return elevator == other.elevator && floors == other.floors;
   }
 
   size_t hash() const {
@@ -187,13 +188,11 @@ struct StateHash {
 };
 
 vector<State> generate_valid_states(const State &state) {
-  vector<State> adjacent = state.adjacent();
-  vector<State> result;
-  for (const State &state : adjacent) {
-    if (state.is_valid()) {
-      result.push_back(state);
-    }
-  }
+  vector<State> result = state.adjacent();
+  result.erase(
+      std::remove_if(result.begin(), result.end(),
+                     [](const State &current) { return !current.is_valid(); }),
+      result.end());
   return result;
 }
 

@@ -12,6 +12,8 @@
 #include <utility>
 #include <vector>
 
+// #define DEBUG 1
+
 namespace Day11 {
 
 using namespace std;
@@ -27,9 +29,11 @@ public:
 
   Floor() {};
 
+#ifdef DEBUG
   bool contains(const string &item) const {
     return find(floor.begin(), floor.end(), item) != floor.end();
   }
+#endif
 
   void add_all(const vector<string> &items) {
     util::add_all(floor, items);
@@ -55,7 +59,7 @@ public:
         bool has_own_generator = false;
         bool has_another_generator = false;
         for (size_t j = 0; j < floor.size(); j++) {
-          const string current = floor[j];
+          const string &current = floor[j];
           if (current[1] == 'G') {
             if (current[0] == item[0]) {
               has_own_generator = true;
@@ -95,18 +99,21 @@ private:
 
   State move_elevator(const bool up, const vector<string> &items) const {
     const size_t size = floors.size();
+
+#ifdef DEBUG
     if (up) {
       assert(elevator < (size - 1));
     } else {
       assert(elevator > 0);
     }
 
-    // TODO contains all
-    Floor floor = floors[elevator];
+    const Floor &floor = floors[elevator];
     for (const string &item : items) {
       assert(floor.contains(item));
     }
+#endif
 
+    // TODO avoid constructor?
     Floors new_floors;
     const size_t new_elevator = up ? (elevator + 1) : (elevator - 1);
     for (size_t i = 0; i < size; i++) {
@@ -127,21 +134,8 @@ public:
     assert(elevator < floors.size());
   };
 
-  void display() const {
-    for (int i = floors.size() - 1; i >= 0; i--) {
-      cout << "F" << (i + 1) << " ";
-      if (elevator == i) {
-        cout << "E ";
-      }
-
-      cout << floors[i].to_string();
-      cout << endl;
-    }
-    cout << endl;
-  }
-
   bool is_valid() const {
-    for (const Floor &floor : floors) {
+    for (const auto &floor : floors) {
       if (!floor.is_valid()) {
         return false;
       }
@@ -153,7 +147,7 @@ public:
     vector<State> result;
 
     vector<vector<string>> perms;
-    const Floor floor = floors[elevator];
+    const Floor &floor = floors[elevator];
     for (size_t i = 0; i < floor.size(); i++) {
       perms.push_back({floor[i]});
       for (size_t j = i + 1; j < floor.size(); j++) {
@@ -220,10 +214,6 @@ int solve(const State &initial, const State &target) {
       if (visited.insert(candidate).second) {
         q.push({candidate, next});
       }
-
-      //   if (visited.size() % 100000 == 0) {
-      //     cout << visited.size() << endl;
-      //   }
     }
   }
 
@@ -261,6 +251,22 @@ int solve_day11_pt1() {
                  {},
                  {},
                  {"PG", "TG", "TM", "pG", "RG", "RM", "CG", "CM", "PM", "pM"}}},
+               3);
+  return solve(initial, target);
+}
+
+int solve_day11_pt2() {
+  State initial({{{"PG", "TG", "TM", "pG", "RG", "RM", "CG", "CM", "EG", "EM",
+                   "DG", "DM"},
+                  {"PM", "pM"},
+                  {},
+                  {}}},
+                0);
+  State target({{{},
+                 {},
+                 {},
+                 {"PG", "TG", "TM", "pG", "RG", "RM", "CG", "CM", "PM", "pM",
+                  "EG", "EM", "DG", "DM"}}},
                3);
   return solve(initial, target);
 }

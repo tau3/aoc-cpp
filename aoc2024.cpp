@@ -23,7 +23,7 @@ int main() {
   // cout << solve_day10(input) << endl;
 
   // cout << solve_pt1_example() << endl;
-  cout << solve_day11_pt1() << endl;
+  cout << solve_day11_pt2() << endl;
   
   return 0;
 }

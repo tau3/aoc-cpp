@@ -5,6 +5,7 @@ namespace Day11 {
 
 int solve_pt1_example();
 int solve_day11_pt1();
+int solve_day11_pt2();
 
 } // namespace Day11
 

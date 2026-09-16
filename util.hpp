@@ -72,10 +72,10 @@ template <typename T, typename V> void add_all(T &to, const V &from) {
 }
 
 template <typename C, typename I = typename C::value_type>
-size_t hash_code(const C &items, const std::function<size_t(const I &)> &h) {
+size_t hash_code(const C &items, const std::function<size_t(const I &)> &hash) {
   size_t result = 1;
   for (const I &item : items) {
-    result = 31 * result + h(item);
+    result = 31 * result + hash(item);
   }
   return result;
 }

@@ -104,7 +104,7 @@ public:
 
   int count_bits(const size_t num) const {
     // cout << endl;
-    cout << num << " " <<  std::format("{:b}", num) << endl;
+    cout << num << " " << std::format("{:b}", num) << endl;
     int result = 0;
     const size_t count = sizeof(size_t) * 8;
     for (size_t i = 0; i < count; i++) {
@@ -234,12 +234,12 @@ int solve_pt1_example() {
 
 void debug() {
   Floors initial_floors{{
-      {"LM"},
-      {"HG", "HM"},
-      {"LG"},
       {},
+      {},
+      {"HM", "LM"},
+      {"HG", "LG"},
   }};
-  State initial(initial_floors, 1);
+  State initial(initial_floors, 2);
   const auto adjacent = initial.adjacent();
 }
 

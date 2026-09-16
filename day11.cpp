@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
-#include <cmath>
 #include <cstddef>
 #include <functional>
 #include <initializer_list>
@@ -22,7 +21,9 @@ private:
   vector<string> floor;
 
 public:
-  Floor(initializer_list<string> floor) : floor(floor) {};
+  Floor(const initializer_list<string> &init) : floor(init) {
+    sort(floor.begin(), floor.end());
+  };
 
   Floor() {};
 
@@ -30,7 +31,10 @@ public:
     return find(floor.begin(), floor.end(), item) != floor.end();
   }
 
-  void add_all(const vector<string> &items) { util::add_all(floor, items); }
+  void add_all(const vector<string> &items) {
+    util::add_all(floor, items);
+    sort(floor.begin(), floor.end());
+  }
 
   void remove_all(const vector<string> &items) {
     util::remove_all(floor, items);
@@ -72,15 +76,11 @@ public:
 
   const string &operator[](size_t index) const { return floor[index]; }
 
-  bool operator==(const Floor &other) const {
-    return unordered_set(floor.begin(), floor.end()) ==
-           unordered_set(other.floor.begin(), other.floor.end());
-  }
+  bool operator==(const Floor &other) const { return floor == other.floor; }
 
   size_t hash_code() const {
-    const unordered_set<string> distict(floor.begin(), floor.end());
     const function<size_t(const string &)> h = hash<string>();
-    return util::hash_code(distict, h);
+    return util::hash_code(floor, h);
   }
 };
 
@@ -93,7 +93,7 @@ private:
 
   State() = delete;
 
-  State move_elevator(const bool up, vector<string> &items) const {
+  State move_elevator(const bool up, const vector<string> &items) const {
     const size_t size = floors.size();
     if (up) {
       assert(elevator < (size - 1));
@@ -149,60 +149,26 @@ public:
     return true;
   };
 
-  bool test_bit(const size_t num, const size_t i) const {
-    return (num & (1 << i)) != 0;
-  }
-
-  int count_bits(const size_t num) const {
-    // cout << endl;
-    cout << num << " " << std::format("{:b}", num) << endl;
-    int result = 0;
-    const size_t count = sizeof(size_t) * 8;
-    for (size_t i = 0; i < count; i++) {
-      const size_t mask = std::size_t{1} << i;
-      if ((mask & num) != 0) {
-        cout << "num=" << num << " mask " << i << endl;
-        result++;
-      }
-    };
-    return result;
-  }
-
   vector<State> adjacent() const {
     vector<State> result;
 
+    vector<vector<string>> perms;
     const Floor floor = floors[elevator];
-    const size_t items_on_floor = floor.size();
-    const size_t max_flag = pow(2, items_on_floor) - 1;
-    for (size_t i = 1; i <= max_flag; i++) {
-      // cout << i << ", count=" << count_bits(i) << endl;
-      if (count_bits(i) > 2) {
-        continue;
+    for (size_t i = 0; i < floor.size(); i++) {
+      perms.push_back({floor[i]});
+      for (size_t j = i + 1; j < floor.size(); j++) {
+        perms.push_back({floor[i], floor[j]});
       }
+    }
 
-      vector<string> moved;
-      for (size_t j = 0; j < items_on_floor; j++) {
-        if (test_bit(i, j)) {
-          moved.push_back(floor[j]);
-        }
-      }
-
-      assert(!moved.empty() && (moved.size() <= 2));
+    for (const vector<string> &perm : perms) {
       if (elevator != 0) {
-        result.push_back(move_elevator(false, moved));
+        result.push_back(move_elevator(false, perm));
       }
       if (elevator != floors.size() - 1) {
-        result.push_back(move_elevator(true, moved));
+        result.push_back(move_elevator(true, perm));
       }
     }
-
-    cout << "adjacent from---------------" << endl;
-    display();
-    cout << "to" << endl;
-    for (auto x : result) {
-      x.display();
-    }
-    cout << "-------------" << endl;
 
     return result;
   }
@@ -253,8 +219,11 @@ int solve(const State &initial, const State &target) {
     for (const State &candidate : states) {
       if (visited.insert(candidate).second) {
         q.push({candidate, next});
-        candidate.display();
       }
+
+      //   if (visited.size() % 100000 == 0) {
+      //     cout << visited.size() << endl;
+      //   }
     }
   }
 
@@ -281,15 +250,19 @@ int solve_pt1_example() {
   return solve(initial, target);
 }
 
-void debug() {
-  Floors initial_floors{{
-      {},
-      {},
-      {"HM", "LM"},
-      {"HG", "LG"},
-  }};
-  State initial(initial_floors, 2);
-  const auto adjacent = initial.adjacent();
+// TODO "target" function?
+int solve_day11_pt1() {
+  State initial({{{"PG", "TG", "TM", "pG", "RG", "RM", "CG", "CM"},
+                  {"PM", "pM"},
+                  {},
+                  {}}},
+                0);
+  State target({{{},
+                 {},
+                 {},
+                 {"PG", "TG", "TM", "pG", "RG", "RM", "CG", "CM", "PM", "pM"}}},
+               3);
+  return solve(initial, target);
 }
 
 } // namespace Day11

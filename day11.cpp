@@ -1,5 +1,6 @@
 #include <array>
 #include <cstddef>
+#include <functional>
 #include <queue>
 #include <stdexcept>
 #include <string>
@@ -16,9 +17,7 @@ private:
 public:
   bool is_valid() const {
     for (const vector<string> &floor : floors) {
-      // TODO for each
-      for (size_t i = 0; i < floor.size(); i++) {
-        const string item = floor[i];
+      for (const string &item : floor) {
         if (item[1] == 'M') {
           bool has_own_generator = false;
           bool has_another_generator = false;
@@ -44,13 +43,24 @@ public:
   bool operator==(const State &other) const {
     return floors == other.floors && elevator == other.elevator;
   }
+
+  size_t hash() const {
+    size_t result = 17;
+    result = 31 * std::hash<array<vector<string>, 4>>()(floors);
+    result = 31 * result + std::hash<size_t>()(elevator);
+    return result;
+  }
+};
+
+struct StateHash {
+  size_t operator()(const State &state) const { return state.hash(); }
 };
 
 vector<State> generate_valid_states(const State &state) {}
 
 int solve(const State &initial, const State &target) {
   queue<pair<State, int>> q;
-  unordered_set<State> visited;
+  unordered_set<State, StateHash> visited;
   q.push({initial, 0});
   while (!q.empty()) {
     const auto [state, depth] = q.front();
@@ -62,7 +72,7 @@ int solve(const State &initial, const State &target) {
     vector<State> states = generate_valid_states(state);
     const int next = depth + 1;
     for (const State &candidate : states) {
-      if (visited.add(candidate)) {
+      if (visited.insert(candidate).second) {
         q.push({candidate, next});
       }
     }

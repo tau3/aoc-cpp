@@ -4,6 +4,7 @@
 namespace Day11 {
 
 int solve_pt1_example();
+void debug();
 
 } // namespace Day11
 

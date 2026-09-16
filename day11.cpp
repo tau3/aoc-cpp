@@ -58,6 +58,21 @@ public:
     assert(elevator < floors.size());
   };
 
+  void display() const {
+    for (int i = floors.size() - 1; i >= 0; i--) {
+      cout << "F" << (i + 1) << " ";
+      if (elevator == i) {
+        cout << "E ";
+      }
+
+      for (const string &item : floors[i]) {
+        cout << item << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
+
   bool is_valid() const {
     for (const vector<string> &floor : floors) {
       for (const string &item : floor) {
@@ -83,27 +98,60 @@ public:
     return true;
   };
 
+  bool test_bit(const size_t num, const size_t i) const {
+    return (num & (1 << i)) != 0;
+  }
+
+  int count_bits(const size_t num) const {
+    // cout << endl;
+    cout << num << " " <<  std::format("{:b}", num) << endl;
+    int result = 0;
+    const size_t count = sizeof(size_t) * 8;
+    for (size_t i = 0; i < count; i++) {
+      const size_t mask = std::size_t{1} << i;
+      if ((mask & num) != 0) {
+        cout << "num=" << num << " mask " << i << endl;
+        result++;
+      }
+    };
+    return result;
+  }
+
   vector<State> adjacent() const {
     vector<State> result;
 
     const vector<string> floor = floors[elevator];
     const size_t items_on_floor = floor.size();
-    const size_t max_flag = pow(2, items_on_floor);
+    const size_t max_flag = pow(2, items_on_floor) - 1;
     for (size_t i = 1; i <= max_flag; i++) {
+      // cout << i << ", count=" << count_bits(i) << endl;
+      if (count_bits(i) > 2) {
+        continue;
+      }
+
       vector<string> moved;
       for (size_t j = 0; j < items_on_floor; j++) {
-        if (i && (1 << j) != 0) {
+        if (test_bit(i, j)) {
           moved.push_back(floor[j]);
         }
       }
 
+      assert(!moved.empty() && (moved.size() <= 2));
       if (elevator != 0) {
         result.push_back(move_elevator(false, moved));
       }
-      if (elevator != floor.size() - 1) {
+      if (elevator != floors.size() - 1) {
         result.push_back(move_elevator(true, moved));
       }
     }
+
+    cout << "adjacent from---------------" << endl;
+    display();
+    cout << "to" << endl;
+    for (auto x : result) {
+      x.display();
+    }
+    cout << "-------------" << endl;
 
     return result;
   }
@@ -156,6 +204,7 @@ int solve(const State &initial, const State &target) {
     for (const State &candidate : states) {
       if (visited.insert(candidate).second) {
         q.push({candidate, next});
+        candidate.display();
       }
     }
   }
@@ -181,6 +230,17 @@ int solve_pt1_example() {
   State target(target_floors, 3);
 
   return solve(initial, target);
+}
+
+void debug() {
+  Floors initial_floors{{
+      {"LM"},
+      {"HG", "HM"},
+      {"LG"},
+      {},
+  }};
+  State initial(initial_floors, 1);
+  const auto adjacent = initial.adjacent();
 }
 
 } // namespace Day11

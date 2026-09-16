@@ -58,15 +58,17 @@ struct PointHash {
   }
 };
 
-// TODO rewrite like below
-template <typename T>
-void remove_all(std::vector<T> &from, const std::vector<T> &items) {
+template <typename T, typename V> void remove_all(T &from, const V &items) {
   from.erase(std::remove_if(from.begin(), from.end(),
-                            [&items](const T &value) {
+                            [&items](const T::value_type &value) {
                               return std::find(items.begin(), items.end(),
                                                value) != items.end();
                             }),
              from.end());
+}
+
+template <typename T, typename V> void add_all(T &to, const V &from) {
+  to.insert(to.end(), from.begin(), from.end());
 }
 
 template <typename C, typename I = typename C::value_type>

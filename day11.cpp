@@ -12,6 +12,8 @@
 #include <utility>
 #include <vector>
 
+namespace Day11 {
+
 using namespace std;
 
 using Floors = array<vector<string>, 4>;
@@ -41,7 +43,7 @@ private:
     for (size_t i = 0; i < size; i++) {
       new_floors[i] = floors[i];
       if (i == new_elevator) {
-        new_floors[i].insert(new_floors[i].end(), items.begin(), items.end());
+        util::add_all(new_floors[i], items);
       } else {
         util::remove_all(new_floors[i], items);
       }
@@ -112,9 +114,12 @@ public:
 
   size_t hash() const {
     size_t result = 17;
-    const auto p =
-        util::hash_code(floors, [](const vector<string> &x) { return 1; });
-    // result = 31 * std::hash<array<vector<string>, 4>>()(floors);
+    std::function<size_t(const vector<string> &)> floors_hash =
+        [](const vector<string> &floor) {
+          std::function<size_t(const string &)> vec_hash = std::hash<string>();
+          return util::hash_code(floor, vec_hash);
+        };
+    result = 31 * util::hash_code(floors, floors_hash);
     result = 31 * result + std::hash<size_t>()(elevator);
     return result;
   }
@@ -157,3 +162,25 @@ int solve(const State &initial, const State &target) {
 
   throw runtime_error("no solution");
 };
+
+int solve_pt1_example() {
+  Floors initial_floors{{
+      {"HM", "LM"},
+      {"HG"},
+      {"LG"},
+      {},
+  }};
+  State initial(initial_floors, 0);
+
+  Floors target_floors{{
+      {},
+      {},
+      {},
+      {"HG", "HM", "LG", "LM"},
+  }};
+  State target(target_floors, 3);
+
+  return solve(initial, target);
+}
+
+} // namespace Day11

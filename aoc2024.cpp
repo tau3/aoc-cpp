@@ -1,13 +1,13 @@
-#include "day10.hpp"
+#include "day11.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day10;
+using namespace Day11;
 
 int main() {
-  const vector<string> input = util::read_file("../day10_input");
+  // const vector<string> input = util::read_file("../day10_input");
   // clang-format off
   // const vector<string> input = {
   //   "value 5 goes to bot 2",
@@ -19,8 +19,10 @@ int main() {
   // };
   // clang-format on
 
-  assert(!input.empty());
-  cout << solve_day10(input) << endl;
+  // assert(!input.empty());
+  // cout << solve_day10(input) << endl;
 
+  cout << solve_pt1_example() << endl;
+  
   return 0;
 }

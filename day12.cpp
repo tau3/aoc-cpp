@@ -15,7 +15,12 @@ private:
   Machine() = delete;
 
   void cpy(const string &from, const string &to) {
-    registers[to] = registers.at(from);
+    if (from == "a" || from == "b" || from == "c" || from == "d") {
+      registers[to] = registers.at(from);
+    } else {
+      const int val = stoi(from);
+      registers[to] = val;
+    }
     rip++;
   }
 
@@ -30,12 +35,21 @@ private:
   }
 
   void jnz(const string &reg, const int jump) {
-    if (registers.at(reg) == 0) {
+    int val;
+    if (reg == "a" || reg == "b" || reg == "c" || reg == "d") {
+      val = registers.at(reg);
+    } else {
+      val = stoi(reg);
+    }
+    if (val != 0) {
       rip += jump;
+    } else {
+      rip++;
     }
   }
 
   void run_command() {
+    // cout << '[' << rip << ']' << " " << program[rip] << endl;
     const vector<string> tokens = util::split(program[rip], " ");
     const string command = tokens[0];
 
@@ -51,7 +65,7 @@ private:
       dec(reg);
     } else if (command == "jnz") {
       const string reg = tokens[1];
-      const int jump = stoi(tokens[1]);
+      const int jump = stoi(tokens[2]);
       jnz(reg, jump);
     }
   }

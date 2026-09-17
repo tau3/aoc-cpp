@@ -71,11 +71,11 @@ private:
   }
 
 public:
-  Machine(const vector<string> &program)
+  Machine(const vector<string> &program, const int c)
       : registers({
             {"a", 0},
             {"b", 0},
-            {"c", 0},
+            {"c", c},
             {"d", 0},
         }),
         program(program), rip(0) {}
@@ -90,7 +90,13 @@ public:
 };
 
 int solve_pt1(const vector<string> &input) {
-  Machine machine(input);
+  Machine machine(input, 0);
+  machine.run_program();
+  return machine.a();
+}
+
+int solve_pt2(const vector<string> &input) {
+  Machine machine(input, 1);
   machine.run_program();
   return machine.a();
 }

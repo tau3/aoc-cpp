@@ -20,7 +20,7 @@ int main() {
   // clang-format on
 
   assert(!input.empty());
-  cout << solve_pt1(input) << endl;
+  cout << solve_pt2(input) << endl;
 
   return 0;
 }

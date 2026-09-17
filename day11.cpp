@@ -1,3 +1,4 @@
+#include "day11.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <array>
@@ -44,6 +45,7 @@ public:
     util::remove_all(floor, items);
   }
 
+#ifdef DEBUG
   string to_string() const {
     string result = "";
     for (const string &item : floor) {
@@ -52,6 +54,7 @@ public:
     }
     return result;
   }
+#endif
 
   bool is_valid() const {
     for (const string &item : floor) {
@@ -113,7 +116,6 @@ private:
     }
 #endif
 
-    // TODO avoid constructor?
     Floors new_floors;
     const size_t new_elevator = up ? (elevator + 1) : (elevator - 1);
     for (size_t i = 0; i < size; i++) {

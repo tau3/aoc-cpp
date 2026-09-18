@@ -80,6 +80,11 @@ size_t hash_code(const C &items, const std::function<size_t(const I &)> &hash) {
   return result;
 }
 
+template <typename C, typename I = typename C::value_type>
+size_t contains(const C &items, const I &item) {
+  return std::find(items.begin(), items.end(), item) != items.end();
+}
+
 } // namespace util
 
 #endif

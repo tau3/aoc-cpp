@@ -1,13 +1,13 @@
-#include "day12.hpp"
+#include "day13.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day12;
+using namespace Day13;
 
 int main() {
-  const vector<string> input = util::read_file("../day12_input");
+  // const vector<string> input = util::read_file("../day12_input");
   // clang-format off
   // const vector<string> input = {
   //   "cpy 41 a",
@@ -19,8 +19,9 @@ int main() {
   // };
   // clang-format on
 
-  assert(!input.empty());
-  cout << solve_pt2(input) << endl;
+  // assert(!input.empty());
+  // cout << solve_pt2(input) << endl;
 
+  cout << solve_pt1(10) << endl;
   return 0;
 }

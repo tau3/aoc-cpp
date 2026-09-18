@@ -45,11 +45,14 @@ vector<Cell> calc_adjacent(const size_t x, const size_t y,
   return result;
 }
 
-size_t solve_pt1(const size_t favorite_number) {
-  queue<pair<Pos, size_t>> q;
-  q.push({Pos{1, 1}, 0});
+size_t solve_pt1(const size_t favorite_number, const size_t target_x,
+                 const size_t target_y) {
+  const Pos start{1, 1};
+  const Pos target{target_x, target_y};
 
-  const Pos target{7, 4};
+  queue<pair<Pos, size_t>> q;
+  q.push({start, 0});
+
   unordered_set<Pos, util::PointHash> visited;
   while (!q.empty()) {
     const auto [pos, dist] = q.front();
@@ -59,12 +62,15 @@ size_t solve_pt1(const size_t favorite_number) {
     visited.insert(pos);
     const vector<Cell> adjacent = calc_adjacent(x, y, favorite_number);
     for (const Cell &cell : adjacent) {
-      if (cell.first == target) {
+      const Pos pos = cell.first;
+      if (pos == target) {
         return dist + 1;
       }
 
-      if (cell.second && !util::contains(visited, pos)) {
-        q.push({cell.first, dist + 1});
+      const bool is_open = cell.second;
+      const bool is_new = visited.insert(pos).second;
+      if (is_open && is_new) {
+        q.push({pos, dist + 1});
       }
     }
   }

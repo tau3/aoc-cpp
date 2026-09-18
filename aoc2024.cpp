@@ -22,6 +22,8 @@ int main() {
   // assert(!input.empty());
   // cout << solve_pt2(input) << endl;
 
-  cout << solve_pt1(10) << endl;
+  // cout << solve_pt1(10, 7, 4) << endl;
+  cout << solve_pt1(1364, 31, 39) << endl;
+
   return 0;
 }

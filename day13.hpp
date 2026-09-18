@@ -9,6 +9,7 @@ using namespace std;
 
 size_t solve_pt1(const size_t favorite_number, const size_t target_x,
                  const size_t target_y);
+size_t solve_pt2(const size_t favorite_number);
 
 } // namespace Day13
 

@@ -77,4 +77,36 @@ size_t solve_pt1(const size_t favorite_number, const size_t target_x,
   throw runtime_error("no solution");
 }
 
+size_t solve_pt2(const size_t favorite_number) {
+  const Pos start{1, 1};
+
+  queue<pair<Pos, size_t>> q;
+  q.push({start, 0});
+
+  unordered_set<Pos, util::PointHash> visited;
+  visited.insert(start);
+
+  while (!q.empty()) {
+    const auto [pos, dist] = q.front();
+    q.pop();
+
+    if (dist > 50) {
+      continue;
+    }
+
+    const auto &[x, y] = pos;
+
+    const vector<Cell> adjacent = calc_adjacent(x, y, favorite_number);
+    for (const Cell &cell : adjacent) {
+      const Pos pos = cell.first;
+      const bool is_open = cell.second;
+      const bool is_new = visited.insert(pos).second;
+      if (is_open && is_new) {
+        q.push({pos, dist + 1});
+      }
+    }
+  }
+  return visited.size();
+}
+
 } // namespace Day13

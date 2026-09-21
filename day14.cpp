@@ -1,6 +1,7 @@
 #include "day14.hpp"
 #include "day5.hpp"
 #include <cstddef>
+#include <functional>
 #include <iostream>
 #include <optional>
 #include <unordered_map>
@@ -21,12 +22,13 @@ optional<char> has_three_row(const string &str) {
   return nullopt;
 }
 
-string calc_md5(const size_t i, const string &salt, Cache &cache) {
+string calc_md5(const size_t i, const string &salt, Cache &cache,
+                const function<string(const string &)> &hash) {
   string result;
   if (cache.find(i) != cache.end()) {
     result = cache.at(i);
   } else {
-    result = Day5::md5(salt + to_string(i));
+    result = hash(salt + to_string(i));
     cache.emplace(i, result);
   }
   return result;
@@ -46,37 +48,48 @@ bool has_five_row(const string &str, const char c) {
   return false;
 }
 
-bool is_key(const size_t i, const string &salt, Cache &cache) {
-  const string md5 = calc_md5(i, salt, cache);
+bool is_key(const size_t i, const string &salt, Cache &cache,
+            const function<string(const string &)> &hash) {
+  const string md5 = calc_md5(i, salt, cache, hash);
   const optional<char> maybe_three_row = has_three_row(md5);
   if (!maybe_three_row.has_value()) {
     return false;
   }
 
   const char three_row = maybe_three_row.value();
-  for (size_t i = 1; i <= 1000; i++) {
-    const string current_md5 = calc_md5(i, salt, cache);
+  for (size_t j = 1; j <= 1000; j++) {
+    const string current_md5 = calc_md5(i + j, salt, cache, hash);
     if (has_five_row(current_md5, three_row)) {
       return true;
     }
   }
 
-  cout << "i=" << i << ", key=" << md5 << endl;
   return false;
 }
 
-size_t solve_pt1(const string &salt) {
+size_t solve(const string &salt, const function<string(const string &)> &hash) {
   Cache cache;
   size_t i = 0;
   size_t count = 0;
   while (count < 64) {
-    if (is_key(i, salt, cache)) {
+    if (is_key(i, salt, cache, hash)) {
       count++;
     }
     i++;
-    // cout << "i=" << i << endl;
   }
-  return i;
+  return i - 1;
+}
+
+size_t solve_pt1(const string &salt) { return solve(salt, Day5::md5); }
+
+size_t solve_pt2(const string &salt) {
+  return solve(salt, [](const string &input) {
+    string result = input;
+    for (size_t i = 0; i <= 2016; i++) {
+      result = Day5::md5(result);
+    }
+    return result;
+  });
 }
 
 } // namespace Day14

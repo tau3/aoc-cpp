@@ -8,6 +8,7 @@ namespace Day14 {
 using namespace std;
 
 size_t solve_pt1(const string &salt);
+size_t solve_pt2(const string &salt);
 
 } // namespace Day14
 

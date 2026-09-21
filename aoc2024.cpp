@@ -1,10 +1,10 @@
-#include "day13.hpp"
+#include "day14.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <vector>
 
 using namespace std;
-using namespace Day13;
+using namespace Day14;
 
 int main() {
   // const vector<string> input = util::read_file("../day12_input");
@@ -23,7 +23,7 @@ int main() {
   // cout << solve_pt2(input) << endl;
 
   // cout << solve_pt1(10, 7, 4) << endl;
-  cout << solve_pt2(1364) << endl;
+  cout << solve_pt1("abc") << endl;
 
   return 0;
 }

@@ -2,7 +2,6 @@
 #include "day5.hpp"
 #include <cstddef>
 #include <functional>
-#include <iostream>
 #include <optional>
 #include <unordered_map>
 

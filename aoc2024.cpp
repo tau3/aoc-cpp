@@ -23,8 +23,8 @@ int main() {
   // cout << solve_pt2(input) << endl;
 
   // cout << solve_pt1(10, 7, 4) << endl;
-  // cout << solve_pt2("ngcjuoqr") << endl;
-  cout << solve_pt2("abc") << endl;
+  cout << solve_pt2("ngcjuoqr") << endl;
+  // cout << solve_pt2("abc") << endl;
 
   return 0;
 }

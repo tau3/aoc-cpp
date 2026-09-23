@@ -1,13 +1,16 @@
 #include "day16.hpp"
 #include <cassert>
 #include <cstddef>
+#include <limits>
 
 namespace Day16 {
 
 void generate_step(string &line) {
   const size_t length = line.size();
   line += '0';
-  for (size_t i = 0; i < length; i++) {
+
+  assert(length < numeric_limits<int>::max());
+  for (int i = length - 1; i >= 0; i--) {
     if (line[i] == '0') {
       line += '1';
     } else {
@@ -21,7 +24,7 @@ string checksum(const string &line) {
 
   const size_t half = line.size() / 2;
 
-  string result = 0;
+  string result = "";
   for (size_t i = 0; i < half; i++) {
     const size_t j = i * 2;
     const char l = line[j];
@@ -45,7 +48,7 @@ string solve_pt1(string &input, const size_t length) {
 
   do {
     input = checksum(input);
-  } while (input.length() % 2 != 0);
+  } while (input.length() % 2 == 0);
 
   return input;
 }

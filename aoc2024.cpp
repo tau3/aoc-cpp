@@ -1,10 +1,11 @@
-#include "day14.hpp"
+#include "day16.hpp"
 #include "util.hpp"
 #include <cassert>
+#include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day14;
+using namespace Day16;
 
 int main() {
   // const vector<string> input = util::read_file("../day12_input");
@@ -22,9 +23,8 @@ int main() {
   // assert(!input.empty());
   // cout << solve_pt2(input) << endl;
 
-  // cout << solve_pt1(10, 7, 4) << endl;
-  cout << solve_pt2("ngcjuoqr") << endl;
-  // cout << solve_pt2("abc") << endl;
+  string input = "10000";
+  cout << solve_pt1(input, 20) << endl;
 
   return 0;
 }

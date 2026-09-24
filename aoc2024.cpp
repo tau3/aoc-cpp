@@ -26,11 +26,11 @@ int main() {
   // string input = "10000";
   // cout << solve_pt1(input, 20) << endl;
 
-  cout << solve_pt2("ihgpwlah") << endl;
-  // cout << solve("kglvqrro") << endl;
-  // cout << solve("ulqzkmiv") << endl;
+  // cout << solve_pt2("ihgpwlah") << endl;
+  // cout << solve_pt2("kglvqrro") << endl;
+  // cout << solve_pt2("ulqzkmiv") << endl;
 
-  // cout << solve_pt1("pvhmgsws") << endl;
+  cout << solve_pt2("pvhmgsws") << endl;
 
   return 0;
 }

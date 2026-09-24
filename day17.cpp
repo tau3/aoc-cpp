@@ -116,7 +116,8 @@ size_t solve_pt2(const string &input) {
     q.pop();
 
     if (position == end) {
-      result = max(result, path.size() - input.size());
+      result = max(result, path.size());
+      continue;
     }
 
     Doors doors = calc_doors(path);
@@ -129,7 +130,7 @@ size_t solve_pt2(const string &input) {
     }
   }
 
-  return result;
+  return result - input.size();
 }
 
 } // namespace Day17

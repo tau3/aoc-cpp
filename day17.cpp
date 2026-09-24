@@ -1,6 +1,7 @@
 #include "day17.hpp"
 #include "day5.hpp"
 #include "util.hpp"
+#include <algorithm>
 #include <bitset>
 #include <cstddef>
 #include <format>
@@ -76,7 +77,7 @@ bool exists(const Position &position, const size_t direction) {
   }
 }
 
-string solve(const string &input) {
+string solve_pt1(const string &input) {
   const Position end{WIDTH - 1, HEIGHT - 1};
 
   queue<pair<Position, string>> q;
@@ -101,6 +102,34 @@ string solve(const string &input) {
   }
 
   throw runtime_error("unreachable");
+}
+
+size_t solve_pt2(const string &input) {
+  const Position end{WIDTH - 1, HEIGHT - 1};
+
+  queue<pair<Position, string>> q;
+  q.push({Position{0, 0}, input});
+
+  size_t result = 0;
+  while (!q.empty()) {
+    const auto [position, path] = q.front();
+    q.pop();
+
+    if (position == end) {
+      result = max(result, path.size() - input.size());
+    }
+
+    Doors doors = calc_doors(path);
+    for (size_t i = 0; i < 4; i++) {
+      if (doors[i] && exists(position, i)) {
+        const string new_path = path + direction(i);
+        const Position new_position = new_pos(position, i);
+        q.push({new_position, new_path});
+      }
+    }
+  }
+
+  return result;
 }
 
 } // namespace Day17

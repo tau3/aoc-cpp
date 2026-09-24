@@ -7,7 +7,8 @@ namespace Day17 {
 
 using namespace std;
 
-string solve(const string &input);
+string solve_pt1(const string &input);
+size_t solve_pt2(const string &input);
 
 } // namespace Day17
 

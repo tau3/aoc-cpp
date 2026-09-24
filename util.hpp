@@ -44,6 +44,11 @@ template <typename T> struct Point {
   T col;
 
   explicit Point(T row, T col) : row(row), col(col) {}
+
+  Point right() const { return Point(row, col + 1); }
+  Point left() const { return Point(row, col - 1); }
+  Point up() const { return Point(row - 1, col); }
+  Point down() const { return Point(row + 1, col); }
 };
 
 template <typename T>

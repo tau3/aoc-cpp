@@ -8,7 +8,7 @@ namespace Day15 {
 
 using namespace std;
 
-int solve_pt1(const vector<pair<int, int>> &disks);
+int solve_pt1(const vector<pair<int, int>>& disks);
 
 } // namespace Day15
 

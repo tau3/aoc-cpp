@@ -5,8 +5,9 @@
 
 namespace Day19 {
 
-size_t solve(const size_t count);
+size_t solve_pt1(const size_t count);
+size_t solve_pt2(const size_t count);
 
-} // namespace Day18
+} // namespace Day19
 
 #endif

@@ -23,8 +23,8 @@ int main() {
   // assert(!input.empty());
   // cout << solve_pt2(input) << endl;
 
-  // cout << solve(5) << endl;
-  cout << solve(3004953) << endl;
+  // cout << solve_pt2(5) << endl;
+  cout << solve_pt2(3004953) << endl;
 
   return 0;
 }

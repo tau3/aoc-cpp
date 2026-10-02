@@ -2,6 +2,7 @@
 #include "util.hpp"
 #include <cassert>
 #include <cstddef>
+#include <memory>
 #include <vector>
 
 namespace Day20 {
@@ -17,7 +18,7 @@ byte leftmost_mask(const size_t i) {
 
 pair<size_t, size_t> solve(const vector<string> &input) {
   const size_t array_size = (MAX / 8) + 1;
-  byte *state = new byte[array_size]{};
+  auto state = make_unique<byte[]>(array_size);
 
   for (const string &line : input) {
     const vector<string> tokens = util::split(line, "-");
@@ -26,8 +27,8 @@ pair<size_t, size_t> solve(const vector<string> &input) {
 
     for (size_t i = from; i <= to; i++) {
       const size_t byte_index = i / 8;
-      const size_t shift = i % 8;
-      const byte mask = leftmost_mask(shift);
+      const size_t bit_index = i % 8;
+      const byte mask = leftmost_mask(bit_index);
       state[byte_index] |= mask;
     }
   }
@@ -36,9 +37,9 @@ pair<size_t, size_t> solve(const vector<string> &input) {
   size_t pt2 = 0;
   for (size_t i = 0; i < MAX; i++) {
     const size_t byte_index = i / 8;
-    const size_t shift = i % 8;
+    const size_t bit_index = i % 8;
     const byte current = state[byte_index];
-    const byte mask = leftmost_mask(shift);
+    const byte mask = leftmost_mask(bit_index);
 
     if ((current & mask) == ((byte)0)) {
       pt2++;

@@ -1,4 +1,5 @@
 #include "day19.hpp"
+#include <cstddef>
 #include <deque>
 
 namespace Day19 {
@@ -32,6 +33,7 @@ size_t solve_pt2(const size_t count) {
   while (q.size() != 1) {
     const size_t current = q.front();
     const size_t size = q.size();
+
     q.pop_front();
 
     q.erase(q.begin() + (size / 2 - 1));

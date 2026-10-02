@@ -8,7 +8,7 @@ namespace Day20 {
 
 using namespace std;
 
-size_t solve(const vector<string> &input);
+pair<size_t, size_t> solve(const vector<string> &input);
 
 } // namespace Day20
 

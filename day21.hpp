@@ -8,7 +8,9 @@ namespace Day21 {
 
 using namespace std;
 
-string solve(const string &pass, const vector<string> &commands);
+string solve_pt1(const string &pass, const vector<string> &commands);
+string solve_pt2(const string &pass, const vector<string> &commands);
+  
 
 } // namespace Day21
 

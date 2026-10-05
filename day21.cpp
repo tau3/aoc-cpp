@@ -14,22 +14,6 @@ void move_position(string &pass, const size_t x, const size_t y);
 void rotate_based(string &pass, const char x);
 void rotate(string &pass, const bool is_left, size_t x);
 
-void un_swap_position(string &pass, const size_t x, const size_t y) {
-  swap_position(pass, y, x);
-}
-
-void un_swap_letter(string &pass, const char x, const char y) {
-  swap_letter(pass, y, x);
-}
-
-void un_reverse_positions(string &pass, const size_t x, const size_t y) {
-  reverse_positions(pass, x, y);
-}
-
-void un_move_position(string &pass, const size_t x, const size_t y) {
-  move_position(pass, y, x);
-}
-
 void un_rotate_based(string &pass, const char x) {
   string result = pass;
   string rotated;
@@ -42,59 +26,31 @@ void un_rotate_based(string &pass, const char x) {
   pass = result;
 }
 
-void un_rotate(string &pass, const bool is_left, size_t x) {
-  rotate(pass, !is_left, x);
-}
-
 void exec(string &pass, const string &command, bool is_reverse) {
   const vector<string> tokens = util::split(command, " ");
   if (util::starts_with(command, "swap position")) {
     const size_t x = stol(tokens[2]);
     const size_t y = stol(tokens[5]);
-    if (!is_reverse) {
-      swap_position(pass, x, y);
-    } else {
-      un_swap_position(pass, x, y);
-    }
+    is_reverse ? swap_position(pass, y, x) : swap_position(pass, x, y);
   } else if (util::starts_with(command, "swap letter")) {
     const char x = tokens[2][0];
     const char y = tokens[5][0];
-    if (!is_reverse) {
-      swap_letter(pass, x, y);
-    } else {
-      un_swap_letter(pass, x, y);
-    }
+    is_reverse ? swap_letter(pass, y, x) : swap_letter(pass, x, y);
   } else if (util::starts_with(command, "reverse positions")) {
     const size_t x = stol(tokens[2]);
     const size_t y = stol(tokens[4]);
-    if (!is_reverse) {
-      reverse_positions(pass, x, y);
-    } else {
-      un_reverse_positions(pass, x, y);
-    }
+    reverse_positions(pass, x, y);
   } else if (util::starts_with(command, "move position")) {
     const size_t x = stol(tokens[2]);
     const size_t y = stol(tokens[5]);
-    if (!is_reverse) {
-      move_position(pass, x, y);
-    } else {
-      un_move_position(pass, x, y);
-    }
+    is_reverse ? move_position(pass, y, x) : move_position(pass, x, y);
   } else if (util::starts_with(command, "rotate based")) {
     const char x = tokens[6][0];
-    if (!is_reverse) {
-      rotate_based(pass, x);
-    } else {
-      un_rotate_based(pass, x);
-    }
+    is_reverse ? un_rotate_based(pass, x) : rotate_based(pass, x);
   } else {
     const bool is_left = tokens[1] == "left";
     const size_t x = stol(tokens[2]);
-    if (!is_reverse) {
-      rotate(pass, is_left, x);
-    } else {
-      un_rotate(pass, is_left, x);
-    }
+    rotate(pass, is_reverse ^ is_left, x);
   }
 }
 
@@ -187,7 +143,6 @@ string solve_pt1(const string &pass, const vector<string> &commands) {
   string result = pass;
   for (const string &command : commands) {
     exec(result, command, false);
-    cout << command << " --> " << result << endl;
   }
   return result;
 }
@@ -197,7 +152,6 @@ string solve_pt2(const string &pass, const vector<string> &commands) {
   for (auto rit = commands.rbegin(); rit != commands.rend(); ++rit) {
     const string command = *rit;
     exec(result, command, true);
-    cout << command << " --> " << result << endl;
   }
   return result;
 }

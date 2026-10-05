@@ -18,7 +18,7 @@ bool contains(const std::vector<T> &values, const T &val) {
   return find(values.begin(), values.end(), val) != values.end();
 }
 
-bool starts_with(const std::string &, const std::string &);
+bool starts_with(const std::string &input, const std::string &prefix);
 
 template <typename T> void print(const T &items) {
   std::cout << "items: ";

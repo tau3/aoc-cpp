@@ -1,10 +1,10 @@
+#include "day21.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
-#include <string>
 
-using namespace std;
+namespace Day21 {
 
 void swap_position(string &pass, const size_t x, const size_t y);
 void swap_letter(string &pass, const char x, const char y);
@@ -13,7 +13,7 @@ void move_position(string &pass, const size_t x, const size_t y);
 void rotate_based(string &pass, const char x);
 void rotate(string &pass, const bool is_left, size_t x);
 
-void solve(string &pass, const string &command) {
+void exec(string &pass, const string &command) {
   const vector<string> tokens = util::split(command, " ");
   if (util::starts_with(command, "swap position")) {
     const size_t x = stol(tokens[2]);
@@ -64,16 +64,16 @@ void reverse_positions(string &pass, const size_t x, const size_t y) {
   const size_t size = pass.size();
   assert(x < size && y < size);
 
-  std::reverse(pass.begin() + x, pass.begin() + y);
+  std::reverse(pass.begin() + x, pass.begin() + y + 1);
 }
 
 void move_position(string &pass, const size_t x, const size_t y) {
   const size_t size = pass.size();
-  assert(x < size && (y - 1) < size);
+  assert(x < size && y < size);
 
   const char c = pass[x];
   pass.erase(x, 1);
-  pass.insert(pass.begin() + (y - 1), c);
+  pass.insert(pass.begin() + y, c);
 }
 
 char pop_first(string &pass);
@@ -113,7 +113,7 @@ char pop_first(string &pass) {
   assert(!pass.empty());
 
   const char result = pass[0];
-  pass.erase(1);
+  pass.erase(0, 1);
   return result;
 }
 
@@ -121,7 +121,18 @@ char pop_last(string &pass) {
   const size_t size = pass.size();
   assert(size != 0);
 
-  const char result = pass[size - 1];
-  pass.erase(size - 1, 1);
+  const char result = pass.back();
+  pass.pop_back();
   return result;
 }
+
+string solve(const string &pass, const vector<string> &commands) {
+  string result = pass;
+  for (const string &command : commands) {
+    exec(result, command);
+    cout << command << " --> " << result << endl;
+  }
+  return result;
+}
+
+} // namespace Day21

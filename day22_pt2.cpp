@@ -1,16 +1,15 @@
+#include "day22.hpp"
 #include "util.hpp"
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <queue>
 #include <stdexcept>
-#include <string>
 #include <sys/types.h>
 #include <unordered_map>
 #include <unordered_set>
-#include <vector>
 
-using namespace std;
+namespace Day22 {
 
 struct Node {
   uint8_t used;
@@ -38,6 +37,11 @@ struct Node {
     from.used = 0;
 
     return {to, from};
+  }
+
+  bool operator==(const Node &other) const {
+    return (used == other.used) && (avail == other.avail) &&
+           (has_target_data == other.has_target_data);
   }
 };
 
@@ -145,6 +149,8 @@ public:
     }
     return result;
   }
+
+  bool operator==(const Nodes &other) const { return nodes == other.nodes; }
 };
 
 struct NodesHash {
@@ -180,7 +186,7 @@ Nodes parse_input(const vector<string> &input) {
   return nodes;
 }
 
-size_t solve(const vector<string> &input) {
+size_t solve_pt2(const vector<string> &input) {
   const Nodes nodes = parse_input(input);
 
   queue<pair<Nodes, size_t>> q;
@@ -205,3 +211,5 @@ size_t solve(const vector<string> &input) {
 
   throw runtime_error("unreachable!");
 }
+
+} // namespace Day22

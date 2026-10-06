@@ -16,16 +16,12 @@ struct Node {
   uint8_t used;
   uint8_t avail;
   bool has_target_data;
-  uint8_t x;
-  uint8_t y;
 
   size_t hash_code() const {
     size_t result = 0;
     result ^= used;
     result ^= avail;
     result ^= has_target_data;
-    result ^= x;
-    result ^= y;
     return result;
   };
 
@@ -66,7 +62,34 @@ private:
 
   unordered_map<Key, Node, util::PointHash> nodes;
 
-  Nodes get_adjacent(const Node &node) const {}
+  Nodes get_adjacent(const Key &key) const {
+    const uint8_t x = key.col;
+    const uint8_t y = key.row;
+
+    Nodes result;
+    if (y > 0) {
+      Key key(x, y - 1);
+      result.put(x, y - 1, nodes.at(key));
+    }
+    if (x > 0) {
+      Key key(x - 1, y);
+      result.put(x - 1, y, nodes.at(key));
+    }
+
+    Key right(x + 1, y);
+    auto it = nodes.find(right);
+    if (it != nodes.end()) {
+      result.put(right.col, right.row, it->second);
+    }
+
+    Key bottom(x, y + 1);
+    it = nodes.find(right);
+    if (it != nodes.end()) {
+      result.put(right.col, right.row, it->second);
+    }
+
+    return result;
+  }
 
 public:
   void put(const uint8_t x, const uint8_t y, const Node &node) {
@@ -108,7 +131,7 @@ public:
         continue;
       }
 
-      Nodes adjacents = get_adjacent(node);
+      Nodes adjacents = get_adjacent(key);
       for (const auto &[adj_key, adj_node] : adjacents.nodes) {
         if (adj_node.can_have_data_from(node)) {
           Nodes copy = *this;
@@ -145,7 +168,7 @@ Nodes parse_input(const vector<string> &input) {
     const auto [x, y] = parse_position(fs);
 
     const Node node{static_cast<uint8_t>(stoi(used)),
-                    static_cast<uint8_t>(stoi(avail)), false, x, y};
+                    static_cast<uint8_t>(stoi(avail)), false};
 
     max_x = max(max_x, x);
 

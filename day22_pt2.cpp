@@ -5,6 +5,8 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
+#include <sys/types.h>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -16,6 +18,8 @@ struct Node {
   bool has_target_data;
   uint8_t x;
   uint8_t y;
+
+  size_t hash_code() const {};
 };
 
 pair<uint8_t, uint8_t> parse_position(const string &fs) {
@@ -33,8 +37,52 @@ pair<uint8_t, uint8_t> parse_position(const string &fs) {
   return {stoi(x), stoi(y)};
 }
 
-vector<Node> parse_input(const vector<string> &input) {
-  vector<Node> nodes;
+class Nodes {
+private:
+  using Key = util::Point<uint8_t>;
+
+  unordered_map<Key, Node, util::PointHash> nodes;
+
+public:
+  void put(const uint8_t x, const uint8_t y, const Node &node) {
+    Key key(x, y);
+    nodes.insert({key, node});
+  }
+
+  void set_target_data() {
+    uint8_t max_x = 0;
+    for (const auto &[k, v] : nodes) {
+      max_x = max(max_x, k.col);
+    }
+
+    Key key(max_x, 0);
+    Node &node = nodes.at(key);
+    node.has_target_data = true;
+  }
+
+  size_t hash_code() const {
+    size_t result = 0;
+    util::PointHash point_hash;
+    for (const auto &[k, v] : nodes) {
+      result ^= point_hash(k);
+      result ^= v.hash_code();
+    }
+    return result;
+  }
+
+  bool is_goal_data() const {
+    Key key(0, 0);
+    const Node &node = nodes.at(key);
+    return node.has_target_data;
+  }
+};
+
+struct NodesHash {
+  size_t operator()(const Nodes &nodes) const { return nodes.hash_code(); };
+};
+
+Nodes parse_input(const vector<string> &input) {
+  Nodes nodes;
   uint8_t max_x = 0;
   for (size_t i = 2; i < input.size(); i++) {
     const string &raw = input[i];
@@ -54,29 +102,25 @@ vector<Node> parse_input(const vector<string> &input) {
 
     max_x = max(max_x, x);
 
-    nodes.push_back(node);
+    nodes.put(x, y, node);
   }
 
-  for (Node &node : nodes) {
-    if (node.x == max_x && node.y == 0) {
-      node.has_target_data = true;
-    }
-  }
+  nodes.set_target_data();
 
   return nodes;
 }
 
-vector<vector<Node>> make_all_perms(const vector<Node> &nodes) {
+vector<Nodes> make_all_perms(const Nodes &nodes) {
   throw runtime_error("not implemented yet!");
 }
 
 size_t solve(const vector<string> &input) {
-  const vector<Node> nodes = parse_input(input);
+  const Nodes nodes = parse_input(input);
 
-  queue<pair<vector<Node>, size_t>> q;
+  queue<pair<Nodes, size_t>> q;
   q.push({nodes, 0});
 
-  unordered_set<vector<Node>> visited;
+  unordered_set<Nodes, NodesHash> visited;
   while (!q.empty()) {
     const auto [nodes, depth] = q.front();
     q.pop();
@@ -85,9 +129,9 @@ size_t solve(const vector<string> &input) {
       return depth + 1;
     }
 
-    vector<vector<Node>> steps = make_all_perms(nodes);
-    for (const vector<Node> &step : steps) {
-      if (!visited.add(step)) {
+    vector<Nodes> steps = make_all_perms(nodes);
+    for (const Nodes &step : steps) {
+      if (!visited.insert(step).second) {
         q.push({step, depth + 1});
       }
     }

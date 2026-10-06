@@ -81,30 +81,39 @@ private:
 
   Nodes() = delete;
 
-  const Node &at(const size_t x, const size_t y) const {
+  using Pos = util::Point<size_t>;
+
+  const Node &at(const Pos &pos) const {
+    const size_t x = pos.col;
+    const size_t y = pos.row;
     assert((x < width) && (y < height));
     return data[y * width + x];
   }
 
-  Node &at(const size_t x, const size_t y) {
+  Node &at(const Pos &pos) {
+    const size_t x = pos.col;
+    const size_t y = pos.row;
     assert(x < width && y < height);
     return data[y * width + x];
   }
 
-  vector<pair<pair<size_t, size_t>, const Node &>>
-  get_adjacent(const size_t x, const size_t y) const {
-    vector<pair<pair<size_t, size_t>, const Node &>> result;
-    if (x > 0) {
-      result.push_back({{x - 1, y}, at(x - 1, y)});
+  vector<pair<Pos, const Node &>> get_adjacent(const Pos &pos) const {
+    vector<pair<Pos, const Node &>> result;
+    if (pos.col > 0) {
+      const Pos left = pos.left();
+      result.push_back({left, at(left)});
     }
-    if (y > 0) {
-      result.push_back({{x, y - 1}, at(x, y - 1)});
+    if (pos.row > 0) {
+      const Pos top = pos.up();
+      result.push_back({top, at(top)});
     }
-    if (x < (width - 1)) {
-      result.push_back({{x + 1, y}, at(x + 1, y)});
+    if (pos.col < (width - 1)) {
+      const Pos right = pos.right();
+      result.push_back({right, at(right)});
     }
-    if (y < (height - 1)) {
-      result.push_back({{x, y + 1}, at(x, y + 1)});
+    if (pos.row < (height - 1)) {
+      const Pos bottom = pos.down();
+      result.push_back({bottom, at(bottom)});
     }
     return result;
   }
@@ -132,18 +141,19 @@ public:
     vector<Nodes> result;
     for (size_t r = 0; r < height; r++) {
       for (size_t c = 0; c < width; c++) {
-        const Node &node = at(c, r);
+        const Pos position = Pos(c, r);
+        const Node &node = at(position);
         if (node.is_empty()) {
           continue;
         }
 
-        const auto adjacents = get_adjacent(c, r);
+        const auto adjacents = get_adjacent(position);
         for (const auto &[adj_pos, adj_node] : adjacents) {
           if (adj_node.can_have_data_from(node)) {
             Nodes copy = *this;
             const auto &[new_adj, new_node] = adj_node.move_data_from(node);
-            copy.at(adj_pos.first, adj_pos.second) = new_adj;
-            copy.at(c, r) = new_node;
+            copy.at(adj_pos) = new_adj;
+            copy.at(position) = new_node;
 
             result.push_back(copy);
           }

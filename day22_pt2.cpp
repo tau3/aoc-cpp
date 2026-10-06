@@ -12,15 +12,15 @@
 namespace Day22 {
 
 struct Node {
-  uint8_t used;
-  uint8_t avail;
+  uint16_t used;
+  uint16_t avail;
   bool has_target_data;
 
   size_t hash_code() const {
-    size_t result = 0;
-    result ^= used;
-    result ^= avail;
-    result ^= has_target_data;
+    size_t result = 17;
+    result = result * 31 + used;
+    result = result * 31 + avail;
+    result = result * 31 + has_target_data;
     return result;
   };
 
@@ -32,9 +32,11 @@ struct Node {
 
     to.used += from.used;
     to.avail -= from.used;
+    to.has_target_data = from.has_target_data;
 
     from.avail += from.used;
     from.used = 0;
+    from.has_target_data = false;
 
     return {to, from};
   }
@@ -45,9 +47,9 @@ struct Node {
   }
 };
 
-pair<uint8_t, uint8_t> parse_position(const string &fs) {
+pair<uint16_t, uint16_t> parse_position(const string &fs) {
   vector<string> tokens = util::split(fs, "/");
-  const string node = tokens[2];
+  const string node = tokens[3];
 
   tokens = util::split(node, "-");
 
@@ -62,13 +64,13 @@ pair<uint8_t, uint8_t> parse_position(const string &fs) {
 
 class Nodes {
 private:
-  using Key = util::Point<uint8_t>;
+  using Key = util::Point<uint16_t>;
 
   unordered_map<Key, Node, util::PointHash> nodes;
 
   Nodes get_adjacent(const Key &key) const {
-    const uint8_t x = key.col;
-    const uint8_t y = key.row;
+    const uint16_t x = key.col;
+    const uint16_t y = key.row;
 
     Nodes result;
     if (y > 0) {
@@ -96,13 +98,13 @@ private:
   }
 
 public:
-  void put(const uint8_t x, const uint8_t y, const Node &node) {
+  void put(const uint16_t x, const uint16_t y, const Node &node) {
     Key key(x, y);
     nodes.insert({key, node});
   }
 
   void set_target_data() {
-    uint8_t max_x = 0;
+    uint16_t max_x = 0;
     for (const auto &[k, v] : nodes) {
       max_x = max(max_x, k.col);
     }
@@ -151,6 +153,14 @@ public:
   }
 
   bool operator==(const Nodes &other) const { return nodes == other.nodes; }
+
+  friend std::ostream &operator<<(std::ostream &os, const Nodes &nodes) {
+    for (const auto &[k, v] : nodes.nodes) {
+      os << "[" << k.col << "," << k.row << "]={" << v.has_target_data << ","
+         << v.avail << "," << v.used << "}; ";
+    }
+    return os;
+  };
 };
 
 struct NodesHash {
@@ -159,7 +169,7 @@ struct NodesHash {
 
 Nodes parse_input(const vector<string> &input) {
   Nodes nodes;
-  uint8_t max_x = 0;
+  uint16_t max_x = 0;
   for (size_t i = 2; i < input.size(); i++) {
     const string &raw = input[i];
     const vector<string> tokens = util::split_by_spaces(raw);
@@ -173,8 +183,8 @@ Nodes parse_input(const vector<string> &input) {
 
     const auto [x, y] = parse_position(fs);
 
-    const Node node{static_cast<uint8_t>(stoi(used)),
-                    static_cast<uint8_t>(stoi(avail)), false};
+    const Node node{static_cast<uint16_t>(stoi(used)),
+                    static_cast<uint16_t>(stoi(avail)), false};
 
     max_x = max(max_x, x);
 
@@ -193,6 +203,7 @@ size_t solve_pt2(const vector<string> &input) {
   q.push({nodes, 0});
 
   unordered_set<Nodes, NodesHash> visited;
+
   while (!q.empty()) {
     const auto [nodes, depth] = q.front();
     q.pop();
@@ -203,7 +214,8 @@ size_t solve_pt2(const vector<string> &input) {
 
     vector<Nodes> steps = nodes.make_all_perms();
     for (const Nodes &step : steps) {
-      if (!visited.insert(step).second) {
+      if (visited.insert(step).second) {
+        cout << step << endl;
         q.push({step, depth + 1});
       }
     }

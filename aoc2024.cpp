@@ -1,14 +1,14 @@
-#include "day21.hpp"
+#include "day22.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day21;
+using namespace Day22;
 
 int main() {
-  const vector<string> input = util::read_file("../day21_input");
+  const vector<string> input = util::read_file("../day22_input");
   // clang-format off
   // const vector<string> input = {
   //   "swap position 4 with position 0",
@@ -23,8 +23,7 @@ int main() {
   // clang-format on
 
   assert(!input.empty());
-  // cout << solve_pt2("decab", input) << endl;
-  cout << solve_pt2("fbgdceah", input) << endl;
+  cout << solve(input) << endl;
 
   return 0;
 }

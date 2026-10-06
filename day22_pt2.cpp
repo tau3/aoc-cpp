@@ -19,7 +19,30 @@ struct Node {
   uint8_t x;
   uint8_t y;
 
-  size_t hash_code() const {};
+  size_t hash_code() const {
+    size_t result = 0;
+    result ^= used;
+    result ^= avail;
+    result ^= has_target_data;
+    result ^= x;
+    result ^= y;
+    return result;
+  };
+
+  bool can_have_data_from(const Node &node) const { return avail >= node.used; }
+
+  pair<Node, Node> move_data_from(const Node &node) const {
+    Node to = *this;
+    Node from = node;
+
+    to.used += from.used;
+    to.avail -= from.used;
+
+    from.avail += from.used;
+    from.used = 0;
+
+    return {to, from};
+  }
 };
 
 pair<uint8_t, uint8_t> parse_position(const string &fs) {
@@ -42,6 +65,8 @@ private:
   using Key = util::Point<uint8_t>;
 
   unordered_map<Key, Node, util::PointHash> nodes;
+
+  Nodes get_adjacent(const Node &node) const {}
 
 public:
   void put(const uint8_t x, const uint8_t y, const Node &node) {
@@ -74,6 +99,28 @@ public:
     Key key(0, 0);
     const Node &node = nodes.at(key);
     return node.has_target_data;
+  }
+
+  vector<Nodes> make_all_perms() const {
+    vector<Nodes> result;
+    for (const auto &[key, node] : nodes) {
+      if (node.used == 0) {
+        continue;
+      }
+
+      Nodes adjacents = get_adjacent(node);
+      for (const auto &[adj_key, adj_node] : adjacents.nodes) {
+        if (adj_node.can_have_data_from(node)) {
+          Nodes copy = *this;
+          const auto &[new_adj, new_node] = adj_node.move_data_from(node);
+          copy.put(adj_key.col, adj_key.row, new_adj);
+          copy.put(key.col, key.row, new_node);
+
+          result.push_back(copy);
+        }
+      }
+    }
+    return result;
   }
 };
 
@@ -110,10 +157,6 @@ Nodes parse_input(const vector<string> &input) {
   return nodes;
 }
 
-vector<Nodes> make_all_perms(const Nodes &nodes) {
-  throw runtime_error("not implemented yet!");
-}
-
 size_t solve(const vector<string> &input) {
   const Nodes nodes = parse_input(input);
 
@@ -129,7 +172,7 @@ size_t solve(const vector<string> &input) {
       return depth + 1;
     }
 
-    vector<Nodes> steps = make_all_perms(nodes);
+    vector<Nodes> steps = nodes.make_all_perms();
     for (const Nodes &step : steps) {
       if (!visited.insert(step).second) {
         q.push({step, depth + 1});

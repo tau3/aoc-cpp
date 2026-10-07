@@ -3,11 +3,13 @@
 #include "util.hpp"
 #include <cassert>
 #include <cstddef>
+#include <format>
+#include <stdexcept>
 #include <vector>
 
 namespace Day23 {
 
-void tgl(vector<string> &program, const size_t rip);
+void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip);
 
 int solve(const vector<string> &input) {
   Day12::ExtraHandlers extra_handlers = {{"tgl", tgl}};
@@ -39,12 +41,30 @@ string join(const vector<string> &tokens, const char delimiter) {
   return result;
 }
 
-void tgl(vector<string> &program, size_t &rip) {
+int read_reg(const Day12::Machine &machine, const string &reg) {
+#define READ_REG(x)                                                            \
+  if (reg == "x") {                                                            \
+    return machine.x();                                                        \
+  }
+
+  READ_REG(a);
+  READ_REG(b);
+  READ_REG(c);
+  READ_REG(d);
+
+  throw runtime_error(format("invalid reg {}", reg));
+}
+
+void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip) {
   const string &command = program[rip];
+
+  cout << command << endl;
+
   vector<string> tokens = util::split(command, " ");
   assert(tokens[0] == "tgl");
 
-  const int x = stoi(tokens[1]);
+  const string reg = tokens[1];
+  const int x = read_reg(machine, reg);
 
   if (is_oob(rip, x, program.size())) {
     return;

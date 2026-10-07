@@ -12,8 +12,10 @@ using namespace std;
 int solve_pt1(const vector<string> &input);
 int solve_pt2(const vector<string> &input);
 
-using ExtraHandlers =
-    unordered_map<string, function<void(vector<string> &, size_t &)>>;
+class Machine;
+
+using ExtraHandlers = unordered_map<
+    string, function<void(const Machine &machine, vector<string> &, size_t &)>>;
 
 class Machine {
 private:
@@ -38,7 +40,13 @@ public:
 
   void run_program();
 
-  inline int a() const { return registers.at("a"); }
+#define REG_FUN(x)                                                             \
+  inline int x() const { return registers.at("x"); }
+
+  REG_FUN(a)
+  REG_FUN(b)
+  REG_FUN(c)
+  REG_FUN(d)
 };
 
 } // namespace Day12

@@ -65,7 +65,7 @@ void Machine::run_command() {
       throw runtime_error(format("unknown command: {}", command));
     }
     const auto handler = e->second;
-    handler(program, rip);
+    handler(*this, program, rip);
   }
 }
 

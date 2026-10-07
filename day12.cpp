@@ -99,7 +99,7 @@ Machine::Machine(const vector<string> program, const int c) noexcept
 Machine::Machine(const vector<string> program,
                  const ExtraHandlers extra_handlers) noexcept
     : registers({
-          {"a", 7},
+          {"a", 12},
           {"b", 0},
           {"c", 0},
           {"d", 0},

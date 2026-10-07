@@ -41,7 +41,7 @@ public:
   void run_program();
 
 #define REG_FUN(x)                                                             \
-  inline int x() const { return registers.at("x"); }
+  inline int x() const { return registers.at(#x); }
 
   REG_FUN(a)
   REG_FUN(b)

@@ -43,7 +43,7 @@ string join(const vector<string> &tokens, const char delimiter) {
 
 int read_reg(const Day12::Machine &machine, const string &reg) {
 #define READ_REG(x)                                                            \
-  if (reg == "x") {                                                            \
+  if (reg == #x) {                                                             \
     return machine.x();                                                        \
   }
 
@@ -75,19 +75,23 @@ void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip) {
   tokens = util::split(target_command, " ");
   if (tokens.size() == 2) {
     if (tokens[0] == "inc") {
-      tokens[1] = "dec";
+      tokens[0] = "dec";
     } else {
-      tokens[1] = "inc";
+      tokens[0] = "inc";
     }
     const string new_command = join(tokens, ' ');
     program[target_rip] = new_command;
   } else if (tokens.size() == 3) {
     if (tokens[0] == "jnz") {
-      tokens[1] = "cpy";
+      tokens[0] = "cpy";
     } else {
-      tokens[1] = "jnz";
+      tokens[0] = "jnz";
     }
     const string new_command = join(tokens, ' ');
+
+    cout << "replace '" << program[target_rip] << "' with '" << new_command
+         << "'" << endl;
+
     program[target_rip] = new_command;
   }
 

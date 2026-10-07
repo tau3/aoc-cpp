@@ -45,7 +45,7 @@ void Machine::jnz(const string &x, const string &y) {
   if (y == "a" || y == "b" || y == "c" || y == "d") {
     jump = registers.at(y);
   } else {
-    jump = stoi(x);
+    jump = stoi(y);
   }
 
   rip += jump;
@@ -60,8 +60,6 @@ optional<int> string_to_int(const string &input) {
 }
 
 void Machine::run_command() {
-  cout << "exec " << program[rip] << endl;
-
   const vector<string> tokens = util::split(program[rip], " ");
   const string command = tokens[0];
 
@@ -101,7 +99,7 @@ Machine::Machine(const vector<string> program, const int c) noexcept
 Machine::Machine(const vector<string> program,
                  const ExtraHandlers extra_handlers) noexcept
     : registers({
-          {"a", 0},
+          {"a", 7},
           {"b", 0},
           {"c", 0},
           {"d", 0},

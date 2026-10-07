@@ -8,17 +8,18 @@ using namespace std;
 using namespace Day23;
 
 int main() {
-  // const vector<string> input = util::read_file("../day22_input");
+  const vector<string> input = util::read_file("../day23_input");
+  // const vector<string> input = util::read_file("day23_input");
   // clang-format off
-  const vector<string> input = {
-    "cpy 2 a",
-    "tgl a",
-    "tgl a",
-    "tgl a",
-    "cpy 1 a",
-    "dec a",
-    "dec a",
-  };
+  // const vector<string> input = {
+  //   "cpy 2 a",
+  //   "tgl a",
+  //   "tgl a",
+  //   "tgl a",
+  //   "cpy 1 a",
+  //   "dec a",
+  //   "dec a",
+  // };
   // clang-format on
 
   assert(!input.empty());

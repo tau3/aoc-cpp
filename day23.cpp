@@ -58,8 +58,6 @@ int read_reg(const Day12::Machine &machine, const string &reg) {
 void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip) {
   const string &command = program[rip];
 
-  cout << command << endl;
-
   vector<string> tokens = util::split(command, " ");
   assert(tokens[0] == "tgl");
 
@@ -67,6 +65,7 @@ void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip) {
   const int x = read_reg(machine, reg);
 
   if (is_oob(rip, x, program.size())) {
+    rip++;
     return;
   }
 
@@ -79,25 +78,15 @@ void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip) {
     } else {
       tokens[0] = "inc";
     }
-    const string new_command = join(tokens, ' ');
-
-    cout << "replace '" << program[target_rip] << "' with '" << new_command
-         << "'" << endl;
-
-    program[target_rip] = new_command;
   } else if (tokens.size() == 3) {
     if (tokens[0] == "jnz") {
       tokens[0] = "cpy";
     } else {
       tokens[0] = "jnz";
     }
-    const string new_command = join(tokens, ' ');
-
-    cout << "replace '" << program[target_rip] << "' with '" << new_command
-         << "'" << endl;
-
-    program[target_rip] = new_command;
   }
+  const string new_command = join(tokens, ' ');
+  program[target_rip] = new_command;
 
   rip++;
 }

@@ -1,6 +1,9 @@
 #include "day23.hpp"
 #include "day12.hpp"
+#include "util.hpp"
+#include <cassert>
 #include <cstddef>
+#include <vector>
 
 namespace Day23 {
 
@@ -15,6 +18,60 @@ int solve(const vector<string> &input) {
   return machine.a();
 }
 
-void tgl(vector<string> &program, const size_t rip) {}
+bool is_oob(const size_t rip, const int x, const size_t program_size) {
+  if (x < 0) {
+    if (abs(x) > rip) {
+      return true;
+    }
+  }
+
+  return (rip + x) >= program_size;
+}
+
+string join(const vector<string> &tokens, const char delimiter) {
+  string result = "";
+  for (const string &token : tokens) {
+    result += token;
+    result += delimiter;
+  }
+
+  result.pop_back();
+  return result;
+}
+
+void tgl(vector<string> &program, size_t &rip) {
+  const string &command = program[rip];
+  vector<string> tokens = util::split(command, " ");
+  assert(tokens[0] == "tgl");
+
+  const int x = stoi(tokens[1]);
+
+  if (is_oob(rip, x, program.size())) {
+    return;
+  }
+
+  const size_t target_rip = rip + x;
+  const string &target_command = program[target_rip];
+  tokens = util::split(target_command, " ");
+  if (tokens.size() == 2) {
+    if (tokens[0] == "inc") {
+      tokens[1] = "dec";
+    } else {
+      tokens[1] = "inc";
+    }
+    const string new_command = join(tokens, ' ');
+    program[target_rip] = new_command;
+  } else if (tokens.size() == 3) {
+    if (tokens[0] == "jnz") {
+      tokens[1] = "cpy";
+    } else {
+      tokens[1] = "jnz";
+    }
+    const string new_command = join(tokens, ' ');
+    program[target_rip] = new_command;
+  }
+
+  rip++;
+}
 
 } // namespace Day23

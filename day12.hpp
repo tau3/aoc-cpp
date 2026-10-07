@@ -13,7 +13,7 @@ int solve_pt1(const vector<string> &input);
 int solve_pt2(const vector<string> &input);
 
 using ExtraHandlers =
-    unordered_map<string, function<void(vector<string> &, const size_t)>>;
+    unordered_map<string, function<void(vector<string> &, size_t &)>>;
 
 class Machine {
 private:

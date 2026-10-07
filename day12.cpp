@@ -1,6 +1,7 @@
 #include "day12.hpp"
 #include "util.hpp"
 #include <format>
+#include <optional>
 #include <stdexcept>
 
 namespace Day12 {
@@ -27,21 +28,40 @@ void Machine::dec(const string &reg) {
   rip++;
 }
 
-void Machine::jnz(const string &reg, const int jump) {
-  int val;
-  if (reg == "a" || reg == "b" || reg == "c" || reg == "d") {
-    val = registers.at(reg);
+void Machine::jnz(const string &x, const string &y) {
+  int test_val;
+  if (x == "a" || x == "b" || x == "c" || x == "d") {
+    test_val = registers.at(x);
   } else {
-    val = stoi(reg);
+    test_val = stoi(x);
   }
-  if (val != 0) {
-    rip += jump;
-  } else {
+
+  if (test_val == 0) {
     rip++;
+    return;
+  }
+
+  int jump;
+  if (y == "a" || y == "b" || y == "c" || y == "d") {
+    jump = registers.at(y);
+  } else {
+    jump = stoi(x);
+  }
+
+  rip += jump;
+}
+
+optional<int> string_to_int(const string &input) {
+  try {
+    return stoi(input);
+  } catch (const invalid_argument &e) {
+    return nullopt;
   }
 }
 
 void Machine::run_command() {
+  cout << "exec " << program[rip] << endl;
+
   const vector<string> tokens = util::split(program[rip], " ");
   const string command = tokens[0];
 
@@ -56,9 +76,9 @@ void Machine::run_command() {
     const string reg = tokens[1];
     dec(reg);
   } else if (command == "jnz") {
-    const string reg = tokens[1];
-    const int jump = stoi(tokens[2]);
-    jnz(reg, jump);
+    const string x = tokens[1];
+    const string y = tokens[2];
+    jnz(x, y);
   } else {
     const auto e = extra_handlers.find(command);
     if (e == extra_handlers.end()) {

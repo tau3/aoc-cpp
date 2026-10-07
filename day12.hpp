@@ -29,7 +29,7 @@ private:
   void cpy(const string &from, const string &to);
   void inc(const string &reg);
   void dec(const string &reg);
-  void jnz(const string &reg, const int jump);
+  void jnz(const string &x, const string& y);
   void run_command();
 
 public:

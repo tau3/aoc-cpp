@@ -80,6 +80,10 @@ void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip) {
       tokens[0] = "inc";
     }
     const string new_command = join(tokens, ' ');
+
+    cout << "replace '" << program[target_rip] << "' with '" << new_command
+         << "'" << endl;
+
     program[target_rip] = new_command;
   } else if (tokens.size() == 3) {
     if (tokens[0] == "jnz") {

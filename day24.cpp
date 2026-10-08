@@ -24,14 +24,16 @@ vector<Point> get_adjacent(const Maze &maze, const Point &point) {
 
 struct State {
   Point point;
-  vector<Point> visited;
-  vector<Point> targets;
+  unordered_set<Point, util::PointHash> visited;
+  unordered_set<Point, util::PointHash> targets;
   size_t depth;
 };
 
 bool operator==(const State &lhs, const State &rhs) {
-  return lhs.depth == rhs.depth && lhs.point == rhs.point &&
-         lhs.targets == rhs.targets && lhs.visited == rhs.visited;
+  return
+      // lhs.depth == rhs.depth &&
+      lhs.point == rhs.point && lhs.targets == rhs.targets &&
+      lhs.visited == rhs.visited;
 }
 
 struct StateHash {
@@ -45,19 +47,33 @@ struct StateHash {
 
     result = 31 * util::hash_code(state.visited, f);
     result = 31 * result + util::hash_code(state.targets, f);
-    result = 31 * result + state.depth;
+    // result = 31 * result + state.depth;
     result = 31 * result + point_hash(state.point);
     return result;
   }
 };
 
+template <typename C, typename I = typename C::value_type>
+bool is_same_content(const C &left, const C &right) {
+  if (left.size() != right.size()) {
+    return false;
+  }
+
+  for (const I &item : left) {
+    if (!util::contains(right, item)) {
+      return false;
+    };
+  }
+  return true;
+}
+
 size_t solve(const vector<string> &maze) {
-  vector<Point> targets;
+  unordered_set<Point, util::PointHash> targets;
   for (size_t row = 0; row < maze.size(); row++) {
     for (size_t col = 0; col < maze[0].size(); col++) {
       const char c = maze[row][col];
       if (c != '#' && c != '.') {
-        targets.push_back(Point(row, col));
+        targets.insert(Point(row, col));
       }
     }
   }
@@ -75,18 +91,18 @@ size_t solve(const vector<string> &maze) {
     const State state = q.front();
     q.pop();
 
-    if (state.visited == targets) {
+    if (is_same_content(state.targets, targets)) {
       return state.depth;
     }
 
     const vector<Point> adjacents = get_adjacent(maze, state.point);
     for (const Point &adjacent : adjacents) {
-      vector<Point> visited = state.visited;
-      visited.push_back(adjacent);
+      auto visited = state.visited;
+      visited.insert(adjacent);
 
-      vector<Point> targets = state.targets;
+      auto targets = state.targets;
       if (maze[adjacent.row][adjacent.col] != '.') {
-        targets.push_back(adjacent);
+        targets.insert(adjacent);
       }
 
       State new_state{adjacent, visited, targets, state.depth + 1};

@@ -8,19 +8,19 @@ using namespace std;
 using namespace Day24;
 
 int main() {
-  const vector<string> input = util::read_file("../day24_input");
+  // const vector<string> input = util::read_file("../day24_input");
   // clang-format off
-  // const vector<string> input = {
-  //     "###########",
-  //     "#0.1.....2#",
-  //     "#.#######.#",
-  //     "#4.......3#",
-  //     "###########",
-  // };
+  const vector<string> input = {
+      "###########",
+      "#0.1.....2#",
+      "#.#######.#",
+      "#4.......3#",
+      "###########",
+  };
   // clang-format on
 
   assert(!input.empty());
-  cout << solve(input) << endl;
+  cout << solve_pt1(input) << endl;
 
   return 0;
 }

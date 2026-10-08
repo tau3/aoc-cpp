@@ -5,11 +5,26 @@
 #include <queue>
 #include <stdexcept>
 #include <unordered_set>
+#include <vector>
 
 namespace Day24 {
 
 using Point = util::Point<uint16_t>;
-using PointSet = unordered_set<Point, util::PointHash>;
+using PointSet = vector<Point>;
+
+template <typename C, typename I = typename C::value_type>
+bool is_same_content(const C &left, const C &right) {
+  if (left.size() != right.size()) {
+    return false;
+  }
+
+  for (const I &item : left) {
+    if (!util::contains(right, item)) {
+      return false;
+    };
+  }
+  return true;
+}
 
 vector<Point> get_adjacent(const vector<string> &maze, const Point &point) {
   vector<Point> result;
@@ -22,31 +37,45 @@ vector<Point> get_adjacent(const vector<string> &maze, const Point &point) {
   return result;
 }
 
-struct State {
+class State {
+private:
   Point point;
   PointSet targets;
   uint16_t depth;
-};
 
-bool operator==(const State &lhs, const State &rhs) {
-  return lhs.depth == rhs.depth && lhs.point == rhs.point &&
-         lhs.targets == rhs.targets;
-}
+public:
+  explicit State(const Point &point, const PointSet targets,
+                 const uint16_t depth) noexcept
+      : point(point), targets(targets), depth(depth) {}
 
-struct StateHash {
-  size_t operator()(const State &state) const {
+  bool operator==(const State &state) const {
+    return depth == state.depth && point == state.point &&
+           is_same_content(targets, state.targets);
+  }
+
+  const Point &get_point() const { return point; }
+
+  const PointSet &get_targets() const { return targets; }
+
+  uint16_t get_depth() const { return depth; }
+
+  size_t hash_code() const {
     size_t result = 17;
 
     static util::PointHash point_hash;
-    std::function<size_t(const Point &)> f = [](const Point &point) {
+    static std::function<size_t(const Point &)> f = [](const Point &point) {
       return point_hash(point);
     };
 
-    result = 31 * result + util::hash_code(state.targets, f);
-    result = 31 * result + state.depth;
-    result = 31 * result + point_hash(state.point);
+    result = 31 * result + util::hash_code(targets, f);
+    result = 31 * result + depth;
+    result = 31 * result + point_hash(point);
     return result;
   }
+};
+
+struct StateHash {
+  size_t operator()(const State &state) const { return state.hash_code(); }
 };
 
 pair<PointSet, Point> find_targets(const vector<string> &maze) {
@@ -57,7 +86,7 @@ pair<PointSet, Point> find_targets(const vector<string> &maze) {
       const char c = maze[row][col];
       if (c != '#' && c != '.') {
         const Point point(row, col);
-        targets.insert(point);
+        targets.push_back(point);
         if (c == '0') {
           start = point;
         }
@@ -67,7 +96,7 @@ pair<PointSet, Point> find_targets(const vector<string> &maze) {
   return {targets, start};
 }
 
-size_t solve(const vector<string> &maze) {
+size_t solve_pt1(const vector<string> &maze) {
   const auto [all_targets, start] = find_targets(maze);
 
   State initial{start, {start}, 0};
@@ -81,18 +110,54 @@ size_t solve(const vector<string> &maze) {
     const State state = q.front();
     q.pop();
 
-    if (state.targets == all_targets) {
-      return state.depth;
+    if (is_same_content(state.get_targets(), all_targets)) {
+      return state.get_depth();
     }
 
-    const vector<Point> adjacents = get_adjacent(maze, state.point);
+    const vector<Point> adjacents = get_adjacent(maze, state.get_point());
     for (const Point &adjacent : adjacents) {
-      auto visited_targets = state.targets;
+      auto visited_targets = state.get_targets();
       if (maze[adjacent.row][adjacent.col] != '.') {
-        visited_targets.insert(adjacent);
+        visited_targets.push_back(adjacent);
       }
 
-      State new_state{adjacent, visited_targets, state.depth + 1};
+      State new_state(adjacent, visited_targets, state.get_depth() + 1);
+      if (states.insert(new_state).second) {
+        q.push(new_state);
+      }
+    }
+  }
+
+  throw runtime_error("unreachable!");
+}
+
+size_t solve_pt2(const vector<string> &maze) {
+  const auto [all_targets, start] = find_targets(maze);
+
+  State initial{start, {start}, 0};
+
+  queue<State> q;
+  q.push(initial);
+  unordered_set<State, StateHash> states;
+  states.insert(initial);
+
+  while (!q.empty()) {
+    const State state = q.front();
+    q.pop();
+
+    if (state.get_point() == start &&
+        is_same_content(state.get_targets(), all_targets)) {
+      return state.get_depth();
+    }
+
+    const vector<Point> adjacents = get_adjacent(maze, state.get_point());
+    for (const Point &adjacent : adjacents) {
+      auto visited_targets = state.get_targets();
+      if (maze[adjacent.row][adjacent.col] != '.') {
+        visited_targets.push_back(adjacent);
+      }
+
+      State new_state(adjacent, visited_targets, state.get_depth() + 1);
       if (states.insert(new_state).second) {
         q.push(new_state);
       }

@@ -10,20 +10,11 @@
 namespace Day24 {
 
 using Point = util::Point<uint16_t>;
-using PointSet = vector<Point>;
 
-template <typename C, typename I = typename C::value_type>
-bool is_same_content(const C &left, const C &right) {
-  if (left.size() != right.size()) {
-    return false;
-  }
-
-  for (const I &item : left) {
-    if (!util::contains(right, item)) {
-      return false;
-    };
-  }
-  return true;
+bool comp(const Point &lhs, const Point &rhs) {
+  if (lhs.row != rhs.row)
+    return lhs.row > rhs.row;
+  return lhs.col < rhs.col;
 }
 
 vector<Point> get_adjacent(const vector<string> &maze, const Point &point) {
@@ -40,22 +31,26 @@ vector<Point> get_adjacent(const vector<string> &maze, const Point &point) {
 class State {
 private:
   Point point;
-  PointSet targets;
+  vector<Point> _targets;
   uint16_t depth;
 
 public:
-  explicit State(const Point &point, const PointSet targets,
+  explicit State(const Point &point, const vector<Point> &targets,
                  const uint16_t depth) noexcept
-      : point(point), targets(targets), depth(depth) {}
+      : point(point), _targets(targets), depth(depth) {
+    sort(_targets.begin(), _targets.end(), comp);
+    _targets.erase(std::unique(_targets.begin(), _targets.end()),
+                   _targets.end());
+  }
 
   bool operator==(const State &state) const {
     return depth == state.depth && point == state.point &&
-           is_same_content(targets, state.targets);
+           _targets == state._targets;
   }
 
   const Point &get_point() const { return point; }
 
-  const PointSet &get_targets() const { return targets; }
+  const vector<Point> &get_targets() const { return _targets; }
 
   uint16_t get_depth() const { return depth; }
 
@@ -67,7 +62,7 @@ public:
       return point_hash(point);
     };
 
-    result = 31 * result + util::hash_code(targets, f);
+    result = 31 * result + util::hash_code(_targets, f);
     result = 31 * result + depth;
     result = 31 * result + point_hash(point);
     return result;
@@ -78,8 +73,8 @@ struct StateHash {
   size_t operator()(const State &state) const { return state.hash_code(); }
 };
 
-pair<PointSet, Point> find_targets(const vector<string> &maze) {
-  PointSet targets;
+pair<vector<Point>, Point> find_targets(const vector<string> &maze) {
+  vector<Point> targets;
   Point start(1, 1);
   for (size_t row = 0; row < maze.size(); row++) {
     for (size_t col = 0; col < maze[0].size(); col++) {
@@ -97,7 +92,8 @@ pair<PointSet, Point> find_targets(const vector<string> &maze) {
 }
 
 size_t solve_pt1(const vector<string> &maze) {
-  const auto [all_targets, start] = find_targets(maze);
+  auto [all_targets, start] = find_targets(maze);
+  sort(all_targets.begin(), all_targets.end(), comp);
 
   State initial{start, {start}, 0};
 
@@ -110,7 +106,7 @@ size_t solve_pt1(const vector<string> &maze) {
     const State state = q.front();
     q.pop();
 
-    if (is_same_content(state.get_targets(), all_targets)) {
+    if (state.get_targets() == all_targets) {
       return state.get_depth();
     }
 
@@ -132,7 +128,8 @@ size_t solve_pt1(const vector<string> &maze) {
 }
 
 size_t solve_pt2(const vector<string> &maze) {
-  const auto [all_targets, start] = find_targets(maze);
+  auto [all_targets, start] = find_targets(maze);
+  sort(all_targets.begin(), all_targets.end(), comp);
 
   State initial{start, {start}, 0};
 
@@ -145,8 +142,7 @@ size_t solve_pt2(const vector<string> &maze) {
     const State state = q.front();
     q.pop();
 
-    if (state.get_point() == start &&
-        is_same_content(state.get_targets(), all_targets)) {
+    if (state.get_point() == start && state.get_targets() == all_targets) {
       return state.get_depth();
     }
 

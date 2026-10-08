@@ -1,25 +1,22 @@
-#include "day23.hpp"
+#include "day24.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day23;
+using namespace Day24;
 
 int main() {
-  const vector<string> input = util::read_file("../day23_input");
-  // const vector<string> input = util::read_file("day23_input");
+  // const vector<string> input = util::read_file("../day23_input");
   // clang-format off
-  // const vector<string> input = {
-  //   "cpy 2 a",
-  //   "tgl a",
-  //   "tgl a",
-  //   "tgl a",
-  //   "cpy 1 a",
-  //   "dec a",
-  //   "dec a",
-  // };
+  const vector<string> input = {
+      "###########",
+      "#0.1.....2#",
+      "#.#######.#",
+      "#4.......3#",
+      "###########",
+  };
   // clang-format on
 
   assert(!input.empty());

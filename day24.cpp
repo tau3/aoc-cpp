@@ -1,13 +1,14 @@
 #include "day24.hpp"
 #include "util.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <queue>
 #include <stdexcept>
 #include <unordered_set>
 
 namespace Day24 {
 
-using Point = util::Point<size_t>;
+using Point = util::Point<uint16_t>;
 using Maze = vector<string>;
 
 vector<Point> get_adjacent(const Maze &maze, const Point &point) {
@@ -36,11 +37,16 @@ bool operator==(const State &lhs, const State &rhs) {
 struct StateHash {
   size_t operator()(const State &state) const {
     size_t result = 17;
-    util::PointHash ph;
-    result = 31 * util::hash_code(state.visited, ph);
-    result = 31 * result + util::hash_code(state.targets, ph);
+
+    util::PointHash point_hash;
+    std::function<size_t(const Point &)> f = [&point_hash](const Point &point) {
+      return point_hash(point);
+    };
+
+    result = 31 * util::hash_code(state.visited, f);
+    result = 31 * result + util::hash_code(state.targets, f);
     result = 31 * result + state.depth;
-    result = 31 * result + ph(state.point);
+    result = 31 * result + point_hash(state.point);
     return result;
   }
 };
@@ -59,9 +65,11 @@ size_t solve(const vector<string> &maze) {
   // TODO check actual input
   Point start(1, 1);
   State initial{start, {start}, {start}, 0};
+
   queue<State> q;
-  unordered_set<State, StateHash> states;
   q.push(initial);
+  unordered_set<State, StateHash> states;
+  states.insert(initial);
 
   while (!q.empty()) {
     const State state = q.front();
@@ -82,7 +90,12 @@ size_t solve(const vector<string> &maze) {
       }
 
       State new_state{adjacent, visited, targets, state.depth + 1};
-      q.push(new_state);
+      if (states.insert(new_state).second) {
+        q.push(new_state);
+        // cout << q.size() << endl;
+      } else {
+        cout << "HIT" << endl;
+      }
     }
   }
 

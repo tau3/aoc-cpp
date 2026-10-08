@@ -2,6 +2,7 @@
 #include "util.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <initializer_list>
 #include <queue>
 #include <stdexcept>
 #include <unordered_set>
@@ -17,6 +18,45 @@ bool comp(const Point &lhs, const Point &rhs) {
   return lhs.col < rhs.col;
 }
 
+class DistinctSortedList {
+private:
+  vector<Point> items;
+
+public:
+  explicit DistinctSortedList(const initializer_list<Point> &items) noexcept
+      : items(items) {}
+
+  explicit DistinctSortedList(const vector<Point> &items) noexcept
+      : items(items) {}
+
+  explicit DistinctSortedList() noexcept = default;
+
+  DistinctSortedList push_back(const Point &point) const {
+    vector<Point> new_items = items;
+    new_items.push_back(point);
+    sort(new_items.begin(), new_items.end(), comp);
+    new_items.erase(std::unique(new_items.begin(), new_items.end()),
+                    new_items.end());
+
+    DistinctSortedList result;
+    result.items = new_items;
+
+    return result;
+  }
+
+  bool operator==(const DistinctSortedList &other) const {
+    return items == other.items;
+  }
+
+  size_t hash_code() const {
+    static std::function<size_t(const Point &)> f = [](const Point &point) {
+      static util::PointHash point_hash;
+      return point_hash(point);
+    };
+    return util::hash_code(items, f);
+  }
+};
+
 vector<Point> get_adjacent(const vector<string> &maze, const Point &point) {
   vector<Point> result;
   for (const Point &current :
@@ -31,26 +71,22 @@ vector<Point> get_adjacent(const vector<string> &maze, const Point &point) {
 class State {
 private:
   Point point;
-  vector<Point> _targets;
+  DistinctSortedList targets;
   uint16_t depth;
 
 public:
-  explicit State(const Point &point, const vector<Point> &targets,
+  explicit State(const Point &point, const DistinctSortedList &targets,
                  const uint16_t depth) noexcept
-      : point(point), _targets(targets), depth(depth) {
-    sort(_targets.begin(), _targets.end(), comp);
-    _targets.erase(std::unique(_targets.begin(), _targets.end()),
-                   _targets.end());
-  }
+      : point(point), targets(targets), depth(depth) {}
 
   bool operator==(const State &state) const {
     return depth == state.depth && point == state.point &&
-           _targets == state._targets;
+           targets == state.targets;
   }
 
   const Point &get_point() const { return point; }
 
-  const vector<Point> &get_targets() const { return _targets; }
+  const DistinctSortedList &get_targets() const { return targets; }
 
   uint16_t get_depth() const { return depth; }
 
@@ -58,11 +94,8 @@ public:
     size_t result = 17;
 
     static util::PointHash point_hash;
-    static std::function<size_t(const Point &)> f = [](const Point &point) {
-      return point_hash(point);
-    };
 
-    result = 31 * result + util::hash_code(_targets, f);
+    result = 31 * result + targets.hash_code();
     result = 31 * result + depth;
     result = 31 * result + point_hash(point);
     return result;
@@ -73,7 +106,7 @@ struct StateHash {
   size_t operator()(const State &state) const { return state.hash_code(); }
 };
 
-pair<vector<Point>, Point> find_targets(const vector<string> &maze) {
+pair<DistinctSortedList, Point> find_targets(const vector<string> &maze) {
   vector<Point> targets;
   Point start(1, 1);
   for (size_t row = 0; row < maze.size(); row++) {
@@ -88,14 +121,13 @@ pair<vector<Point>, Point> find_targets(const vector<string> &maze) {
       }
     }
   }
-  return {targets, start};
+  return {DistinctSortedList(targets), start};
 }
 
 size_t solve_pt1(const vector<string> &maze) {
   auto [all_targets, start] = find_targets(maze);
-  sort(all_targets.begin(), all_targets.end(), comp);
 
-  State initial{start, {start}, 0};
+  State initial{start, DistinctSortedList{start}, 0};
 
   queue<State> q;
   q.push(initial);
@@ -128,10 +160,9 @@ size_t solve_pt1(const vector<string> &maze) {
 }
 
 size_t solve_pt2(const vector<string> &maze) {
-  auto [all_targets, start] = find_targets(maze);
-  sort(all_targets.begin(), all_targets.end(), comp);
+  const auto [all_targets, start] = find_targets(maze);
 
-  State initial{start, {start}, 0};
+  State initial{start, DistinctSortedList{start}, 0};
 
   queue<State> q;
   q.push(initial);

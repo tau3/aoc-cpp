@@ -1,7 +1,6 @@
 #include "day12.hpp"
 #include "util.hpp"
 #include <format>
-#include <optional>
 #include <stdexcept>
 
 namespace Day12 {
@@ -49,14 +48,6 @@ void Machine::jnz(const string &x, const string &y) {
   }
 
   rip += jump;
-}
-
-optional<int> string_to_int(const string &input) {
-  try {
-    return stoi(input);
-  } catch (const invalid_argument &e) {
-    return nullopt;
-  }
 }
 
 void Machine::run_command() {

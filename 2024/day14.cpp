@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "day14.hpp"
 #include "util.hpp"
 #include <unordered_set>

@@ -8,15 +8,15 @@ using namespace std;
 using namespace Day24;
 
 int main() {
-  // const vector<string> input = util::read_file("../day23_input");
+  const vector<string> input = util::read_file("../day24_input");
   // clang-format off
-  const vector<string> input = {
-      "###########",
-      "#0.1.....2#",
-      "#.#######.#",
-      "#4.......3#",
-      "###########",
-  };
+  // const vector<string> input = {
+  //     "###########",
+  //     "#0.1.....2#",
+  //     "#.#######.#",
+  //     "#4.......3#",
+  //     "###########",
+  // };
   // clang-format on
 
   assert(!input.empty());

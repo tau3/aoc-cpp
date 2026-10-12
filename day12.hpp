@@ -17,8 +17,9 @@ int solve_pt2(const vector<string> &input);
 
 class Machine;
 
-using ExtraHandlers = unordered_map<
-    string, function<void(const Machine &machine, vector<string> &, size_t &)>>;
+using ExtraHander = function<void(const Machine &machine,
+                                  vector<string> &program, size_t &rip)>;
+using ExtraHandlers = unordered_map<string, ExtraHander>;
 
 class Machine {
 private:
@@ -33,7 +34,6 @@ private:
   void inc(const string &reg);
   void dec(const string &reg);
   void jnz(const string &x, const string &y);
-  void run_command();
 
 public:
   explicit Machine(const vector<string> &program,
@@ -47,6 +47,7 @@ public:
   }
 
   void run_program();
+  void run_command();
 
 #define REG_FUN(x)                                                             \
   inline int x() const { return registers.at(#x); }

@@ -1,14 +1,14 @@
-#include "day24.hpp"
+#include "day25.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <ostream>
 #include <vector>
 
 using namespace std;
-using namespace Day24;
+using namespace Day25;
 
 int main() {
-  const vector<string> input = util::read_file("../day24_input");
+  const vector<string> input = util::read_file("../day25_input");
   // clang-format off
   // const vector<string> input = {
   //     "###########",
@@ -20,7 +20,8 @@ int main() {
   // clang-format on
 
   assert(!input.empty());
-  cout << solve_pt2(input) << endl;
+  // cout << solve(input) << endl;
+  solve(input);
 
   return 0;
 }

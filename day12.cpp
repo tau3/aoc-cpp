@@ -1,7 +1,9 @@
 #include "day12.hpp"
 #include "util.hpp"
+#include <cassert>
 #include <format>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace Day12 {
 
@@ -78,24 +80,17 @@ void Machine::run_command() {
   }
 }
 
-Machine::Machine(const vector<string> program, const int c) noexcept
-    : registers({
-          {"a", 0},
-          {"b", 0},
-          {"c", c},
-          {"d", 0},
-      }),
-      program(program), rip(0) {}
-
-Machine::Machine(const vector<string> program,
-                 const ExtraHandlers extra_handlers) noexcept
-    : registers({
-          {"a", 12},
-          {"b", 0},
-          {"c", 0},
-          {"d", 0},
-      }),
-      program(program), rip(0), extra_handlers(extra_handlers) {}
+Machine::Machine(const vector<string> &program,
+                 const unordered_map<string, int> &registers,
+                 const ExtraHandlers &extra_handlers)
+    : registers(registers), program(program), rip(0),
+      extra_handlers(extra_handlers) {
+  assert(registers.size() == 4);
+  assert(registers.find("a") != registers.end());
+  assert(registers.find("b") != registers.end());
+  assert(registers.find("c") != registers.end());
+  assert(registers.find("d") != registers.end());
+}
 
 void Machine::run_program() {
   while (rip < program.size()) {
@@ -104,13 +99,19 @@ void Machine::run_program() {
 }
 
 int solve_pt1(const vector<string> &input) {
-  Machine machine(input, 0);
+  Machine machine(input, Machine::default_registers(), {});
   machine.run_program();
   return machine.a();
 }
 
 int solve_pt2(const vector<string> &input) {
-  Machine machine(input, 1);
+  const unordered_map<string, int> registers{
+      {"a", 0},
+      {"b", 0},
+      {"c", 1},
+      {"d", 0},
+  };
+  Machine machine(input, registers, {});
   machine.run_program();
   return machine.a();
 }

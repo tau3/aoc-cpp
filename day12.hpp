@@ -2,7 +2,10 @@
 #define INCLUDE_DAY_12_H
 
 #include <functional>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace Day12 {
@@ -29,14 +32,19 @@ private:
   void cpy(const string &from, const string &to);
   void inc(const string &reg);
   void dec(const string &reg);
-  void jnz(const string &x, const string& y);
+  void jnz(const string &x, const string &y);
   void run_command();
 
 public:
-  explicit Machine(const vector<string> program, const int c) noexcept;
+  explicit Machine(const vector<string> &program,
+                   const unordered_map<string, int> &registers,
+                   const ExtraHandlers &extra_handlers);
 
-  explicit Machine(const vector<string> program,
-                   const ExtraHandlers extra_handlers) noexcept;
+  static unordered_map<string, int> default_registers() {
+    const static unordered_map<string, int> result = {
+        {"a", 0}, {"b", 0}, {"c", 0}, {"d", 0}};
+    return result;
+  }
 
   void run_program();
 

@@ -9,12 +9,11 @@
 
 namespace Day23 {
 
-void tgl(const Day12::Machine &machine, vector<string> &program, size_t &rip);
-
 int solve(const vector<string> &input) {
   Day12::ExtraHandlers extra_handlers = {{"tgl", tgl}};
 
-  Day12::Machine machine(input, extra_handlers);
+  Day12::Machine machine(input, Day12::Machine::default_registers(),
+                         extra_handlers);
   machine.run_program();
 
   return machine.a();

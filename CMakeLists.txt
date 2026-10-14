@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 4.3.4)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# set(CMAKE_CXX_FLAGS "-g -pedantic -Wall -Wextra")
-set(CMAKE_CXX_FLAGS "-g -pedantic -Wall -Wextra -O3")
-# set(CMAKE_CXX_STANDARD 26)
+# set(CMAKE_CXX_FLAGS "-g -pedantic -Wall -Wextra -std=c++23")
+set(CMAKE_CXX_FLAGS "-g -pedantic -Wall -Wextra -std=c++23 -O3")
 
 project (aoc)
 file(GLOB aoc
@@ -11,7 +10,3 @@ file(GLOB aoc
     "*.cpp"
 )
 add_executable(${PROJECT_NAME} ${aoc})
-
-# 16.05
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} OpenSSL::SSL)

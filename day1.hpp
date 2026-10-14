@@ -5,10 +5,7 @@
 
 namespace Day1 {
 
-using namespace std;
-
-int solve_day1_pt1(const string &input);
-int solve_day1_pt2(const string &input);
+int solve(const std::string &input);
 
 } // namespace Day1
 

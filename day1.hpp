@@ -5,7 +5,8 @@
 
 namespace Day1 {
 
-int solve(const std::string &input);
+int solve_pt1(const std::string &input);
+int solve_pt2(const std::string &input);
 
 } // namespace Day1
 

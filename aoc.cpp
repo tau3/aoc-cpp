@@ -11,14 +11,14 @@ int main() {
   const vector<string> input = util::read_file("../day2_input");
   // clang-format off
   // const vector<string> input = {
-  //   "5 1 9 5",
-  //   "7 5 3",
-  //   "2 4 6 8",
+  //   "5 9 2 8",
+  //   "9 4 7 3",
+  //   "3 8 6 5",
   // };
   // clang-format on
 
   assert(!input.empty());
-  cout << solve(input) << endl;
+  cout << solve_pt2(input) << endl;
 
   return 0;
 }

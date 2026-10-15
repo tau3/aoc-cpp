@@ -8,7 +8,8 @@ namespace Day2 {
 
 using namespace std;
 
-int solve(const vector<string> &input);
+int solve_pt1(const vector<string> &input);
+int solve_pt2(const vector<string> &input);
 
 } // namespace Day2
 

@@ -1,14 +1,14 @@
-#include "day2.hpp"
+#include "day3.hpp"
 #include "util.hpp"
 #include <cassert>
 #include <ostream>
 #include <vector>
 
-using namespace Day2;
+using namespace Day3;
 using namespace std;
 
 int main() {
-  const vector<string> input = util::read_file("../day2_input");
+  // const vector<string> input = util::read_file("../day2_input");
   // clang-format off
   // const vector<string> input = {
   //   "5 9 2 8",
@@ -17,8 +17,14 @@ int main() {
   // };
   // clang-format on
 
-  assert(!input.empty());
-  cout << solve_pt2(input) << endl;
+  // assert(!input.empty());
+  // cout << solve_pt2(input) << endl;
+
+  Generator generator;
+  for (int i = 0; i < 25; i++) {
+    cout << generator.next() << endl;
+    // generator.next();
+  }
 
   return 0;
 }

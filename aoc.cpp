@@ -20,11 +20,12 @@ int main() {
   // assert(!input.empty());
   // cout << solve_pt2(input) << endl;
 
-  Generator generator;
-  for (int i = 0; i < 25; i++) {
-    cout << generator.next() << endl;
-    // generator.next();
-  }
+  // cout << solve(1) << endl;
+  // cout << solve(12) << endl;
+  // cout << solve(23) << endl;
+  // cout << solve(1024) << endl;
+
+  cout << solve(368078) << endl;
 
   return 0;
 }

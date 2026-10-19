@@ -1,5 +1,4 @@
 #include "day3.hpp"
-#include <iostream>
 #include <stdexcept>
 
 namespace Day3 {
@@ -22,9 +21,7 @@ char Generator::next_direction() const {
 }
 
 char Generator::next() {
-  // cout << "dir=" << direction << "; c=" << c << "; tw=" << twice << "; i=" << i
-       // << endl;
-
+  char result = direction;
   i++;
   if (i == c) {
     if (twice) {
@@ -38,7 +35,36 @@ char Generator::next() {
       i = 0;
     }
   }
-  return direction;
+  return result;
+}
+
+int solve(const size_t n) {
+  Generator generator;
+
+  int x = 0;
+  int y = 0;
+
+  for (size_t i = 1; i < n; i++) {
+    const char direction = generator.next();
+    switch (direction) {
+    case 'e':
+      x++;
+      break;
+    case 'n':
+      y++;
+      break;
+    case 'w':
+      x--;
+      break;
+    case 's':
+      y--;
+      break;
+    default:
+      throw runtime_error("unknown direction");
+    }
+  }
+
+  return abs(x) + abs(y);
 }
 
 } // namespace Day3

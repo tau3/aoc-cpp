@@ -20,6 +20,8 @@ public:
   char next();
 };
 
+int solve(const size_t n);
+
 } // namespace Day3
 
 #endif

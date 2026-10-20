@@ -20,7 +20,8 @@ public:
   char next();
 };
 
-int solve(const size_t n);
+int solve_pt1(const size_t n);
+int solve_pt2(const int n);
 
 } // namespace Day3
 

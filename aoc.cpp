@@ -1,6 +1,7 @@
 #include "day3.hpp"
 #include "util.hpp"
 #include <cassert>
+#include <cstddef>
 #include <ostream>
 #include <vector>
 
@@ -20,12 +21,11 @@ int main() {
   // assert(!input.empty());
   // cout << solve_pt2(input) << endl;
 
-  // cout << solve(1) << endl;
-  // cout << solve(12) << endl;
-  // cout << solve(23) << endl;
-  // cout << solve(1024) << endl;
+  // cout << solve_pt2(368078) << endl;
 
-  cout << solve(368078) << endl;
+  for (size_t i = 0; i < 25; i++) {
+    cout << solve_pt2(i) << endl;
+  }
 
   return 0;
 }

@@ -37,7 +37,7 @@ template <typename T> std::string to_str(const T &items) {
   return result;
 }
 
-std::vector<std::string> split_by_spaces(const std::string &);
+td::vector<std::string> split_by_spaces(const std::string &);
 
 template <typename T> struct Point {
   T row;
@@ -50,6 +50,21 @@ template <typename T> struct Point {
   Point up() const { return Point(row - 1, col); }
   Point down() const { return Point(row + 1, col); }
 };
+
+template <typename T>
+std::array<Point<T>, 8> get_adjacent(const Point<T> &point) {
+  const Point n = point.up();
+  const Point s = point.down();
+  const Point w = point.left();
+  const Point e = point.right();
+
+  const Point nw = n.left();
+  const Point ne = n.right();
+  const Point sw = s.left();
+  const Point se = s.right();
+
+  return {n, s, w, e, nw, ne, sw, se};
+}
 
 template <typename T>
 inline bool operator==(const Point<T> &lhs, const Point<T> &rhs) {

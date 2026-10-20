@@ -23,9 +23,12 @@ int main() {
 
   // cout << solve_pt2(368078) << endl;
 
-  for (size_t i = 0; i < 25; i++) {
-    cout << solve_pt2(i) << endl;
-  }
+  // for (size_t i = 0; i < 25; i++) {
+  //   // cout << solve_pt2(i) << " ";
+  //   solve_pt2(i);
+  // }
+
+  cout << solve_pt2(368078) << endl;
 
   return 0;
 }

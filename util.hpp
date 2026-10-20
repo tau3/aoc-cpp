@@ -37,7 +37,7 @@ template <typename T> std::string to_str(const T &items) {
   return result;
 }
 
-td::vector<std::string> split_by_spaces(const std::string &);
+std::vector<std::string> split_by_spaces(const std::string &);
 
 template <typename T> struct Point {
   T row;

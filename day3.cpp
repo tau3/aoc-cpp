@@ -88,13 +88,13 @@ int solve_pt2(const int n) {
       current = current.right();
       break;
     case 'n':
-      current = current.up();
+      current = current.down();
       break;
     case 'w':
       current = current.left();
       break;
     case 's':
-      current = current.down();
+      current = current.up();
       break;
     default:
       throw runtime_error("unknown direction");

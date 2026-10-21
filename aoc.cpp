@@ -11,14 +11,16 @@ int main() {
   const vector<string> input = util::read_file("../day4_input");
   // clang-format off
   // const vector<string> input = {
-  //   "aa bb cc dd ee",
-  //   "aa bb cc dd aa",
-  //   "aa bb cc dd aaa",
+  //   "abcde fghij",
+  //   "abcde xyz ecdab",
+  //   "a ab abc abd abf abj",
+  //   "iiii oiii ooii oooi oooo",
+  //   "oiii ioii iioi iiio",
   // };
   // clang-format on
 
   assert(!input.empty());
-  cout << solve(input) << endl;
+  cout << solve_pt2(input) << endl;
 
   return 0;
 }

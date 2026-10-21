@@ -1,34 +1,24 @@
-#include "day3.hpp"
+#include "day4.hpp"
 #include "util.hpp"
 #include <cassert>
-#include <cstddef>
 #include <ostream>
 #include <vector>
 
-using namespace Day3;
+using namespace Day4;
 using namespace std;
 
 int main() {
-  // const vector<string> input = util::read_file("../day2_input");
+  const vector<string> input = util::read_file("../day4_input");
   // clang-format off
   // const vector<string> input = {
-  //   "5 9 2 8",
-  //   "9 4 7 3",
-  //   "3 8 6 5",
+  //   "aa bb cc dd ee",
+  //   "aa bb cc dd aa",
+  //   "aa bb cc dd aaa",
   // };
   // clang-format on
 
-  // assert(!input.empty());
-  // cout << solve_pt2(input) << endl;
-
-  // cout << solve_pt2(368078) << endl;
-
-  // for (size_t i = 0; i < 25; i++) {
-  //   // cout << solve_pt2(i) << " ";
-  //   solve_pt2(i);
-  // }
-
-  cout << solve_pt2(368078) << endl;
+  assert(!input.empty());
+  cout << solve(input) << endl;
 
   return 0;
 }

@@ -1,14 +1,19 @@
 #include "day5.hpp"
-#include <fstream>
+#include <vector>
 
 namespace Day5 {
 
-int solve_pt1(const vector<string> &input) {
-  vector<int> offsets;
+vector<int> to_ints(const vector<string> &input) {
+  vector<int> result;
   for (const string &line : input) {
     const int val = stoi(line);
-    offsets.push_back(val);
+    result.push_back(val);
   }
+  return result;
+}
+
+int solve_pt1(const vector<string> &input) {
+  vector<int> offsets = to_ints(input);
 
   int pos = 0;
   int count = 0;
@@ -23,11 +28,7 @@ int solve_pt1(const vector<string> &input) {
 }
 
 int solve_pt2(const vector<string> &input) {
-  vector<int> offsets;
-  for (const string &line : input) {
-    const int val = stoi(line);
-    offsets.push_back(val);
-  }
+  vector<int> offsets = to_ints(input);
 
   int pos = 0;
   int count = 0;

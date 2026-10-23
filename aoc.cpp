@@ -22,11 +22,13 @@ int main() {
   // assert(!input.empty());
   // cout << solve_pt2(input) << endl;
 
-  cout
-      << solve(
-             "2	8	8	5	4	2	3	1	"
-             "5	5	1	2	15	13	5	14")
-      << endl;
+
+  // const auto [pt1, pt2] = solve("0 2 7 0");
+  const auto [pt1, pt2] =
+      solve("2	8	8	5	4	2	3	1	"
+            "5	5	1	2	15	13	5	14");
+
+  cout << pt2 << endl;
 
   return 0;
 }

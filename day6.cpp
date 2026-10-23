@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <limits>
 #include <unordered_set>
+#include <vector>
 
 namespace Day6 {
 
@@ -48,7 +49,7 @@ vector<int> next(const vector<int> &bank) {
   return result;
 }
 
-int solve(const string &input) {
+pair<int, int> solve(const string &input) {
   const vector<string> tokens = util::split_by_spaces(input);
   vector<int> current;
   for (const string &token : tokens) {
@@ -56,14 +57,21 @@ int solve(const string &input) {
   }
 
   unordered_set<vector<int>, IntsHash> states;
-
-  int result = 0;
+  int pt1 = 0;
   while (states.insert(current).second) {
-    result++;
+    pt1++;
     current = next(current);
   }
 
-  return result;
+  const vector<int> target = current;
+  current = next(target);
+  size_t pt2 = 1;
+  while (current != target) {
+    current = next(current);
+    pt2++;
+  }
+
+  return {pt1, pt2};
 }
 
 } // namespace Day6

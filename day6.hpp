@@ -7,7 +7,7 @@ namespace Day6 {
 
 using namespace std;
 
-int solve(const string &input);
+pair<int, int> solve(const string &input);
 
 } // namespace Day6
 

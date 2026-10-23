@@ -37,22 +37,28 @@ vector<int> next(const vector<int> &bank) {
   }
 
   vector<int> result = bank;
+  result[max_index] = 0;
   size_t current = next_index(max_index, bank);
   while (max_val > 0) {
     result[current]++;
     max_val--;
-    current = next_index(max_index, bank);
+    current = next_index(current, bank);
   }
 
   return result;
 }
 
-int solve(const vector<int> &blocks) {
+int solve(const string &input) {
+  const vector<string> tokens = util::split_by_spaces(input);
+  vector<int> current;
+  for (const string &token : tokens) {
+    current.push_back(stoi(token));
+  }
+
   unordered_set<vector<int>, IntsHash> states;
 
   int result = 0;
-  vector<int> current = blocks;
-  while (states.insert(blocks).second) {
+  while (states.insert(current).second) {
     result++;
     current = next(current);
   }

@@ -1,13 +1,13 @@
 #ifndef INCLUDE_DAY_6_H
 #define INCLUDE_DAY_6_H
 
-#include <vector>
+#include <string>
 
 namespace Day6 {
 
 using namespace std;
 
-int solve(const vector<int> &blocks);
+int solve(const string &input);
 
 } // namespace Day6
 

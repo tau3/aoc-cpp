@@ -16,21 +16,22 @@ string solve(const vector<string> &input) {
     nodes.insert(parent);
 
     const size_t count = tokens.size();
-
     if (count > 2) {
       for (size_t i = 3; i < count; i++) {
         string &child = tokens[i];
-        child.pop_back();
+        if (child.ends_with(',')) {
+          child.pop_back();
+        }
 
         children.insert(child);
         nodes.insert(child);
       }
     }
+  }
 
-    for (const string &node : nodes) {
-      if (!children.contains(node)) {
-        return node;
-      }
+  for (const string &node : nodes) {
+    if (!children.contains(node)) {
+      return node;
     }
   }
 

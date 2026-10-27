@@ -41,25 +41,40 @@ string solve_pt1(const vector<string> &input) {
   throw runtime_error("unreachable");
 }
 
-string find_unbalanced_node(
-    const string &node,
-    const unordered_map<string, vector<string>> &node_to_children) {
-  const vector<string> &children = node_to_children.at(node);
+using Tree = unordered_map<string, vector<string>>;
+using Weights = unordered_map<string, int>;
 
-  unordered_map<int, int> weights;
+int total_weight(const string &node, const Tree &tree, const Weights &weights) {
+  int result = weights.at(node);
+  if (tree.find(node) == tree.end()) {
+    return result;
+  }
+
+  const vector<string> &children = tree.at(node);
   for (const string &child : children) {
-    const int total = total_weight(child);
-    if (weights.find(total) == weights.end()) {
-      weights.insert({total, 1});
+    result += total_weight(child, tree, weights);
+  }
+  return result;
+}
+
+string find_unbalanced_node(const string &node, const Tree &tree,
+                            const Weights &weights) {
+  const vector<string> &children = tree.at(node);
+
+  unordered_map<int, int> total_weights;
+  for (const string &child : children) {
+    const int total = total_weight(child, tree, );
+    if (total_weights.find(total) == total_weights.end()) {
+      total_weights.insert({total, 1});
     } else {
-      weights[total]++;
+      total_weights[total]++;
     }
   }
 
   int unbalanced_total_weight = -1;
-  for (const auto &[weight, count] : weights) {
+  for (const auto &[total_weight, count] : total_weights) {
     if (count == 1) {
-      unbalanced_total_weight = weight;
+      unbalanced_total_weight = total_weight;
       break;
     }
   }
@@ -69,8 +84,8 @@ string find_unbalanced_node(
   }
 
   for (const string &child : children) {
-    if (total_weight(child) == unbalanced_total_weight) {
-      return find_unbalanced_node(child, node_to_children);
+    if (total_weight(child, tree, weights) == unbalanced_total_weight) {
+      return find_unbalanced_node(child, tree, weights);
     }
   }
 
@@ -79,8 +94,8 @@ string find_unbalanced_node(
 
 // tknk or eqgvf
 int solve_pt2(const vector<string> &input, const string &root) {
-  unordered_map<string, vector<string>> node_to_children;
-  unordered_map<string, int> node_to_weight;
+  Tree tree;
+  Weights weights;
 
   for (const string &line : input) {
     vector<string> tokens = util::split(line, " ");
@@ -91,7 +106,7 @@ int solve_pt2(const vector<string> &input, const string &root) {
     weight_str = weight_str.substr(1, weight_str.size() - 1);
     const int weight = stoi(weight_str);
 
-    node_to_weight.insert({parent, weight});
+    weights.insert({parent, weight});
 
     const size_t count = tokens.size();
     if (count > 2) {
@@ -105,15 +120,15 @@ int solve_pt2(const vector<string> &input, const string &root) {
         children.push_back(child);
       }
 
-      node_to_children.insert({parent, children});
+      tree.insert({parent, children});
     }
   }
 
-  const string target = find_unbalanced_node(root, node_to_children);
-  const vector<string> siblings = find_siblings(target);
-  const int target_weight = total_weight(siblings[0]);
-  const vector<string> &children = node_to_children.at(target);
-  target_weight -= total_weight(children[0]) * children.size();
+  const string target = find_unbalanced_node(root, tree, weights);
+  const vector<string> siblings = find_siblings(target, tree);
+  int target_weight = total_weight(siblings[0], tree, weights);
+  const vector<string> &children = tree.at(target);
+  target_weight -= total_weight(children[0], tree, weights) * children.size();
   return target_weight;
 }
 

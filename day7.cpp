@@ -56,13 +56,13 @@ int total_weight(const string &node, const Tree &tree, const Weights &weights) {
   return result;
 }
 
-string find_unbalanced_node(const string &node, const Tree &tree,
-                            const Weights &weights) {
+const string &find_unbalanced_node(const string &node, const Tree &tree,
+                                   const Weights &weights) {
   const vector<string> &children = tree.at(node);
 
   unordered_map<int, int> total_weights;
   for (const string &child : children) {
-    const int total = total_weight(child, tree, );
+    const int total = total_weight(child, tree, weights);
     if (total_weights.find(total) == total_weights.end()) {
       total_weights.insert({total, 1});
     } else {
@@ -126,15 +126,33 @@ pair<Tree, Weights> parse_input(const vector<string> &input) {
   return {tree, weights};
 }
 
+vector<string> find_siblings(const string &target, const Tree &tree) {
+  for (const auto &[parent, children] : tree) {
+    for (const string &child : children) {
+      if (child != target) {
+        continue;
+      }
+      vector<string> result;
+      for (const string &sibling : children) {
+        if (sibling != target) {
+          result.push_back(sibling);
+        }
+      }
+      return result;
+    }
+  }
+  throw runtime_error("unreachable");
+}
+
 // tknk or eqgvf
 int solve_pt2(const vector<string> &input, const string &root) {
   const auto [tree, weights] = parse_input(input);
   const string target = find_unbalanced_node(root, tree, weights);
   const vector<string> siblings = find_siblings(target, tree);
-  int target_weight = total_weight(siblings[0], tree, weights);
+  int result = total_weight(siblings[0], tree, weights);
   const vector<string> &children = tree.at(target);
-  target_weight -= total_weight(children[0], tree, weights) * children.size();
-  return target_weight;
+  result -= total_weight(children[0], tree, weights) * children.size();
+  return result;
 }
 
 } // namespace Day7

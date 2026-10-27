@@ -2,7 +2,6 @@
 #include "util.hpp"
 #include <cstddef>
 #include <stdexcept>
-#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -92,20 +91,20 @@ string find_unbalanced_node(const string &node, const Tree &tree,
   throw runtime_error("unreachable");
 }
 
-// tknk or eqgvf
-int solve_pt2(const vector<string> &input, const string &root) {
+int parse_weight(string &weight_str) {
+  weight_str = weight_str.substr(1, weight_str.size() - 1);
+  return stoi(weight_str);
+}
+
+pair<Tree, Weights> parse_input(const vector<string> &input) {
   Tree tree;
   Weights weights;
 
   for (const string &line : input) {
     vector<string> tokens = util::split(line, " ");
+
     const string &parent = tokens[0];
-
-    // TODO extract
-    string weight_str = tokens[1];
-    weight_str = weight_str.substr(1, weight_str.size() - 1);
-    const int weight = stoi(weight_str);
-
+    const int weight = parse_weight(tokens[1]);
     weights.insert({parent, weight});
 
     const size_t count = tokens.size();
@@ -124,6 +123,12 @@ int solve_pt2(const vector<string> &input, const string &root) {
     }
   }
 
+  return {tree, weights};
+}
+
+// tknk or eqgvf
+int solve_pt2(const vector<string> &input, const string &root) {
+  const auto [tree, weights] = parse_input(input);
   const string target = find_unbalanced_node(root, tree, weights);
   const vector<string> siblings = find_siblings(target, tree);
   int target_weight = total_weight(siblings[0], tree, weights);
